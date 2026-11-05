@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>도쿠시마 여행 플랜</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 상단 요약 띠 → 날짜별 카드 → 예매법 → 주의사항. 쪽빛(도쿠시마 전통 염색) 계열의 연한 색 */
+:root{
+  --bg:#f7f9fd; --card:#ffffff; --ink:#1f2a44; --muted:#5c6785; --line:#dde5f3;
+  --accent:#3f5fa8; --tint:#e9eefa; --warn-bg:#fff4e0; --warn-ink:#7a4a00; --ok-bg:#e4f5ec; --ok-ink:#17613a; --wait-bg:#eef0f5;
+  --f-head:'Jua','Noto Sans KR',sans-serif; --f-body:'Noto Sans KR',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12172a; --card:#1b2240; --ink:#e8ecf8; --muted:#a6b0cf; --line:#2c3558;
+  --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12172a; --card:#1b2240; --ink:#e8ecf8; --muted:#a6b0cf; --line:#2c3558;
+  --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;
+  padding-block:0 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:760px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);font-weight:400;text-wrap:balance;margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+header{padding:36px 0 20px}
+.kicker{font-size:13px;letter-spacing:.08em;color:var(--muted);font-weight:500}
+h1{font-size:clamp(32px,8vw,46px);line-height:1.2;margin:6px 0 10px}
+.sub{color:var(--muted);margin:0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:20px 0 0}
+.fact{background:var(--tint);border-radius:12px;padding:12px 14px;min-width:0}
+.fact b{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.04em}
+.fact span{font-size:17px;font-weight:700;overflow-wrap:anywhere}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
+  margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));overflow-x:auto;white-space:nowrap}
+nav a{display:inline-block;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-right:6px;font-size:14px;font-weight:500}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+section{padding-top:32px;scroll-margin-top:60px}
+h2{font-size:26px;margin-bottom:14px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:16px}
+.day-top{background:var(--tint);padding:14px 18px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between}
+.day-top h3{font-size:22px}
+.pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--wait-bg);color:var(--muted)}
+.pill.ok{background:var(--ok-bg);color:var(--ok-ink)}
+.day-body{padding:16px 18px;display:grid;gap:14px}
+.day-body p{margin:0}
+.step{display:grid;grid-template-columns:76px 1fr;gap:4px 12px}
+.step .t{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.step .d{min-width:0;overflow-wrap:anywhere}
+.step small{display:block;color:var(--muted);font-size:14px}
+.empty{color:var(--muted);margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-block;text-decoration:none;font-weight:700;font-size:15px;color:var(--ink);background:var(--tint);border:1px solid var(--line);padding:9px 14px;border-radius:10px}
+.btn:hover{border-color:var(--accent)}
+.how{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+.how h3{font-size:20px;margin-bottom:8px}
+.how ol{margin:0 0 12px;padding-left:22px}
+.how li{margin-bottom:4px}
+.note{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 12px;font-size:15px;margin:0 0 12px}
+.warn{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.warn li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.warn b{display:block}
+footer{margin-top:36px;color:var(--muted);font-size:13px}
+@media (max-width:420px){.step{grid-template-columns:1fr}}
+</style>
+</head><body>
+
+
+<div class="wrap">
+<header>
+  <div class="kicker">서울 → 다카마쓰 → 도쿠시마</div>
+  <h1>도쿠시마 여행 플랜</h1>
+  <p class="sub">날짜별 일정, 예매하는 법, 조심할 것만 한 페이지에 모았어. 새 정보는 계속 추가돼.</p>
+  <div class="facts">
+    <div class="fact"><b>날짜</b><span>2027.1.19(화) ~ 1.22(금)</span></div>
+    <div class="fact"><b>비행기</b><span>서울 ⇄ 다카마쓰 (LJ299 / LJ300)</span></div>
+    <div class="fact"><b>머무는 곳</b><span>도쿠시마</span></div>
+  </div>
+</header>
+
+<nav id="nav" aria-label="바로가기"></nav>
+
+<section id="schedule"><h2>날짜별 일정</h2><div id="days"></div></section>
+
+<section id="booking"><h2>예매하는 법</h2>
+  <div class="how">
+    <h3>비행기 (서울 ⇄ 다카마쓰)</h3>
+    <ol>
+      <li>아래 링크를 눌러. 가는 날 1/19, 오는 날 1/22로 이미 맞춰져 있어.</li>
+      <li>가는 편 LJ299, 오는 편 LJ300인지 보고 시간을 확인해.</li>
+      <li>여권에 적힌 영문 이름 그대로 입력해. 철자가 다르면 탑승이 안 될 수 있어.</li>
+      <li>결제하고 e-티켓을 폰에 저장해 둬.</li>
+    </ol>
+    <p class="note">11월 5일에 조회했을 때 왕복 약 299,700원이었어. 가격은 매일 바뀌니까 링크에서 다시 확인해.</p>
+    <div class="btns">
+      <a class="btn" href="https://kr.trip.com/flights/showfarefirst/?flighttype=D&amp;dcity=SEL&amp;acity=TAK&amp;ddate=2027-01-19&amp;rdate=2027-01-22&amp;quantity=1&amp;childqty=0&amp;babyqty=0&amp;curr=KRW&amp;class=Y&amp;locale=ko-KR" target="_blank" rel="noopener">트립닷컴에서 보기</a>
+      <a class="btn" href="https://www.skyscanner.co.kr/transport/flights/sela/tak/270119/270122/?adultsv2=1&amp;cabinclass=economy&amp;childrenv2=&amp;ref=home&amp;rtn=1&amp;preferdirects=true&amp;outboundaltsenabled=false&amp;inboundaltsenabled=false" target="_blank" rel="noopener">스카이스캐너에서 보기</a>
+      <a class="btn" href="https://www.jinair.com/" target="_blank" rel="noopener">진에어 공식 사이트</a>
+    </div>
+  </div>
+  <div class="how">
+    <h3>기차 (다카마쓰 ⇄ 도쿠시마)</h3>
+    <ol>
+      <li>아래 링크를 열면 다카마쓰(가가와) ⇄ 도쿠시마, 1/19 ~ 1/22로 검색돼 있어.</li>
+      <li>가는 날은 17:00 이후, 오는 날은 11:30 이후 출발로 잡혀 있어. 비행기 시간에 맞춰서 바꿔.</li>
+      <li>원하는 열차를 골라 결제해.</li>
+    </ol>
+    <p class="note">귀국 비행기 시간을 먼저 확인하고 기차 시간을 정해. 11:30은 검색용 기본값이라 그대로 타라는 뜻이 아니야.</p>
+    <div class="btns"><a class="btn" href="https://kr.trip.com/trains/asia/list?locale=ko_kr&amp;curr=krw&amp;tripTab=train&amp;scheduleType=return&amp;biztype=JP&amp;businessType=jp_train&amp;departurecountrycode=JP&amp;arrivalcountrycode=JP&amp;departdate=2027-01-19&amp;departhouript=17&amp;departminuteipt=00&amp;returndate=2027-01-22&amp;returnhouript=11&amp;returnminuteipt=30&amp;departurecitycode=JP03156&amp;arrivalcitycode=JP00226&amp;departurecity=%EB%8B%A4%EC%B9%B4%EB%A7%88%EC%93%B0%28%EA%B0%80%EA%B0%80%EC%99%80%29&amp;arrivalcity=%EB%8F%84%EC%BF%A0%EC%8B%9C%EB%A7%88" target="_blank" rel="noopener">트립닷컴에서 기차 보기</a></div>
+  </div>
+  <div class="how">
+    <h3>공항 ⇄ 도쿠시마 길찾기</h3>
+    <p style="margin:0 0 10px">구글 지도에서 미리 찾아 둔 경로야. 링크를 누르면 지도 앱이 열려.</p>
+    <div class="btns">
+      <a class="btn" href="https://maps.app.goo.gl/5QAJcGW5fsewagfb7" target="_blank" rel="noopener">경로 지도 1 (가는 길)</a>
+      <a class="btn" href="https://maps.app.goo.gl/enkreaSbpfyhk5cn6" target="_blank" rel="noopener">경로 지도 2 (오는 길)</a>
+    </div>
+  </div>
+</section>
+
+<section id="live"><h2>실시간 정보 보기</h2>
+  <div class="how">
+    <p style="margin:0 0 12px">운항·운행 상태는 아래 버튼을 누르면 각 사이트에서 지금 상태를 볼 수 있어.</p>
+    <h3>비행기</h3>
+    <div class="btns" style="margin-bottom:14px">
+      <a class="btn" href="https://www.jinair.com/" target="_blank" rel="noopener">진에어 공식 사이트</a>
+      <a class="btn" href="https://www.takamatsu-airport.com/" target="_blank" rel="noopener">다카마쓰 공항 운항 정보</a>
+    </div>
+    <h3>기차·버스·길찾기</h3>
+    <div class="btns" style="margin-bottom:14px">
+      <a class="btn" href="https://www.jr-shikoku.co.jp/" target="_blank" rel="noopener">JR 시코쿠 (운행 정보)</a>
+      <a class="btn" href="https://www.kotoden.co.jp/" target="_blank" rel="noopener">고토덴 (공항 버스)</a>
+      <a class="btn" href="https://www.jorudan.co.jp/" target="_blank" rel="noopener">조르단 환승 검색</a>
+    </div>
+    <h3>날씨·입국</h3>
+    <div class="btns">
+      <a class="btn" href="https://www.jma.go.jp/jma/indexe.html" target="_blank" rel="noopener">일본 기상청</a>
+      <a class="btn" href="https://www.vjw.digital.go.jp/" target="_blank" rel="noopener">Visit Japan Web</a>
+    </div>
+  </div>
+</section>
+
+<section id="weather"><h2>날씨</h2>
+  <div class="how"><p id="wx-note" style="margin:0 0 10px">불러오는 중...</p><div id="wx" class="facts" style="margin:0"></div>
+  <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">데이터: Open-Meteo. 여행 날짜는 출발 16일 전부터 예보가 나와.</p></div>
+</section>
+
+<section id="caution"><h2>주의사항</h2>
+  <ul class="warn">
+    <li><b>여권</b>한국 여권이면 관광으로 90일까지 비자 없이 들어갈 수 있어. 유효기간과 영문 이름만 다시 확인해.</li>
+    <li><b>입국 서류</b>입국 전에 Visit Japan Web에서 미리 등록하면 공항에서 빨라져.</li>
+    <li><b>이동 시간</b>다카마쓰 공항과 도쿠시마는 한 번에 가는 길이 아니야. 버스와 열차를 갈아타서 약 2시간 걸려. 귀국 날은 비행기 출발 3시간 전에 도착한다고 생각하고 일찍 움직여.</li>
+    <li><b>지도 시간은 예시</b>지도 PDF의 출발·도착 시간은 11월 5일에 조회한 시간이야. 여행 당일 시간표를 다시 확인해.</li>
+    <li><b>돈</b>이동비가 공항 → 도쿠시마 4,670엔, 도쿠시마 → 공항 4,370엔 정도야(구글 지도 기준). 엔화 현금과 교통카드를 같이 챙겨.</li>
+    <li><b>겨울 날씨</b>1월은 춥고 바람이 불어. 겉옷과 장갑을 챙겨.</li>
+    <li><b>폰·전원</b>일본 콘센트는 11자 모양이야. 변환 플러그와 로밍이나 eSIM을 미리 준비해.</li>
+  </ul>
+</section>
+
+<footer>정보가 더 오면 이 페이지에 날짜별로 채워 넣을게.</footer>
+</div>
+
+<script>
+/* 날짜별 데이터. 새 파일이 오면 해당 날짜의 steps만 채우면 된다. */
+var DAYS = [
+ {id:'d1', date:'1/19 (화)', title:'출발, 도쿠시마까지', status:'ok', statusText:'정보 있음', steps:[
+   {t:'서울', d:'비행기 LJ299로 다카마쓰 공항 도착', s:'출발 시간은 예매 링크에서 확인'},
+   {t:'공항 → 도쿠시마', d:'버스(약 50분)를 타고 나가서 JR 열차(약 1시간)로 갈아탄 뒤 걸어서 도착', s:'전체 약 2시간 12분, 4,670엔 (구글 지도 기준). 목적지 주소: 770-0832 도쿠시마시 데라시마혼초히가시 3초메'}
+ ]},
+ {id:'d2', date:'1/20 (수)', title:'도쿠시마 1일차', status:'wait', statusText:'정보 받는 중', steps:[]},
+ {id:'d3', date:'1/21 (목)', title:'도쿠시마 2일차', status:'wait', statusText:'정보 받는 중', steps:[]},
+ {id:'d4', date:'1/22 (금)', title:'돌아오는 날', status:'ok', statusText:'정보 있음', steps:[
+   {t:'도쿠시마 → 공항', d:'JR 열차(약 1시간)를 타고 버스(약 25분)로 갈아탄 뒤 공항까지 걸어서 도착', s:'전체 약 1시간 46분, 4,370엔 (구글 지도 기준)'},
+   {t:'공항 → 서울', d:'비행기 LJ300', s:'출발 시간은 예매 링크에서 확인하고, 그보다 일찍 공항에 도착하도록 출발 시간을 거꾸로 계산해'}
+ ]}
+];
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+var nav=document.getElementById('nav'), box=document.getElementById('days');
+var navHtml='<a href="#schedule">일정</a>';
+DAYS.forEach(function(x){ navHtml+='<a href="#'+x.id+'">'+esc(x.date.split(' ')[0])+'</a>'; });
+navHtml+='<a href="#booking">예매법</a><a href="#live">실시간</a><a href="#weather">날씨</a><a href="#caution">주의사항</a>';
+nav.innerHTML=navHtml;
+box.innerHTML=DAYS.map(function(x){
+  var body = x.steps.length ? x.steps.map(function(s){
+    return '<div class="step"><div class="t">'+esc(s.t)+'</div><div class="d">'+esc(s.d)+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div></div>';
+  }).join('') : '<p class="empty">아직 일정이 안 왔어. 받으면 여기에 채울게.</p>';
+  return '<article class="day" id="'+x.id+'"><div class="day-top"><h3>'+esc(x.date)+' · '+esc(x.title)+'</h3><span class="pill '+(x.status==='ok'?'ok':'')+'">'+esc(x.statusText)+'</span></div><div class="day-body">'+body+'</div></article>';
+}).join('');
+
+(function(){
+ var P=[['도쿠시마',34.0658,134.5593],['다카마쓰',34.3428,134.0466]],T=['2027-01-19','2027-01-20','2027-01-21','2027-01-22'];
+ var out=document.getElementById('wx'),note=document.getElementById('wx-note'),html='',any=false,n=0;
+ P.forEach(function(p){
+  fetch('https://api.open-meteo.com/v1/forecast?latitude='+p[1]+'&longitude='+p[2]+'&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=16&timezone=Asia%2FTokyo')
+  .then(function(r){return r.json()}).then(function(j){
+    html+='<div class="fact"><b>'+p[0]+' 지금</b><span>'+Math.round(j.current.temperature_2m)+'°C</span></div>';
+    T.forEach(function(d){var i=j.daily.time.indexOf(d);if(i>=0){any=true;html+='<div class="fact"><b>'+p[0]+' '+d.slice(5).replace('-','/')+'</b><span>'+Math.round(j.daily.temperature_2m_min[i])+'~'+Math.round(j.daily.temperature_2m_max[i])+'°C · 비 '+j.daily.precipitation_probability_max[i]+'%</span></div>';}});
+  }).catch(function(){html+='<div class="fact"><b>'+p[0]+'</b><span>불러오지 못했어</span></div>';})
+  .then(function(){if(++n===P.length){out.innerHTML=html;note.textContent=any?'여행 날짜 예보야.':'아직 여행 날짜 예보는 없어. 지금 기온만 보여줘.';}});
+ });
+})();
+</script>
+
+</body></html>
