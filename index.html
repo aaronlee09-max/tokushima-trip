@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793921388">
+<meta name="build" content="1793921531">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -311,6 +311,10 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 
 <section id="bookgo"><h2>예매 바로가기</h2>
   <div class="how">
+    <div class="bk-h">한국 공항버스 (과천청사 ↔ 인천공항)</div>
+    <div class="bk-grid">
+      <a class="bk bus" href="https://m.bustago.or.kr:444/mobus/btmho/BTMHORN0001.do?type=k" target="_blank" rel="noopener"><i>B</i><span><b>버스타고</b><small>공항버스 모바일 예매</small></span><em>↗</em></a>
+    </div>
     <div class="bk-h">비행기 (인천 ⇄ 다카마쓰)</div>
     <div class="bk-grid">
       <a class="bk trip" href="https://kr.trip.com/flights/showfarefirst/?flighttype=D&amp;dcity=SEL&amp;acity=TAK&amp;ddate=2027-01-19&amp;rdate=2027-01-22&amp;quantity=1&amp;childqty=0&amp;babyqty=0&amp;curr=KRW&amp;class=Y&amp;channel=KRSite&amp;allianceid=2175&amp;uuid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;sid=957214&amp;country=KR&amp;TrackerType=180808_enf_sctj&amp;TrackerTag=NA&amp;criteriatoken=tripType%3ART%7CcabinClass%3AEconomy%7Cadult%3A1%7Cchild%3A0%7Cinfant%3A0%7CsubChannel%3A102%7Cchannel%3AEnglishSite%7Ccurrency%3AKRW%7CextensionFlag%3A16%7Clist%3Atrue%7Cidc%3ASUZ-HUA%7CdetailSearch%3Afalse%7Cissuer%3ATRIP%7Cdate_1%3A2027-01-19%7CaCity_1%3ATAK%7CdCity_1%3ASEL%7Cdate_2%3A2027-01-22%7CaCity_2%3ASEL%7CdCity_2%3ATAK%7CsiteType%3A1%7ClistTime%3A202611051256%7Crepricing%3A9%7Caid%3A2175%7Csid%3A957214&amp;flightclass=I&amp;wkp=1&amp;referrer_source=SC&amp;locale=ko-KR&amp;shoppingid=8000000000I6RYdJ01AoZ11KE394y03zO0KONwnc_APO0Vh6qCeM01B1sE39B1K5e08000007wnjA0000000000137U0e8200000i00w3qW00D07W00UX80hf00haaIZ6MK580000000000%7C%7C%7C%7C%7C%7C%7CCglEWUMzbjNvSms%3D%7CCgEBEgKMBRgCIAsotL3duAZIAVICCAFaAggB&amp;ouid=hPJI5lvTTkebpllQFCm9FA&amp;skyscanner_redirectid=hPJI5lvTTkebpllQFCm9FA&amp;amt=299700.0&amp;upsell=false&amp;nextgroupkey=LJ299-SEL-TAK-20270119%7CLJ300-TAK-SEL-20270122%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E&amp;utm_source=skyscanner&amp;utm_medium=referral&amp;utm_campaign=kr&amp;pagesource=transfer&amp;txid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;initialSource=meta" target="_blank" rel="noopener"><i>T</i><span><b>트립닷컴</b><small>1/19 → 1/22 왕복, 메일 링크 그대로</small></span><em>↗</em></a>
@@ -327,7 +331,6 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     <div class="bk-grid">
       <a class="bk map" href="https://maps.app.goo.gl/5QAJcGW5fsewagfb7" target="_blank" rel="noopener"><i>G</i><span><b>구글 지도 1</b><small>가는 길 · 공항 → 도쿠시마역</small></span><em>↗</em></a>
       <a class="bk map" href="https://maps.app.goo.gl/enkreaSbpfyhk5cn6" target="_blank" rel="noopener"><i>G</i><span><b>구글 지도 2</b><small>오는 길 · 도쿠시마역 → 공항</small></span><em>↗</em></a>
-      <a class="bk bus" href="https://m.bustago.or.kr:444/mobus/btmho/BTMHORN0001.do?type=k" target="_blank" rel="noopener"><i>B</i><span><b>버스타고</b><small>공항버스 모바일 예매</small></span><em>↗</em></a>
       <a class="bk vjw" href="https://www.vjw.digital.go.jp/" target="_blank" rel="noopener"><i>V</i><span><b>Visit Japan Web</b><small>입국 정보 사전 등록</small></span><em>↗</em></a>
     </div>
     <p style="margin:12px 0 0;font-size:13px;color:var(--muted)">버튼 색은 사이트를 구분하려고 넣은 거야. 각 사이트의 공식 로고가 아니야.</p>
