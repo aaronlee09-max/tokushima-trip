@@ -31,7 +31,7 @@ header{padding:36px 0 20px}
 h1{font-size:clamp(32px,8vw,46px);line-height:1.2}
 .dday{font-weight:700;font-size:15px;background:var(--accent);color:var(--card);padding:4px 14px;border-radius:999px;font-variant-numeric:tabular-nums}
 .sub{color:var(--muted);margin:0}
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:20px 0 0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin:20px 0 0}
 .fact{background:var(--tint);border-radius:12px;padding:12px 14px;min-width:0}
 .fact b{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.04em}
 .fact span{font-size:17px;font-weight:700;overflow-wrap:anywhere}
@@ -145,6 +145,24 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip{color:#10142a}}
 .rt-foot{padding:12px 18px 16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
 .rt-foot p{margin:0;font-size:13px;color:var(--muted);flex:1 1 240px}
+.tab{word-break:keep-all}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.tools .btn{font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.tools .btn svg{width:16px;height:16px;flex:none}
+.tools .msg{flex:1 1 100%;font-size:13px;color:var(--muted);margin:0}
+.glance{margin:14px 0 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.glance b{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:6px}
+.glance ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.glance li{display:flex;gap:10px;align-items:baseline;font-size:15px}
+.glance li{word-break:keep-all}.glance li i{font-style:normal;font-weight:700;min-width:56px;flex:none}.fact{word-break:keep-all}
+.offline-banner{background:#fff4e0;color:#7a4a00;font-size:13px;padding:8px 16px;text-align:center}
+@media print{
+  :root{--bg:#fff!important;--card:#fff!important;--tint:#f4f6fb!important}
+  body{background:#fff!important;color:#222!important}
+  nav,.tools,.tabs,#live,#bookgo,.calc,#mapbox{display:none!important}
+  .how,.fact,.glance,.warn li{break-inside:avoid;box-shadow:none!important}
+  a{color:inherit!important;text-decoration:none!important}
+}
 .lmap{height:300px;width:100%}
 .leaflet-container{font-family:inherit}
 </style>
@@ -162,7 +180,17 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     <div class="fact"><b>항공권 조회가</b><span>왕복 약 29만 9,700원</span><small>11월 5일 기준, 매일 변동</small></div>
     <div class="fact"><b>현지 이동비 왕복</b><span>약 7만 6,400원</span><small>9,040엔 · 공항 ⇄ 도쿠시마</small></div>
   </div>
-  <div class="btns" style="margin-top:12px"><button class="btn sm" id="savehtml" type="button" style="font-family:inherit;cursor:pointer">오프라인용 HTML 저장</button><span id="savemsg" style="font-size:13px;color:var(--muted);align-self:center">인터넷 없이도 열려. 날씨·지도는 온라인에서만 보여.</span></div>
+  <div class="glance"><b>한눈에 보기</b><ul>
+    <li><i>1/19</i><span>인천 14:10 출발 → 도쿠시마역 19:19 도착 (5시간 9분)</span></li>
+    <li><i>1/22</i><span>도쿠시마역 12:15 도착 → 인천 18:35 도착 (6시간 20분)</span></li>
+    <li><i>1/20~21</i><span>도쿠시마 자유 일정 (친구에게 받으면 채울게)</span></li>
+  </ul></div>
+  <div class="tools">
+    <button class="btn sm" id="savehtml" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>오프라인 HTML 저장</button>
+    <button class="btn sm" id="printpg" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>PDF·인쇄</button>
+    <button class="btn sm" id="copylink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>링크 복사</button>
+    <p class="msg" id="savemsg">HTML 파일은 인터넷 없이도 열려. 날씨·지도는 온라인에서만 보여. 폰에서 안 열리면 PDF로 저장해.</p>
+  </div>
 </header>
 
 <nav id="nav" aria-label="바로가기"></nav>
@@ -760,21 +788,35 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
  });
 })();
 
-/* 오프라인용 HTML 저장 */
+/* 저장·인쇄·링크 복사 */
 (function(){
   var b=document.getElementById('savehtml'),m=document.getElementById('savemsg'); if(!b) return;
+  function say(t){m.textContent=t}
+  function ymd(){var d=new Date();function z(n){return (n<10?'0':'')+n}return d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())}
   function save(t){
-    var a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([t],{type:'text/html;charset=utf-8'}));
-    a.download='tokushima-trip-plan.html';document.body.appendChild(a);a.click();a.remove();
-    m.textContent='저장했어. 다운로드 폴더에서 열어.';
+    var day=ymd();
+    t=t.replace('<body>','<body><div class="offline-banner">오프라인 사본 · 저장한 날 '+day.slice(0,4)+'.'+day.slice(4,6)+'.'+day.slice(6)+' · 일정과 시간은 바뀔 수 있어. 온라인에서 다시 확인해.</div>');
+    var url=URL.createObjectURL(new Blob([t],{type:'text/html;charset=utf-8'}));
+    var a=document.createElement('a'); a.href=url; a.download='tokushima-trip-plan-'+day+'.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url)},30000);
+    say('저장했어. 폰은 「파일」 앱의 다운로드 폴더에서 열어. 안 열리면 PDF·인쇄를 써.');
   }
   b.addEventListener('click',function(){
+    say('저장하는 중...');
     var u=location.href.split('#')[0];
-    fetch(u).then(function(r){if(!r.ok)throw 0;return r.text()})
+    fetch(u,{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text()})
      .catch(function(){return '<!doctype html>\n'+document.documentElement.outerHTML})
      .then(save)
-     .catch(function(){m.textContent='여기서는 저장이 막혀 있어. 사이트 주소에서 눌러 줘.'});
+     .catch(function(){say('여기서는 저장이 막혀 있어. 사이트 주소에서 눌러 줘.')});
+  });
+  document.getElementById('printpg').addEventListener('click',function(){
+    try{window.print()}catch(e){say('여기서는 인쇄가 막혀 있어. 브라우저 메뉴의 공유 → PDF를 써.')}
+  });
+  document.getElementById('copylink').addEventListener('click',function(){
+    var u=location.href.split('#')[0];
+    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){say('주소를 복사했어.')})
+     .catch(function(){say('복사가 안 돼. 주소창의 주소를 직접 복사해 줘.')});
   });
 })();
 
