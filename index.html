@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793921024">
+<meta name="build" content="1793921218">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -165,6 +165,7 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 .stops ol{list-style:none;margin:10px 0 0 6px;padding:0 0 0 14px;border-left:3px solid var(--jr)}
 .stops li{position:relative;padding:3px 0 7px 6px;font-size:15px}
 .stops li:before{content:"";position:absolute;left:-23px;top:9px;width:11px;height:11px;border-radius:50%;background:var(--card);border:3px solid var(--jr)}
+.stops.bus ol{border-color:var(--bus)}.stops.bus li:before{border-color:var(--bus)}.stops.bus li.end:before{background:var(--bus)}
 .stops li.end{font-weight:700}.stops li.end:before{background:var(--jr)}
 .lmini{display:none;height:190px;border-radius:10px;overflow:hidden;margin-top:8px;border:1px solid var(--line)}
 .lmini.on{display:block}
@@ -659,8 +660,12 @@ var DAYS = [
    {t:'16:50 다카마쓰 출발', d:'진에어 LJ300으로 인천 도착 18:35 예정', s:'최근 운항 시각 기준, 예매 링크에서 확인', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]}
  ], sum:[['총 이동 시간','약 1시간 46분'],['비용','4,370엔 (약 3만 6,900원)']], calc:true}
 ];
+var BUSTAGO='https://m.bustago.or.kr:444/mobus/btmho/BTMHORN0001.do?type=k';
+var BNOTE='공항버스 8842 시간표(2026-04-11 기준)로 만들었어. 도로 사정과 1월 시간표 변경으로 달라질 수 있어(확인 필요).';
+var BUS_OUT=['과천청사 · 10:00 승차','과천주공 · 10:02','남태령 · 10:05','사당 · 10:10','김포공항 · 11:20','인천T1 · 11:50','인천T2 · 12:10 하차'];
+var BUS_BACK=['인천T2 · 20:30 승차','인천T1 · 20:50','김포공항 · 21:20','사당역 · 21:50','남태령 · 21:52','과천주공 · 21:55','과천청사 · 22:00 하차'];
 var UZ=['다카마쓰','리쓰린(栗林)','야시마(屋島)','시도(志度)','산본마쓰(三本松)','히케타(引田)','이타노(板野)','이케노타니(池谷)','도쿠시마'];
-function stopsHtml(a){return '<details class="stops"><summary>정차역 보기 · 구글 지도 기준 '+(a.length-1)+'개</summary><ol>'+a.map(function(n,i){return '<li class="'+(i===0||i===a.length-1?'end':'')+'">'+esc(n)+'</li>'}).join('')+'</ol><p class="mini-n">같은 노선 우즈시오 시각표를 보고 만든 예시야. 열차마다 서는 역이 달라서 이 열차의 실제 정차역은 시각표에서 확인해(확인 필요).</p></details>'}
+function stopsHtml(a,o){o=o||{};return '<details class="stops '+(o.cls||'')+'"><summary>'+(o.label||('정차역 보기 · 구글 지도 기준 '+(a.length-1)+'개'))+'</summary><ol>'+a.map(function(n,i){return '<li class="'+(i===0||i===a.length-1?'end':'')+'">'+esc(n)+'</li>'}).join('')+'</ol><p class="mini-n">'+(o.note||'같은 노선 우즈시오 시각표를 보고 만든 예시야. 열차마다 서는 역이 달라서 이 열차의 실제 정차역은 시각표에서 확인해(확인 필요).')+'</p></details>'}
 var MINI={
  A:"<div class=\"mini\"><div class=\"mini-t\">약도 · 다카마쓰 공항 도착층에서 버스 타는 곳까지</div>\n<svg viewBox=\"0 0 340 170\" role=\"img\" aria-label=\"공항 터미널 1층 도착 로비에서 2번 출구를 지나 버스 정류장까지 걷는 약도\">\n<rect x=\"8\" y=\"10\" width=\"190\" height=\"96\" rx=\"10\" fill=\"var(--card)\" stroke=\"var(--line)\" stroke-width=\"2\"/>\n<text x=\"20\" y=\"30\" font-size=\"13.5\" font-weight=\"700\" fill=\"var(--muted)\">공항 터미널 1층</text>\n<rect x=\"150\" y=\"98\" width=\"34\" height=\"10\" rx=\"3\" fill=\"var(--tint)\" stroke=\"var(--line)\"/>\n<text x=\"167\" y=\"95\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"700\" fill=\"var(--ink)\">2번 출구</text>\n<circle cx=\"40\" cy=\"64\" r=\"7\" fill=\"var(--ink)\"/><text x=\"40\" y=\"86\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"700\" fill=\"var(--ink)\">도착 로비</text>\n<path d=\"M47 64 H110 V102 H167 V128\" fill=\"none\" stroke=\"var(--walk)\" stroke-width=\"3.5\" stroke-dasharray=\"2 7\" stroke-linecap=\"round\"/>\n<text x=\"80\" y=\"57\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">70m</text>\n<text x=\"140\" y=\"124\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">120m</text>\n<rect x=\"8\" y=\"132\" width=\"324\" height=\"30\" rx=\"6\" fill=\"var(--line)\"/>\n<text x=\"20\" y=\"151\" font-size=\"12.5\" fill=\"var(--muted)\">도로 (버스가 서는 곳)</text>\n<rect x=\"150\" y=\"128\" width=\"34\" height=\"16\" rx=\"4\" fill=\"var(--bus)\"/>\n<text x=\"167\" y=\"140\" text-anchor=\"middle\" font-size=\"11.5\" font-weight=\"700\" fill=\"#fff\">버스</text>\n<circle cx=\"167\" cy=\"128\" r=\"6\" fill=\"var(--pin)\" stroke=\"var(--card)\" stroke-width=\"2\"/>\n<text x=\"258\" y=\"40\" text-anchor=\"middle\" font-size=\"13.5\" font-weight=\"700\" fill=\"var(--ink)\">① 표 사기</text>\n<text x=\"258\" y=\"58\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">무인 발매기</text>\n<text x=\"258\" y=\"74\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">「2번 다카마쓰 방면」</text>\n<text x=\"258\" y=\"96\" text-anchor=\"middle\" font-size=\"13.5\" font-weight=\"700\" fill=\"var(--ink)\">② 2번 정류장</text>\n</svg><p class=\"mini-n\">합계 약 190m · 약 3분. 위치 관계만 그린 약도야(축척 아님). 정확한 길은 구글 지도를 같이 봐.</p></div>",
  B:"<div class=\"mini\"><div class=\"mini-t\">약도 · JR 다카마쓰역 안</div><div class=\"path\"><span class=\"n s\">버스 하차 (종점)</span><span class=\"sg\"><span>약 290m · 약 4분</span></span><span class=\"n e\">JR 승강장</span></div><p class=\"mini-n\">역 안을 걸어. 큰 짐은 엘리베이터. 표는 승강장에 가기 전에 사.</p></div>",
@@ -774,10 +779,10 @@ function dayRoute(g){
     var links=s.l?'<div class="btns" style="margin-top:8px">'+s.l.map(btn).join('')+'</div>':'';
     if(s.k==='pt'){
       var end=(i===last), first=(i===0), nx=g.steps[i+1], c=first&&nx?colorOf2(nx.k):prev;
-      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.stops?stopsHtml(s.stops):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
+      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     } else {
       var w=s.k==='walk', c2=colorOf2(s.k); prev=c2;
-      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.stops?stopsHtml(s.stops):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
+      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     }
   });
   var bar=g.steps.filter(function(s){return s.k!=='pt'&&s.min}).map(function(s){return '<i class="m-'+s.k+'" style="flex:'+s.min+' 1 0" title="'+esc(s.title)+'">'+(s.min>=40?NAME[s.k]:'')+'</i>'}).join('');
@@ -789,6 +794,8 @@ function gTabs(x){return '<div class="tabs" role="tablist" aria-label="가는 �
 DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서 열기',U.map2]],big:'5시간 9분',sub:'인천 14:10 → 도쿠시마 19:19 · 현지 이동비 '+money(4670),
  note:'JR 시각은 2026년 10월 시각표 기준이라 1월에 달라질 수 있어. 입국 40분은 가정한 값이고 비행기 시각은 최근 운항 기록 기준이야. 예매 전에 다시 확인해.',
  steps:[
+  {k:'pt',time:'10:00',title:'과천청사에서 공항버스 8842 승차',sub:'정부과천청사역 근처 「과천청사」 정류장. 09:50까지 가서 기다려. 요금 12,700원.',l:[['버스타고 예매',BUSTAGO]]},
+  {k:'bus',title:'공항버스 8842 · 인천공항 T2까지',sub:'약 2시간 10분 · 정류장 6개 (정류장 위치는 확인 필요)',stops:BUS_OUT,so:{cls:'bus',label:'정류장 보기 · 6개 (과천청사 → 인천T2)',note:BNOTE}},
   {k:'pt',time:'12:10',title:'인천공항 도착',sub:'출발 2시간 전 기준이야. 과천청사 10:00 공항버스(8842)를 타면 인천 T2에 12:10 도착해. 진에어는 T2 D·E 카운터야(출발 전 재확인). 체크인 마감 시각은 확인 필요.',tip:'여권, 항공권 e-티켓, 부모님 동의서(영문), Visit Japan Web QR코드를 꺼내기 쉽게 챙겨.'},
   {k:'walk',title:'체크인, 짐 부치기, 보안 검색, 출국 심사',sub:'약 1시간 30분 (여유 포함)'},
   {k:'pt',time:'14:10',title:'인천국제공항 출발',sub:'진에어 LJ299',l:TF.concat([['운항 기록',REF.lj299]])},
@@ -825,7 +832,11 @@ DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서
   {k:'walk',min:157,title:'체크인, 짐 부치기, 출국 심사, 대기',sub:'약 2시간 37분 (여유 포함)'},
   {k:'pt',time:'16:50',title:'다카마쓰 공항 출발',sub:'진에어 LJ300',l:TF.concat([['운항 기록',REF.lj300]])},
   {k:'plane',min:105,title:'LJ300 비행',sub:'약 1시간 45분 · 다카마쓰 → 인천'},
-  {k:'pt',time:'18:35',title:'인천국제공항 도착'}
+  {k:'pt',time:'18:35',title:'인천국제공항 도착'},
+  {k:'walk',title:'한국 입국 심사와 짐 찾기',sub:'약 1시간 (추정)'},
+  {k:'pt',time:'20:30',title:'인천T2에서 공항버스 8842 승차',sub:'19:15 버스는 너무 일러서 못 타. 20:30이 추천이야. 다음은 21:35.',l:[['버스타고 예매',BUSTAGO]]},
+  {k:'bus',title:'공항버스 8842 · 과천청사까지',sub:'약 1시간 30분 · 정류장 6개',stops:BUS_BACK,so:{cls:'bus',label:'정류장 보기 · 6개 (인천T2 → 과천청사)',note:BNOTE}},
+  {k:'pt',time:'22:00',title:'과천청사 도착',sub:'정부과천청사역 근처. 집까지 가는 방법과 막차는 미리 확인해.'}
  ]};
 
 /* D-day */
