@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>도쿠시마 여행 플랜</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -130,6 +133,8 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip{color:#10142a}}
 .rt-foot{padding:12px 18px 16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
 .rt-foot p{margin:0;font-size:13px;color:var(--muted);flex:1 1 240px}
+.lmap{height:300px;width:100%}
+.leaflet-container{font-family:inherit}
 </style>
 </head><body>
 
@@ -546,6 +551,31 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   }).catch(function(){fail=true;})
   .then(function(){if(++n===P.length){out.innerHTML=html;note.textContent=fail&&!html?'날씨를 불러오지 못했어. 아래 일본 기상청 링크를 이용해.':(any?'여행 날짜 예보야.':'아직 여행 날짜 예보는 없어. 지금 기온만 보여줘.');}});
  });
+})();
+
+/* 실제 지도 (Leaflet + OpenStreetMap). 키가 필요 없다. */
+(function(){
+  if(!window.L) return;
+  var box=document.getElementById('mapbox'); if(!box) return;
+  box.innerHTML='<div class="lmap" id="lmap"></div>';
+  var A=[34.2142,134.0156], T=[34.3502,134.0467], S=[34.0742,134.5517];
+  var map=L.map('lmap',{scrollWheelZoom:false});
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+  var css=getComputedStyle(document.documentElement);
+  function col(n,f){return (css.getPropertyValue(n)||'').trim()||f}
+  var bus=col('--bus','#2f6fd6'), jr=col('--jr','#18915f');
+  function pin(ll,txt){return L.circleMarker(ll,{radius:8,color:'#fff',weight:3,fillColor:'#1f2a44',fillOpacity:1}).bindTooltip(txt,{permanent:true,direction:'top',offset:[0,-8]}).addTo(map)}
+  var busLine=L.polyline([A,T],{color:bus,weight:5,dashArray:'2 8',opacity:.9}).addTo(map);
+  var jrLine=L.polyline([T,S],{color:jr,weight:5,opacity:.9}).addTo(map);
+  pin(A,'다카마쓰 공항'); pin(T,'다카마쓰역 (추정)');
+  L.circleMarker(S,{radius:9,color:'#fff',weight:3,fillColor:'#d9473f',fillOpacity:1}).bindTooltip('도쿠시마역',{permanent:true,direction:'bottom',offset:[0,8]}).addTo(map);
+  map.fitBounds(L.latLngBounds([A,T,S]).pad(0.2));
+  /* 버스 구간은 도로 경로를 받아 보고, 실패하면 직선을 그대로 둔다 */
+  fetch('https://router.project-osrm.org/route/v1/driving/'+A[1]+','+A[0]+';'+T[1]+','+T[0]+'?overview=full&geometries=geojson')
+   .then(function(r){return r.json()}).then(function(j){
+     if(j&&j.routes&&j.routes[0]){var pts=j.routes[0].geometry.coordinates.map(function(c){return [c[1],c[0]]});busLine.setLatLngs(pts).setStyle({dashArray:null})}
+   }).catch(function(){});
+  box.insertAdjacentHTML('beforeend','<p style="margin:0;padding:8px 12px;font-size:12px;color:var(--muted)">파란 선은 공항 버스(도로 경로), 초록 선은 JR(두 역을 잇는 직선)이야. 철도 노선 그대로가 아니라 대략적인 방향이야.</p>');
 })();
 </script>
 
