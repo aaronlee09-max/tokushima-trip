@@ -3,18 +3,18 @@
 <title>도쿠시마 여행 플랜</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
-/* 레이아웃: 상단 요약 띠 → 날짜별 카드 → 예매법 → 주의사항. 쪽빛(도쿠시마 전통 염색) 계열의 연한 색 */
+/* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
 :root{
   --bg:#f7f9fd; --card:#ffffff; --ink:#1f2a44; --muted:#5c6785; --line:#dde5f3;
-  --accent:#3f5fa8; --tint:#e9eefa; --warn-bg:#fff4e0; --warn-ink:#7a4a00; --ok-bg:#e4f5ec; --ok-ink:#17613a; --wait-bg:#eef0f5;
+  --accent:#3f5fa8; --tint:#e9eefa; --warn-bg:#fff4e0; --warn-ink:#7a4a00; --ok-bg:#e4f5ec; --ok-ink:#17613a; --wait-bg:#eef0f5; --bus:#2f6fd6; --jr:#18915f; --walk:#8791ab; --pin:#d9473f; --plane:#7a5cc7;
   --f-head:'Jua','Noto Sans KR',sans-serif; --f-body:'Noto Sans KR',system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#12172a; --card:#1b2240; --ink:#e8ecf8; --muted:#a6b0cf; --line:#2c3558;
-  --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; color-scheme:dark}}
+  --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; --bus:#7fa8ff; --jr:#5fd0a0; --walk:#8e99bb; --pin:#ff8a80; --plane:#b7a2ff; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12172a; --card:#1b2240; --ink:#e8ecf8; --muted:#a6b0cf; --line:#2c3558;
-  --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; color-scheme:dark}
+  --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; --bus:#7fa8ff; --jr:#5fd0a0; --walk:#8e99bb; --pin:#ff8a80; --plane:#b7a2ff; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;
   padding-block:0 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -24,43 +24,112 @@ a{color:var(--accent)}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
 header{padding:36px 0 20px}
 .kicker{font-size:13px;letter-spacing:.08em;color:var(--muted);font-weight:500}
-h1{font-size:clamp(32px,8vw,46px);line-height:1.2;margin:6px 0 10px}
+.title-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:6px 0 10px}
+h1{font-size:clamp(32px,8vw,46px);line-height:1.2}
+.dday{font-weight:700;font-size:15px;background:var(--accent);color:var(--card);padding:4px 14px;border-radius:999px;font-variant-numeric:tabular-nums}
 .sub{color:var(--muted);margin:0}
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:20px 0 0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:20px 0 0}
 .fact{background:var(--tint);border-radius:12px;padding:12px 14px;min-width:0}
 .fact b{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:.04em}
 .fact span{font-size:17px;font-weight:700;overflow-wrap:anywhere}
+.fact small{display:block;font-size:12px;color:var(--muted);font-weight:400}
 nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);
   margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));overflow-x:auto;white-space:nowrap}
 nav a{display:inline-block;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;margin-right:6px;font-size:14px;font-weight:500}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 section{padding-top:32px;scroll-margin-top:60px}
 h2{font-size:26px;margin-bottom:14px}
-.day{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:16px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:16px;scroll-margin-top:60px}
 .day-top{background:var(--tint);padding:14px 18px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between}
 .day-top h3{font-size:22px}
 .pill{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--wait-bg);color:var(--muted)}
 .pill.ok{background:var(--ok-bg);color:var(--ok-ink)}
-.day-body{padding:16px 18px;display:grid;gap:14px}
-.day-body p{margin:0}
-.step{display:grid;grid-template-columns:76px 1fr;gap:4px 12px}
-.step .t{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
-.step .d{min-width:0;overflow-wrap:anywhere}
-.step small{display:block;color:var(--muted);font-size:14px}
+.day-body{padding:18px}
+.tl{list-style:none;margin:0;padding:0 0 0 22px;border-left:2px solid var(--line);display:grid;gap:18px}
+.tl li{position:relative;min-width:0}
+.tl li::before{content:"";position:absolute;left:-29px;top:7px;width:12px;height:12px;border-radius:50%;background:var(--card);border:3px solid var(--accent)}
+.tl .t{font-weight:700;color:var(--accent)}
+.tl .d{overflow-wrap:anywhere}
+.tl small{display:block;color:var(--muted);font-size:14px}
+.tl .btns{margin-top:8px}
+.sum{margin:16px 0 0;background:var(--tint);border-radius:12px;padding:10px 14px;font-size:15px;display:flex;flex-wrap:wrap;gap:4px 18px}
+.sum b{font-variant-numeric:tabular-nums}
 .empty{color:var(--muted);margin:0}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
 .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:15px;color:var(--ink);background:var(--tint);border:1px solid var(--line);padding:9px 14px;border-radius:10px}
 .btn:hover{border-color:var(--accent)}
+.btn.sm{font-size:14px;padding:6px 12px}
 .how{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
-.how h3{font-size:20px;margin-bottom:8px}
+.how h3{font-size:20px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--card);font-family:var(--f-body);font-weight:700;font-size:14px;flex:none}
 .how ol{margin:0 0 12px;padding-left:22px}
 .how li{margin-bottom:4px}
 .note{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 12px;font-size:15px;margin:0 0 12px}
+.calc{margin-top:16px;border-top:1px dashed var(--line);padding-top:14px}
+.calc label{font-weight:700;display:block;margin-bottom:6px}
+.calc input{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.calc output{display:block;margin-top:10px;font-weight:700}
+.src{width:100%;min-width:480px;border-collapse:collapse;font-size:15px}
+.src th,.src td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.src th{font-size:12px;color:var(--muted);font-weight:500}
+.tbl{overflow-x:auto}
+.chk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+.chk label{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
+.chk input{margin-top:5px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+.chk input:checked+span{color:var(--muted);text-decoration:line-through}
 .warn{display:grid;gap:10px;padding:0;margin:0;list-style:none}
 .warn li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .warn b{display:block}
 footer{margin-top:36px;color:var(--muted);font-size:13px}
-@media (max-width:420px){.step{grid-template-columns:1fr}}
+
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;font:inherit;font-weight:700;font-size:15px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--card)}
+.rt{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.rt-head{padding:16px 18px;border-bottom:1px solid var(--line)}
+.rt-big{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.rt-big b{font-family:var(--f-head);font-weight:400;font-size:30px;line-height:1.2}
+.rt-big span{color:var(--muted);font-size:15px}
+.bar{display:flex;gap:3px;margin-top:12px;height:30px}
+.bar i{display:flex;align-items:center;justify-content:center;border-radius:8px;min-width:30px;color:#fff;font-style:normal;font-size:12px;font-weight:700;overflow:hidden;white-space:nowrap}
+.bar .m-walk{background:var(--walk)} .bar .m-bus{background:var(--bus)} .bar .m-jr{background:var(--jr)}
+:root[data-theme="dark"] .bar i{color:#10142a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .bar i{color:#10142a}}
+.rt-list{list-style:none;margin:0;padding:18px 18px 8px}
+.rt-list>li{display:grid;grid-template-columns:52px 24px 1fr;gap:0 10px;min-width:0}
+.el{text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px}
+.rail{position:relative;display:flex;justify-content:center}
+.rail::before{content:"";position:absolute;top:0;bottom:0;width:6px;border-radius:3px;background:var(--c)}
+.rail.last::before{bottom:auto;height:10px}
+.rail.walk::before{width:0;border-left:4px dotted var(--walk);background:none;border-radius:0}
+.node{position:relative;width:16px;height:16px;border-radius:50%;background:var(--card);border:4px solid var(--ink);margin-top:2px;z-index:1}
+.node.end{background:var(--pin);border-color:var(--pin)}
+.node.mid{width:12px;height:12px;border-width:3px;margin-top:4px;border-color:var(--c)}
+.ico{position:relative;z-index:1;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--c);color:#fff;margin:6px 0}
+.ico.walk{background:var(--card);color:var(--walk);border:2px solid var(--walk)}
+:root[data-theme="dark"] .ico:not(.walk){color:#10142a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ico:not(.walk){color:#10142a}}
+.ico svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.body{padding:2px 0 18px;min-width:0}
+.body b{display:block}
+.body small{display:block;color:var(--muted);font-size:14px}
+.map{margin-bottom:12px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.price{margin:12px 0;font-size:16px}
+.price span{color:var(--muted);font-size:13px}
+
+.gm .rt-head{padding:0 0 14px;border-bottom:1px solid var(--line)}
+.gm .rt-list{padding:16px 0 0}
+.gm .el{font-weight:700;color:var(--ink);font-size:14px}
+.bar .m-plane{background:var(--plane)}
+.ico.plane{background:var(--plane)}
+.node.pt{width:14px;height:14px;border-width:3px;margin-top:3px;border-color:var(--ink)}
+.chip.plane{background:var(--plane)}
+.body small.tip{margin-top:4px;font-size:13px;background:var(--tint);border-radius:8px;padding:5px 9px;color:var(--ink)}
+.chip{display:inline-block;font-size:12px;font-weight:700;color:#fff;border-radius:6px;padding:1px 8px;margin-right:6px;background:var(--c)}
+:root[data-theme="dark"] .chip{color:#10142a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip{color:#10142a}}
+.rt-foot{padding:12px 18px 16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.rt-foot p{margin:0;font-size:13px;color:var(--muted);flex:1 1 240px}
 </style>
 </head><body>
 
@@ -68,12 +137,13 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 <div class="wrap">
 <header>
   <div class="kicker">서울 → 다카마쓰 → 도쿠시마</div>
-  <h1>도쿠시마 여행 플랜</h1>
-  <p class="sub">날짜별 일정, 예매하는 법, 조심할 것만 한 페이지에 모았어. 새 정보는 계속 추가돼.</p>
+  <div class="title-row"><h1>도쿠시마 여행 플랜</h1><span class="dday" id="dday"></span></div>
+  <p class="sub">날짜별 일정, 예매하는 순서, 링크, 준비물, 조심할 것을 한 페이지에 모았어. 새 정보는 계속 추가돼.</p>
   <div class="facts">
-    <div class="fact"><b>날짜</b><span>2027.1.19(화) ~ 1.22(금)</span></div>
-    <div class="fact"><b>비행기</b><span>서울 ⇄ 다카마쓰 (LJ299 / LJ300)</span></div>
-    <div class="fact"><b>머무는 곳</b><span>도쿠시마</span></div>
+    <div class="fact"><b>날짜</b><span>1.19(화) ~ 1.22(금)</span><small>3박 4일</small></div>
+    <div class="fact"><b>비행기</b><span>LJ299 / LJ300</span><small>서울 ⇄ 다카마쓰</small></div>
+    <div class="fact"><b>항공권 조회가</b><span>왕복 약 29만 9,700원</span><small>11월 5일 기준, 매일 변동</small></div>
+    <div class="fact"><b>현지 이동비 왕복</b><span>약 7만 6,400원</span><small>9,040엔 · 공항 ⇄ 도쿠시마</small></div>
   </div>
 </header>
 
@@ -81,16 +151,65 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 
 <section id="schedule"><h2>날짜별 일정</h2><div id="days"></div></section>
 
-<section id="booking"><h2>예매하는 법</h2>
+<section id="route"><h2>상세 경로</h2>
+  <div class="tabs" role="tablist" aria-label="가는 길과 오는 길">
+    <button class="tab" role="tab" id="tab-out" aria-controls="panel" aria-selected="true" data-k="out">가는 길 · 공항 → 도쿠시마</button>
+    <button class="tab" role="tab" id="tab-back" aria-controls="panel" aria-selected="false" data-k="back">오는 길 · 도쿠시마 → 공항</button>
+  </div>
+  <div class="map" id="mapbox"></div>
+  <div id="panel" role="tabpanel" aria-labelledby="tab-out"></div>
+</section>
+
+<section id="trans"><h2>항공·기차 정보</h2>
   <div class="how">
-    <h3>비행기 (서울 ⇄ 다카마쓰)</h3>
+    <h3>비행기 · 진에어</h3>
+    <div class="tbl"><table class="src">
+      <thead><tr><th>구간</th><th>편명</th><th>출발</th><th>도착</th><th>비행시간</th></tr></thead>
+      <tbody>
+        <tr><td>1/19 인천 → 다카마쓰</td><td>LJ299</td><td>14:10</td><td>15:50</td><td>약 1시간 40분</td></tr>
+        <tr><td>1/22 다카마쓰 → 인천</td><td>LJ300</td><td>16:50</td><td>18:35</td><td>약 1시간 45분</td></tr>
+      </tbody></table></div>
+    <p class="price">왕복 항공권 <b>약 29만 9,700원</b> <span>(1인, 이코노미, 11월 5일 트립닷컴 조회)</span></p>
+    <p class="note">편도별 가격은 확인하지 못했어. 시각은 최근 운항 기록의 예정 시각이라 1월 시간표에서 달라질 수 있어. 예매 링크에서 꼭 다시 확인해.</p>
+    <div class="btns"><a class="btn" href="https://kr.trip.com/flights/showfarefirst/?flighttype=D&amp;dcity=SEL&amp;acity=TAK&amp;ddate=2027-01-19&amp;rdate=2027-01-22&amp;quantity=1&amp;childqty=0&amp;babyqty=0&amp;curr=KRW&amp;class=Y&amp;channel=KRSite&amp;allianceid=2175&amp;uuid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;sid=957214&amp;country=KR&amp;TrackerType=180808_enf_sctj&amp;TrackerTag=NA&amp;criteriatoken=tripType%3ART%7CcabinClass%3AEconomy%7Cadult%3A1%7Cchild%3A0%7Cinfant%3A0%7CsubChannel%3A102%7Cchannel%3AEnglishSite%7Ccurrency%3AKRW%7CextensionFlag%3A16%7Clist%3Atrue%7Cidc%3ASUZ-HUA%7CdetailSearch%3Afalse%7Cissuer%3ATRIP%7Cdate_1%3A2027-01-19%7CaCity_1%3ATAK%7CdCity_1%3ASEL%7Cdate_2%3A2027-01-22%7CaCity_2%3ASEL%7CdCity_2%3ATAK%7CsiteType%3A1%7ClistTime%3A202611051256%7Crepricing%3A9%7Caid%3A2175%7Csid%3A957214&amp;flightclass=I&amp;wkp=1&amp;referrer_source=SC&amp;locale=ko-KR&amp;shoppingid=8000000000I6RYdJ01AoZ11KE394y03zO0KONwnc_APO0Vh6qCeM01B1sE39B1K5e08000007wnjA0000000000137U0e8200000i00w3qW00D07W00UX80hf00haaIZ6MK580000000000%7C%7C%7C%7C%7C%7C%7CCglEWUMzbjNvSms%3D%7CCgEBEgKMBRgCIAsotL3duAZIAVICCAFaAggB&amp;ouid=hPJI5lvTTkebpllQFCm9FA&amp;skyscanner_redirectid=hPJI5lvTTkebpllQFCm9FA&amp;amt=299700.0&amp;upsell=false&amp;nextgroupkey=LJ299-SEL-TAK-20270119%7CLJ300-TAK-SEL-20270122%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E&amp;utm_source=skyscanner&amp;utm_medium=referral&amp;utm_campaign=kr&amp;pagesource=transfer&amp;txid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;initialSource=meta" target="_blank" rel="noopener">트립닷컴에서 확인</a><a class="btn" href="https://www.skyscanner.co.kr/transport/flights/sela/tak/270119/270122/?adultsv2=1&amp;cabinclass=economy&amp;childrenv2=&amp;ref=home&amp;rtn=1&amp;preferdirects=true&amp;outboundaltsenabled=false&amp;inboundaltsenabled=false" target="_blank" rel="noopener">스카이스캐너에서 확인</a></div>
+  </div>
+  <div class="how">
+    <h3>기차 · JR (다카마쓰 ⇄ 도쿠시마)</h3>
+    <div class="tbl"><table class="src">
+      <thead><tr><th>구간</th><th>소요</th><th>정차역</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>다카마쓰역 → 도쿠시마역</td><td>약 1시간 7분</td><td>8개</td><td>구글 지도에 열차 번호 T28 표시</td></tr>
+        <tr><td>도쿠시마역 → 다카마쓰역</td><td>약 1시간</td><td>7개</td><td>2번 승강장 표시</td></tr>
+      </tbody></table></div>
+    <p class="price">기차표 가격 <b>트립닷컴 링크에서 확인</b> <span>(요금은 내가 읽지 못했어)</span></p>
+    <p class="note">공항에서 도쿠시마역까지 버스와 기차를 합친 요금은 구글 지도 기준 4,670엔(약 3만 9,500원)이야. 기차만의 요금은 따로 나뉘어 있지 않았어. 가는 날 기차 검색은 17:00 출발로 잡혀 있는데, 비행기가 15:50에 도착하면 버스를 타고 다카마쓰역에 17:20 이후에 닿아. 17:40 이후 열차로 찾아봐.</p>
+    <div class="btns"><a class="btn" href="https://kr.trip.com/trains/asia/list?locale=ko_kr&amp;curr=krw&amp;allianceid=14887&amp;sid=24732119&amp;ppcid=adid-808637743806_akid-kwl-3500001_adgid-196525047557&amp;utm_source=google&amp;utm_medium=cpc&amp;utm_campaign=23848211641&amp;matchtype=a&amp;gad_source=1&amp;gad_campaignid=23848211641&amp;gbraid=0AAAAABn2eFLtTdLWrqS7xuEBIo72Rc_lP&amp;gclid=CjwKCAiAzKvXBhBAEiwABLl9Ai49ZcU7GskQrcdMUqQprLDlQk-3H5kszodr6SJE97B3-UQB8HoLVBoCMjcQAvD_BwE&amp;tripTab=train&amp;scheduleType=return&amp;biztype=JP&amp;fromSource=homePage&amp;businessType=jp_train&amp;departurecountrycode=JP&amp;arrivalcountrycode=JP&amp;departdate=2027-01-19&amp;departhouript=17&amp;departminuteipt=00&amp;returndate=2027-01-22&amp;returnhouript=11&amp;returnminuteipt=30&amp;departurecitycode=JP03156&amp;arrivalcitycode=JP00226&amp;departurecity=%EB%8B%A4%EC%B9%B4%EB%A7%88%EC%93%B0%28%EA%B0%80%EA%B0%80%EC%99%80%29&amp;arrivalcity=%EB%8F%84%EC%BF%A0%EC%8B%9C%EB%A7%88" target="_blank" rel="noopener">트립닷컴에서 기차 확인</a></div>
+  </div>
+</section>
+
+<section id="cost"><h2>예상 비용 (원화)</h2>
+  <div class="how"><div class="tbl"><table class="src">
+    <thead><tr><th>항목</th><th>금액</th><th>메모</th></tr></thead>
+    <tbody>
+      <tr><td>항공권 왕복</td><td><b>약 29만 9,700원</b></td><td>11/5 트립닷컴 조회, 매일 변동</td></tr>
+      <tr><td>가는 날 이동</td><td id="c1"></td><td>공항 → 도쿠시마, 4,670엔</td></tr>
+      <tr><td>오는 날 이동</td><td id="c2"></td><td>도쿠시마 → 공항, 4,370엔</td></tr>
+      <tr><td><b>합계</b></td><td id="c3"><b></b></td><td>숙박, 식비, 관광 제외</td></tr>
+    </tbody></table></div>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">환율 100엔당 845.17원(2026-11-04 한국수출입은행 매매기준율). 현금 환전이나 카드 결제는 은행과 카드사에 따라 더 들 수 있어.</p>
+  </div>
+</section>
+
+<section id="booking"><h2>예매하는 순서</h2>
+  <div class="how">
+    <h3><span class="num">1</span>비행기 (서울 ⇄ 다카마쓰)</h3>
     <ol>
       <li>아래 링크를 눌러. 가는 날 1/19, 오는 날 1/22로 이미 맞춰져 있어.</li>
+      <li>트립닷컴과 스카이스캐너 가격을 비교해. 같은 항공편이라도 가격이 다를 수 있어.</li>
       <li>가는 편 LJ299, 오는 편 LJ300인지 보고 시간을 확인해.</li>
-      <li>여권에 적힌 영문 이름 그대로 입력해. 철자가 다르면 탑승이 안 될 수 있어.</li>
-      <li>결제하고 e-티켓을 폰에 저장해 둬.</li>
+      <li>여권에 적힌 영문 이름 그대로 입력하고 결제해. 철자가 다르면 탑승이 안 될 수 있어.</li>
+      <li>e-티켓을 폰에 저장해 둬.</li>
     </ol>
-    <p class="note">11월 5일에 조회했을 때 왕복 약 299,700원이었어. 가격은 매일 바뀌니까 링크에서 다시 확인해.</p>
     <div class="btns">
       <a class="btn" href="https://kr.trip.com/flights/showfarefirst/?flighttype=D&amp;dcity=SEL&amp;acity=TAK&amp;ddate=2027-01-19&amp;rdate=2027-01-22&amp;quantity=1&amp;childqty=0&amp;babyqty=0&amp;curr=KRW&amp;class=Y&amp;channel=KRSite&amp;allianceid=2175&amp;uuid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;sid=957214&amp;country=KR&amp;TrackerType=180808_enf_sctj&amp;TrackerTag=NA&amp;criteriatoken=tripType%3ART%7CcabinClass%3AEconomy%7Cadult%3A1%7Cchild%3A0%7Cinfant%3A0%7CsubChannel%3A102%7Cchannel%3AEnglishSite%7Ccurrency%3AKRW%7CextensionFlag%3A16%7Clist%3Atrue%7Cidc%3ASUZ-HUA%7CdetailSearch%3Afalse%7Cissuer%3ATRIP%7Cdate_1%3A2027-01-19%7CaCity_1%3ATAK%7CdCity_1%3ASEL%7Cdate_2%3A2027-01-22%7CaCity_2%3ASEL%7CdCity_2%3ATAK%7CsiteType%3A1%7ClistTime%3A202611051256%7Crepricing%3A9%7Caid%3A2175%7Csid%3A957214&amp;flightclass=I&amp;wkp=1&amp;referrer_source=SC&amp;locale=ko-KR&amp;shoppingid=8000000000I6RYdJ01AoZ11KE394y03zO0KONwnc_APO0Vh6qCeM01B1sE39B1K5e08000007wnjA0000000000137U0e8200000i00w3qW00D07W00UX80hf00haaIZ6MK580000000000%7C%7C%7C%7C%7C%7C%7CCglEWUMzbjNvSms%3D%7CCgEBEgKMBRgCIAsotL3duAZIAVICCAFaAggB&amp;ouid=hPJI5lvTTkebpllQFCm9FA&amp;skyscanner_redirectid=hPJI5lvTTkebpllQFCm9FA&amp;amt=299700.0&amp;upsell=false&amp;nextgroupkey=LJ299-SEL-TAK-20270119%7CLJ300-TAK-SEL-20270122%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E&amp;utm_source=skyscanner&amp;utm_medium=referral&amp;utm_campaign=kr&amp;pagesource=transfer&amp;txid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;initialSource=meta" target="_blank" rel="noopener">트립닷컴에서 보기</a>
       <a class="btn" href="https://www.skyscanner.co.kr/transport/flights/sela/tak/270119/270122/?adultsv2=1&amp;cabinclass=economy&amp;childrenv2=&amp;ref=home&amp;rtn=1&amp;preferdirects=true&amp;outboundaltsenabled=false&amp;inboundaltsenabled=false" target="_blank" rel="noopener">스카이스캐너에서 보기</a>
@@ -98,22 +217,41 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     </div>
   </div>
   <div class="how">
-    <h3>기차 (다카마쓰 ⇄ 도쿠시마)</h3>
+    <h3><span class="num">2</span>기차 (다카마쓰 ⇄ 도쿠시마)</h3>
     <ol>
+      <li>비행기 시간을 먼저 정해. 기차는 그 시간에 맞춰야 해.</li>
       <li>아래 링크를 열면 다카마쓰(가가와) ⇄ 도쿠시마, 1/19 ~ 1/22로 검색돼 있어.</li>
-      <li>가는 날은 17:00 이후, 오는 날은 11:30 이후 출발로 잡혀 있어. 비행기 시간에 맞춰서 바꿔.</li>
+      <li>가는 날은 17:00 이후, 오는 날은 11:30 이후 출발로 잡혀 있어. 검색용 기본값이니까 비행기 시간에 맞춰 바꿔.</li>
       <li>원하는 열차를 골라 결제해.</li>
     </ol>
-    <p class="note">귀국 비행기 시간을 먼저 확인하고 기차 시간을 정해. 11:30은 검색용 기본값이라 그대로 타라는 뜻이 아니야.</p>
     <div class="btns"><a class="btn" href="https://kr.trip.com/trains/asia/list?locale=ko_kr&amp;curr=krw&amp;allianceid=14887&amp;sid=24732119&amp;ppcid=adid-808637743806_akid-kwl-3500001_adgid-196525047557&amp;utm_source=google&amp;utm_medium=cpc&amp;utm_campaign=23848211641&amp;matchtype=a&amp;gad_source=1&amp;gad_campaignid=23848211641&amp;gbraid=0AAAAABn2eFLtTdLWrqS7xuEBIo72Rc_lP&amp;gclid=CjwKCAiAzKvXBhBAEiwABLl9Ai49ZcU7GskQrcdMUqQprLDlQk-3H5kszodr6SJE97B3-UQB8HoLVBoCMjcQAvD_BwE&amp;tripTab=train&amp;scheduleType=return&amp;biztype=JP&amp;fromSource=homePage&amp;businessType=jp_train&amp;departurecountrycode=JP&amp;arrivalcountrycode=JP&amp;departdate=2027-01-19&amp;departhouript=17&amp;departminuteipt=00&amp;returndate=2027-01-22&amp;returnhouript=11&amp;returnminuteipt=30&amp;departurecitycode=JP03156&amp;arrivalcitycode=JP00226&amp;departurecity=%EB%8B%A4%EC%B9%B4%EB%A7%88%EC%93%B0%28%EA%B0%80%EA%B0%80%EC%99%80%29&amp;arrivalcity=%EB%8F%84%EC%BF%A0%EC%8B%9C%EB%A7%88" target="_blank" rel="noopener">트립닷컴에서 기차 보기</a></div>
   </div>
   <div class="how">
-    <h3>공항 ⇄ 도쿠시마 길찾기</h3>
-    <p style="margin:0 0 10px">구글 지도에서 미리 찾아 둔 경로야. 링크를 누르면 지도 앱이 열려.</p>
+    <h3><span class="num">3</span>길찾기 저장</h3>
+    <p style="margin:0 0 10px">구글 지도에서 미리 찾아 둔 경로야. 열어서 내 지도 앱에 저장해 둬.</p>
     <div class="btns">
-      <a class="btn" href="https://maps.app.goo.gl/5QAJcGW5fsewagfb7" target="_blank" rel="noopener">경로 지도 1 (가는 길)</a>
-      <a class="btn" href="https://maps.app.goo.gl/enkreaSbpfyhk5cn6" target="_blank" rel="noopener">경로 지도 2 (오는 길)</a>
+      <a class="btn" href="https://maps.app.goo.gl/5QAJcGW5fsewagfb7" target="_blank" rel="noopener">경로 지도 1</a>
+      <a class="btn" href="https://maps.app.goo.gl/enkreaSbpfyhk5cn6" target="_blank" rel="noopener">경로 지도 2</a>
     </div>
+  </div>
+  <div class="how">
+    <h3><span class="num">4</span>입국 준비</h3>
+    <p style="margin:0 0 10px">출발 전에 Visit Japan Web에서 입국 정보를 미리 등록하면 공항에서 빨라져.</p>
+    <div class="btns"><a class="btn" href="https://www.vjw.digital.go.jp/" target="_blank" rel="noopener">Visit Japan Web</a></div>
+  </div>
+</section>
+
+<section id="links"><h2>링크 모음</h2>
+  <div class="how"><div class="tbl"><table class="src">
+    <thead><tr><th>무엇</th><th>어디서</th><th>링크</th></tr></thead>
+    <tbody>
+      <tr><td>비행기</td><td>트립닷컴</td><td><a href="https://kr.trip.com/flights/showfarefirst/?flighttype=D&amp;dcity=SEL&amp;acity=TAK&amp;ddate=2027-01-19&amp;rdate=2027-01-22&amp;quantity=1&amp;childqty=0&amp;babyqty=0&amp;curr=KRW&amp;class=Y&amp;channel=KRSite&amp;allianceid=2175&amp;uuid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;sid=957214&amp;country=KR&amp;TrackerType=180808_enf_sctj&amp;TrackerTag=NA&amp;criteriatoken=tripType%3ART%7CcabinClass%3AEconomy%7Cadult%3A1%7Cchild%3A0%7Cinfant%3A0%7CsubChannel%3A102%7Cchannel%3AEnglishSite%7Ccurrency%3AKRW%7CextensionFlag%3A16%7Clist%3Atrue%7Cidc%3ASUZ-HUA%7CdetailSearch%3Afalse%7Cissuer%3ATRIP%7Cdate_1%3A2027-01-19%7CaCity_1%3ATAK%7CdCity_1%3ASEL%7Cdate_2%3A2027-01-22%7CaCity_2%3ASEL%7CdCity_2%3ATAK%7CsiteType%3A1%7ClistTime%3A202611051256%7Crepricing%3A9%7Caid%3A2175%7Csid%3A957214&amp;flightclass=I&amp;wkp=1&amp;referrer_source=SC&amp;locale=ko-KR&amp;shoppingid=8000000000I6RYdJ01AoZ11KE394y03zO0KONwnc_APO0Vh6qCeM01B1sE39B1K5e08000007wnjA0000000000137U0e8200000i00w3qW00D07W00UX80hf00haaIZ6MK580000000000%7C%7C%7C%7C%7C%7C%7CCglEWUMzbjNvSms%3D%7CCgEBEgKMBRgCIAsotL3duAZIAVICCAFaAggB&amp;ouid=hPJI5lvTTkebpllQFCm9FA&amp;skyscanner_redirectid=hPJI5lvTTkebpllQFCm9FA&amp;amt=299700.0&amp;upsell=false&amp;nextgroupkey=LJ299-SEL-TAK-20270119%7CLJ300-TAK-SEL-20270122%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E&amp;utm_source=skyscanner&amp;utm_medium=referral&amp;utm_campaign=kr&amp;pagesource=transfer&amp;txid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&amp;initialSource=meta" target="_blank" rel="noopener">열기</a></td></tr>
+      <tr><td>비행기 비교</td><td>스카이스캐너</td><td><a href="https://www.skyscanner.co.kr/transport/flights/sela/tak/270119/270122/?adultsv2=1&amp;cabinclass=economy&amp;childrenv2=&amp;ref=home&amp;rtn=1&amp;preferdirects=true&amp;outboundaltsenabled=false&amp;inboundaltsenabled=false" target="_blank" rel="noopener">열기</a></td></tr>
+      <tr><td>기차</td><td>트립닷컴</td><td><a href="https://kr.trip.com/trains/asia/list?locale=ko_kr&amp;curr=krw&amp;allianceid=14887&amp;sid=24732119&amp;ppcid=adid-808637743806_akid-kwl-3500001_adgid-196525047557&amp;utm_source=google&amp;utm_medium=cpc&amp;utm_campaign=23848211641&amp;matchtype=a&amp;gad_source=1&amp;gad_campaignid=23848211641&amp;gbraid=0AAAAABn2eFLtTdLWrqS7xuEBIo72Rc_lP&amp;gclid=CjwKCAiAzKvXBhBAEiwABLl9Ai49ZcU7GskQrcdMUqQprLDlQk-3H5kszodr6SJE97B3-UQB8HoLVBoCMjcQAvD_BwE&amp;tripTab=train&amp;scheduleType=return&amp;biztype=JP&amp;fromSource=homePage&amp;businessType=jp_train&amp;departurecountrycode=JP&amp;arrivalcountrycode=JP&amp;departdate=2027-01-19&amp;departhouript=17&amp;departminuteipt=00&amp;returndate=2027-01-22&amp;returnhouript=11&amp;returnminuteipt=30&amp;departurecitycode=JP03156&amp;arrivalcitycode=JP00226&amp;departurecity=%EB%8B%A4%EC%B9%B4%EB%A7%88%EC%93%B0%28%EA%B0%80%EA%B0%80%EC%99%80%29&amp;arrivalcity=%EB%8F%84%EC%BF%A0%EC%8B%9C%EB%A7%88" target="_blank" rel="noopener">열기</a></td></tr>
+      <tr><td>지도 1</td><td>구글 지도 (공항 ⇄ 도쿠시마)</td><td><a href="https://maps.app.goo.gl/5QAJcGW5fsewagfb7" target="_blank" rel="noopener">열기</a></td></tr>
+      <tr><td>지도 2</td><td>구글 지도 (공항 ⇄ 도쿠시마)</td><td><a href="https://maps.app.goo.gl/enkreaSbpfyhk5cn6" target="_blank" rel="noopener">열기</a></td></tr>
+    </tbody></table></div>
+    <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">메일로 받은 링크 그대로야. 지도 1, 2 중 어느 쪽이 가는 길인지는 확인이 안 됐어.</p>
   </div>
 </section>
 
@@ -123,19 +261,16 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     <h3>비행기</h3>
     <div class="btns" style="margin-bottom:14px">
       <a class="btn" href="https://www.jinair.com/" target="_blank" rel="noopener">진에어 공식 사이트</a>
-      <a class="btn" href="https://www.takamatsu-airport.com/" target="_blank" rel="noopener">다카마쓰 공항 운항 정보</a>
+      <a class="btn" href="https://www.takamatsu-airport.com/" target="_blank" rel="noopener">다카마쓰 공항</a>
     </div>
     <h3>기차·버스·길찾기</h3>
     <div class="btns" style="margin-bottom:14px">
-      <a class="btn" href="https://www.jr-shikoku.co.jp/" target="_blank" rel="noopener">JR 시코쿠 (운행 정보)</a>
+      <a class="btn" href="https://www.jr-shikoku.co.jp/" target="_blank" rel="noopener">JR 시코쿠</a>
       <a class="btn" href="https://www.kotoden.co.jp/" target="_blank" rel="noopener">고토덴 (공항 버스)</a>
       <a class="btn" href="https://www.jorudan.co.jp/" target="_blank" rel="noopener">조르단 환승 검색</a>
     </div>
-    <h3>날씨·입국</h3>
-    <div class="btns">
-      <a class="btn" href="https://www.jma.go.jp/jma/indexe.html" target="_blank" rel="noopener">일본 기상청</a>
-      <a class="btn" href="https://www.vjw.digital.go.jp/" target="_blank" rel="noopener">Visit Japan Web</a>
-    </div>
+    <h3>날씨</h3>
+    <div class="btns"><a class="btn" href="https://www.jma.go.jp/jma/indexe.html" target="_blank" rel="noopener">일본 기상청</a></div>
   </div>
 </section>
 
@@ -144,15 +279,19 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
   <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">데이터: Open-Meteo. 여행 날짜는 출발 16일 전부터 예보가 나와.</p></div>
 </section>
 
+<section id="pack"><h2>준비물 체크</h2>
+  <ul class="chk" id="chk"></ul>
+  <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">체크한 건 이 기기의 브라우저에만 저장돼.</p>
+</section>
+
 <section id="caution"><h2>주의사항</h2>
   <ul class="warn">
     <li><b>여권</b>한국 여권이면 관광으로 90일까지 비자 없이 들어갈 수 있어. 유효기간과 영문 이름만 다시 확인해.</li>
-    <li><b>입국 서류</b>입국 전에 Visit Japan Web에서 미리 등록하면 공항에서 빨라져.</li>
-    <li><b>이동 시간</b>다카마쓰 공항과 도쿠시마는 한 번에 가는 길이 아니야. 버스와 열차를 갈아타서 약 2시간 걸려. 귀국 날은 비행기 출발 3시간 전에 도착한다고 생각하고 일찍 움직여.</li>
+    <li><b>이동 시간</b>다카마쓰 공항과 도쿠시마는 한 번에 가는 길이 아니야. 버스와 열차를 갈아타서 약 2시간 걸려.</li>
+    <li><b>귀국 날</b>공항에는 비행기 출발 2시간 전까지 도착하는 걸 기준으로 계산했어. 항공사 안내를 확인해.</li>
     <li><b>지도 시간은 예시</b>지도 PDF의 출발·도착 시간은 11월 5일에 조회한 시간이야. 여행 당일 시간표를 다시 확인해.</li>
-    <li><b>돈</b>이동비가 공항 → 도쿠시마 4,670엔, 도쿠시마 → 공항 4,370엔 정도야(구글 지도 기준). 엔화 현금과 교통카드를 같이 챙겨.</li>
+    <li><b>돈</b>이동비는 공항 → 도쿠시마 4,670엔(약 3만 9,500원), 도쿠시마 → 공항 4,370엔(약 3만 6,900원)이야. 구글 지도 기준이고 환율은 11월 4일 값이라 바뀔 수 있어. 엔화 현금과 교통카드를 같이 챙겨.</li>
     <li><b>겨울 날씨</b>1월은 춥고 바람이 불어. 겉옷과 장갑을 챙겨.</li>
-    <li><b>폰·전원</b>일본 콘센트는 11자 모양이야. 변환 플러그와 로밍이나 eSIM을 미리 준비해.</li>
   </ul>
 </section>
 
@@ -160,42 +299,252 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 </div>
 
 <script>
-/* 날짜별 데이터. 새 파일이 오면 해당 날짜의 steps만 채우면 된다. */
+var U = {"trip_fl": "https://kr.trip.com/flights/showfarefirst/?flighttype=D&dcity=SEL&acity=TAK&ddate=2027-01-19&rdate=2027-01-22&quantity=1&childqty=0&babyqty=0&curr=KRW&class=Y&channel=KRSite&allianceid=2175&uuid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&sid=957214&country=KR&TrackerType=180808_enf_sctj&TrackerTag=NA&criteriatoken=tripType%3ART%7CcabinClass%3AEconomy%7Cadult%3A1%7Cchild%3A0%7Cinfant%3A0%7CsubChannel%3A102%7Cchannel%3AEnglishSite%7Ccurrency%3AKRW%7CextensionFlag%3A16%7Clist%3Atrue%7Cidc%3ASUZ-HUA%7CdetailSearch%3Afalse%7Cissuer%3ATRIP%7Cdate_1%3A2027-01-19%7CaCity_1%3ATAK%7CdCity_1%3ASEL%7Cdate_2%3A2027-01-22%7CaCity_2%3ASEL%7CdCity_2%3ATAK%7CsiteType%3A1%7ClistTime%3A202611051256%7Crepricing%3A9%7Caid%3A2175%7Csid%3A957214&flightclass=I&wkp=1&referrer_source=SC&locale=ko-KR&shoppingid=8000000000I6RYdJ01AoZ11KE394y03zO0KONwnc_APO0Vh6qCeM01B1sE39B1K5e08000007wnjA0000000000137U0e8200000i00w3qW00D07W00UX80hf00haaIZ6MK580000000000%7C%7C%7C%7C%7C%7C%7CCglEWUMzbjNvSms%3D%7CCgEBEgKMBRgCIAsotL3duAZIAVICCAFaAggB&ouid=hPJI5lvTTkebpllQFCm9FA&skyscanner_redirectid=hPJI5lvTTkebpllQFCm9FA&amt=299700.0&upsell=false&nextgroupkey=LJ299-SEL-TAK-20270119%7CLJ300-TAK-SEL-20270122%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E%5E&utm_source=skyscanner&utm_medium=referral&utm_campaign=kr&pagesource=transfer&txid=c0f95efd-afcf-4d55-a989-3ea92fba41ee&initialSource=meta", "sky": "https://www.skyscanner.co.kr/transport/flights/sela/tak/270119/270122/?adultsv2=1&cabinclass=economy&childrenv2=&ref=home&rtn=1&preferdirects=true&outboundaltsenabled=false&inboundaltsenabled=false", "train": "https://kr.trip.com/trains/asia/list?locale=ko_kr&curr=krw&allianceid=14887&sid=24732119&ppcid=adid-808637743806_akid-kwl-3500001_adgid-196525047557&utm_source=google&utm_medium=cpc&utm_campaign=23848211641&matchtype=a&gad_source=1&gad_campaignid=23848211641&gbraid=0AAAAABn2eFLtTdLWrqS7xuEBIo72Rc_lP&gclid=CjwKCAiAzKvXBhBAEiwABLl9Ai49ZcU7GskQrcdMUqQprLDlQk-3H5kszodr6SJE97B3-UQB8HoLVBoCMjcQAvD_BwE&tripTab=train&scheduleType=return&biztype=JP&fromSource=homePage&businessType=jp_train&departurecountrycode=JP&arrivalcountrycode=JP&departdate=2027-01-19&departhouript=17&departminuteipt=00&returndate=2027-01-22&returnhouript=11&returnminuteipt=30&departurecitycode=JP03156&arrivalcitycode=JP00226&departurecity=%EB%8B%A4%EC%B9%B4%EB%A7%88%EC%93%B0%28%EA%B0%80%EA%B0%80%EC%99%80%29&arrivalcity=%EB%8F%84%EC%BF%A0%EC%8B%9C%EB%A7%88", "map1": "https://maps.app.goo.gl/5QAJcGW5fsewagfb7", "map2": "https://maps.app.goo.gl/enkreaSbpfyhk5cn6"};
+var TRIP_START = '2027-01-19T00:00:00+09:00';
+/* 날짜별 데이터. 새 파일이 오면 해당 날짜의 steps만 채우면 된다. l은 버튼 목록. */
 var DAYS = [
  {id:'d1', date:'1/19 (화)', title:'출발, 도쿠시마까지', status:'ok', statusText:'정보 있음', steps:[
-   {t:'서울', d:'비행기 LJ299로 다카마쓰 공항 도착', s:'출발 시간은 예매 링크에서 확인'},
-   {t:'공항 → 도쿠시마', d:'버스(약 50분)를 타고 나가서 JR 열차(약 1시간)로 갈아탄 뒤 걸어서 도착', s:'전체 약 2시간 12분, 4,670엔 (구글 지도 기준). 목적지 주소: 770-0832 도쿠시마시 데라시마혼초히가시 3초메'}
- ]},
+   {t:'14:10 인천 출발', d:'진에어 LJ299로 다카마쓰 공항으로 이동', s:'15:50 도착 예정 (최근 운항 시각 기준, 예매 링크에서 확인)', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]},
+   {t:'15:50 다카마쓰 공항 도착', d:'입국 심사와 짐 찾기를 마치고 공항 버스 정류장으로 이동', s:'입국에 약 40분 걸린다고 보면 16:30쯤 버스를 타'},
+   {t:'공항 버스 약 50분', d:'공항에서 버스를 타고 다카마쓰 시내로 이동', s:'구글 지도 기준 정류장 11개. 시내에서 내려 JR 다카마쓰역으로 걸어가'},
+   {t:'JR 다카마쓰역 → 도쿠시마역 약 1시간 7분', d:'버스에서 내려 JR 열차로 갈아타고 도쿠시마로 이동', s:'정차역 8개. 17:40 이후 열차를 찾아봐', l:[['기차 예매',U.train]]},
+   {t:'19시 전후 도쿠시마역 도착', d:'역에서 걸어서 목적지까지 이동', s:'770-0832 도쿠시마시 데라시마혼초히가시 3초메 (역에서 약 170m)', l:[['상세 경로 보기','#route-out'],['경로 지도 1',U.map1]]}
+ ], sum:[['총 이동 시간','약 2시간 12분'],['비용','4,670엔 (약 3만 9,500원)']]},
  {id:'d2', date:'1/20 (수)', title:'도쿠시마 1일차', status:'wait', statusText:'정보 받는 중', steps:[]},
  {id:'d3', date:'1/21 (목)', title:'도쿠시마 2일차', status:'wait', statusText:'정보 받는 중', steps:[]},
  {id:'d4', date:'1/22 (금)', title:'돌아오는 날', status:'ok', statusText:'정보 있음', steps:[
-   {t:'도쿠시마 → 공항', d:'JR 열차(약 1시간)를 타고 버스(약 25분)로 갈아탄 뒤 공항까지 걸어서 도착', s:'전체 약 1시간 46분, 4,370엔 (구글 지도 기준)'},
-   {t:'공항 → 서울', d:'비행기 LJ300', s:'출발 시간은 예매 링크에서 확인하고, 그보다 일찍 공항에 도착하도록 출발 시간을 거꾸로 계산해'}
- ]}
+   {t:'늦어도 12:30 도쿠시마역 출발', d:'JR 열차로 다카마쓰역까지 이동 (약 1시간)', s:'LJ300이 16:50 출발이라 공항에 14:50까지 도착하는 기준이야. 아래 계산기에서 바꿔 볼 수 있어', l:[['기차 예매',U.train]]},
+   {t:'버스 약 25분', d:'JR에서 내려 공항 버스로 갈아타고 공항까지 이동'},
+   {t:'14:50 다카마쓰 공항 도착', d:'체크인과 짐 부치기, 출국 심사', l:[['상세 경로 보기','#route-back'],['경로 지도 2',U.map2]]},
+   {t:'16:50 다카마쓰 출발', d:'진에어 LJ300으로 인천 도착 18:35 예정', s:'최근 운항 시각 기준, 예매 링크에서 확인', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]}
+ ], sum:[['총 이동 시간','약 1시간 46분'],['비용','4,370엔 (약 3만 6,900원)']], calc:true}
 ];
+var PACK = ['여권 (유효기간 확인)','항공권 e-티켓 저장','Visit Japan Web 등록 화면 캡처','엔화 현금','교통 IC카드','변환 플러그','보조배터리 (기내 휴대)','로밍 또는 eSIM','겉옷과 장갑','구글 지도 경로 저장'];
+
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-var nav=document.getElementById('nav'), box=document.getElementById('days');
+function btn(a){var ext=a[1].charAt(0)!=='#';return '<a class="btn sm" href="'+esc(a[1])+'"'+(ext?' target="_blank" rel="noopener"':'')+'>'+esc(a[0])+'</a>'}
+
+
+/* 상세 경로 (구글 지도 예시 값 기준). m: walk | bus | jr, min: 분, el: 출발 후 경과 분 */
+var RATE = 8.4517; /* 1엔 = 8.4517원, 2026-11-04 한국수출입은행 매매기준율 */
+function won(y){return Math.round(y*RATE/100)*100}
+function fmtWon(n){var m=Math.floor(n/10000), r=n%10000; return (m?m+'만 ':'')+(r?r.toLocaleString('ko-KR'):'')+'원'}
+function money(y){return y.toLocaleString('ko-KR')+'엔 (약 '+fmtWon(won(y))+')'}
+var ROUTES = {
+ out:{from:'다카마쓰 공항', to:'도쿠시마 (770-0832 데라시마혼초히가시 3초메)', total:132, yen:4670, map:U.map1, mapLabel:'구글 지도 1에서 열기',
+  seg:[
+   {m:'walk',min:3,t:'공항 건물에서 버스 정류장까지 걷기',s:'약 3분 · 190m (70m → 120m)',tip:'공항 안내 표지를 따라 나가서 버스 승차장을 찾아.'},
+   {m:'bus',min:50,t:'공항 버스 타기',s:'약 50분 · 정류장 11개',tip:'지도에 적힌 문의 전화: +81 87-821-3033'},
+   {m:'walk',min:10,t:'버스에서 내려 JR 다카마쓰역으로 걷기와 대기',s:'걷기 약 4분 · 약 290m, 나머지는 열차 기다리는 시간',tip:'역 이름은 지도 글자가 깨져 추정이야. 역 안 이동 구간이 있으니 짐이 크면 엘리베이터를 찾아.'},
+   {m:'jr',min:67,t:'JR 다카마쓰역 → 도쿠시마역',s:'약 1시간 7분 · 정차역 8개',tip:'지도에 T28 표시가 나와. 탈 때 행선지가 도쿠시마인지 꼭 확인해.'},
+   {m:'walk',min:2,t:'도쿠시마역(T28)에서 목적지까지 걷기',s:'약 2분 · 170m (60m → 85m → 30m)',tip:''}
+  ]},
+ back:{from:'도쿠시마 (770-0832 데라시마혼초히가시 3초메)', to:'다카마쓰 공항', total:106, yen:4370, map:U.map2, mapLabel:'구글 지도 2에서 열기',
+  seg:[
+   {m:'walk',min:3,t:'목적지에서 JR 도쿠시마역까지 걷기',s:'약 3분 · 170m (30m → 85m → 60m)',tip:''},
+   {m:'jr',min:60,t:'JR 도쿠시마역 → 다카마쓰역',s:'약 1시간 · 정차역 7개',tip:'지도에 2번 승강장으로 표시돼 있어. 타기 전에 행선지가 다카마쓰인지 확인해.'},
+   {m:'walk',min:17,t:'다카마쓰역에서 공항 버스 정류장까지 걷기와 대기',s:'걷기 약 12분 · 약 830m, 나머지는 버스 기다리는 시간',tip:'역 이름은 지도 글자가 깨져 추정이야. 환승 대기가 길 수 있으니 귀국 날은 넉넉하게 잡아.'},
+   {m:'bus',min:25,t:'공항 버스 타기',s:'약 25분 · 정류장 4개',tip:'지도에 적힌 문의 전화: +81 87-821-3033'},
+   {m:'walk',min:1,t:'버스에서 내려 공항 건물까지 걷기',s:'약 1분 · 110m',tip:''}
+  ]}
+};
+var NAME={walk:'걷기',bus:'버스',jr:'JR'};
+var ICON={
+ walk:'<svg viewBox="0 0 24 24"><circle cx="13" cy="4.5" r="1.8"/><path d="M9 21l2.5-6-2-3 1-4 3 2 2 3M11.5 15l3 2.5V21M10.5 8L8 11"/></svg>',
+ bus:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="2.5"/><path d="M5 11h14M8 20v-3M16 20v-3"/><circle cx="8.5" cy="14" r=".6"/><circle cx="15.5" cy="14" r=".6"/></svg>',
+ jr:'<svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 11h14M8 21l2-4M16 21l-2-4"/><circle cx="9" cy="14" r=".6"/><circle cx="15" cy="14" r=".6"/></svg>'
+};
+function dur(m){return m>=60?Math.floor(m/60)+'시간'+(m%60?' '+m%60+'분':''):m+'분'}
+function colorOf(m){return m==='bus'?'var(--bus)':(m==='jr'?'var(--jr)':'var(--walk)')}
+function renderRoute(k){
+  var r=ROUTES[k], el=0, rows='';
+  rows+='<li><div class="el">0분</div><div class="rail walk"><span class="node"></span></div><div class="body"><b>'+esc(r.from)+'</b><small>출발</small></div></li>';
+  r.seg.forEach(function(g){
+    var c=colorOf(g.m), w=g.m==='walk';
+    rows+='<li style="--c:'+c+'"><div class="el">'+(el?'+'+el+'분':'')+'</div><div class="rail'+(w?' walk':'')+'"><span class="ico'+(w?' walk':'')+'">'+ICON[g.m]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip">'+NAME[g.m]+'</span>')+esc(g.t)+'</b><small>'+esc(g.s)+'</small>'+(g.tip?'<small class="tip">'+esc(g.tip)+'</small>':'')+'</div></li>';
+    el+=g.min;
+  });
+  rows+='<li><div class="el">'+dur(el)+'</div><div class="rail last" style="--c:var(--pin)"><span class="node end"></span></div><div class="body"><b>'+esc(r.to)+'</b><small>도착</small></div></li>';
+  var bar=r.seg.map(function(g){return '<i class="m-'+g.m+'" style="flex:'+g.min+' 1 0" title="'+NAME[g.m]+' '+g.min+'분">'+(g.min>=10?NAME[g.m]:'')+'</i>'}).join('');
+  document.getElementById('panel').innerHTML=
+   '<div class="rt"><div class="rt-head"><div class="rt-big"><b>'+dur(r.total)+'</b><span>비용 '+money(r.yen)+'</span></div><div class="bar">'+bar+'</div></div><ol class="rt-list">'+rows+'</ol>'+
+   '<div class="rt-foot"><p>구글 지도 조회 값이라 시간표는 달라질 수 있어. 원화는 100엔당 845.17원(11/4 한국수출입은행) 기준이야. 대기 시간과 걸음은 대략이야. 여행 날짜에 다시 확인해.</p>'+btn([r.mapLabel,r.map])+'</div></div>';
+}
+function setTab(k){
+  document.querySelectorAll('.tab').forEach(function(b){var on=b.getAttribute('data-k')===k;b.setAttribute('aria-selected',on?'true':'false');if(on)document.getElementById('panel').setAttribute('aria-labelledby',b.id)});
+  renderRoute(k);
+}
+document.querySelector('.tabs').addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)setTab(b.getAttribute('data-k'))});
+function fromHash(){
+  var h=location.hash; if(h==='#route-out'||h==='#route-back'){setTab(h==='#route-back'?'back':'out');var s=document.getElementById('route');if(s)s.scrollIntoView()}
+}
+setTab('out'); window.addEventListener('hashchange',fromHash); fromHash();
+
+
+(function(){
+  var a=won(4670), b=won(4370), f=299700;
+  document.getElementById('c1').textContent='약 '+fmtWon(a);
+  document.getElementById('c2').textContent='약 '+fmtWon(b);
+  document.getElementById('c3').innerHTML='<b>약 '+fmtWon(f+a+b)+'</b>';
+})();
+
+
+/* 개념 지도: 대략적인 위도·경도를 같은 비율로 그린 약도 (정확한 축척 아님) */
+(function(){
+  var pts={ap:{n:'다카마쓰 공항',la:34.2142,lo:134.0156},tk:{n:'다카마쓰역 (추정)',la:34.3502,lo:134.0467},ts:{n:'도쿠시마역',la:34.0742,lo:134.5517}};
+  var k=Math.cos(34.2*Math.PI/180), x0=133.98, x1=134.6, y0=34.4, y1=34.04, W=420, H=250, pad=24;
+  function X(lo){return pad+(lo-x0)*k/((x1-x0)*k)*(W-2*pad-40)}
+  function Y(la){return pad+(y0-la)/(y0-y1)*(H-2*pad)}
+  var A=pts.ap,B=pts.tk,C=pts.ts;
+  function lab(p,dx,dy,an){return '<text x="'+(X(p.lo)+dx)+'" y="'+(Y(p.la)+dy)+'" text-anchor="'+an+'" font-size="12" font-weight="700" fill="var(--ink)">'+p.n+'</text>'}
+  function dot(p,c){return '<circle cx="'+X(p.lo)+'" cy="'+Y(p.la)+'" r="7" fill="'+c+'" stroke="var(--card)" stroke-width="3"/>'}
+  var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="다카마쓰 공항, 다카마쓰역, 도쿠시마역 위치 약도" style="width:100%;height:auto;display:block">'+
+   '<rect width="'+W+'" height="'+H+'" rx="14" fill="var(--tint)"/>'+
+   '<line x1="'+X(A.lo)+'" y1="'+Y(A.la)+'" x2="'+X(B.lo)+'" y2="'+Y(B.la)+'" stroke="var(--bus)" stroke-width="5" stroke-linecap="round"/>'+
+   '<line x1="'+X(B.lo)+'" y1="'+Y(B.la)+'" x2="'+X(C.lo)+'" y2="'+Y(C.la)+'" stroke="var(--jr)" stroke-width="5" stroke-linecap="round"/>'+
+   dot(A,'var(--ink)')+dot(B,'var(--ink)')+dot(C,'var(--pin)')+
+   lab(A,0,24,'start')+lab(B,-12,-12,'start')+lab(C,10,26,'end')+
+   '<g font-size="12" font-weight="700"><rect x="14" y="'+(H-34)+'" width="12" height="6" rx="3" fill="var(--bus)"/><text x="32" y="'+(H-28)+'" fill="var(--ink)">공항 버스 약 50분</text><rect x="150" y="'+(H-34)+'" width="12" height="6" rx="3" fill="var(--jr)"/><text x="168" y="'+(H-28)+'" fill="var(--ink)">JR 약 1시간 7분</text></g>'+
+   '<text x="14" y="'+(H-10)+'" font-size="11" fill="var(--muted)">약도입니다. 거리와 방향만 대략 맞춘 그림이에요.</text></svg>';
+  document.getElementById('mapbox').innerHTML=svg;
+})();
+
+
+ICON.plane='<svg viewBox="0 0 24 24"><path d="M3 13l18-8-6 15-3-6-9-1z"/><path d="M12 14l9-9"/></svg>';
+NAME.plane='비행기';
+function colorOf2(m){return m==='plane'?'var(--plane)':colorOf(m)}
+function dayRoute(g){
+  var rows='', last=g.steps.length-1, prev='var(--walk)';
+  g.steps.forEach(function(s,i){
+    var links=s.l?'<div class="btns" style="margin-top:8px">'+s.l.map(btn).join('')+'</div>':'';
+    if(s.k==='pt'){
+      var end=(i===last), first=(i===0), nx=g.steps[i+1], c=first&&nx?colorOf2(nx.k):prev;
+      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+'</div></li>';
+    } else {
+      var w=s.k==='walk', c2=colorOf2(s.k); prev=c2;
+      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+'</div></li>';
+    }
+  });
+  var bar=g.steps.filter(function(s){return s.k!=='pt'&&s.min}).map(function(s){return '<i class="m-'+s.k+'" style="flex:'+s.min+' 1 0" title="'+esc(s.title)+'">'+(s.min>=40?NAME[s.k]:'')+'</i>'}).join('');
+  return '<div class="gm"><div class="rt-head"><div class="rt-big"><b>'+esc(g.big)+'</b><span>'+esc(g.sub)+'</span></div><div class="bar">'+bar+'</div></div><ol class="rt-list">'+rows+'</ol><p style="margin:6px 0 0;font-size:13px;color:var(--muted)">'+esc(g.note)+'</p>'+(g.maps?'<div class="btns" style="margin-top:12px">'+g.maps.map(function(m){return '<a class="btn" href="'+esc(m[1])+'" target="_blank" rel="noopener">'+esc(m[0])+'</a>'}).join('')+'</div>':'')+'</div>';
+}
+var TF=[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]];
+DAYS[0].sum=null; DAYS[3].sum=null;
+function gTabs(x){return '<div class="tabs" role="tablist" aria-label="가는 길과 오는 길" data-card="'+x.id+'"><button class="tab" role="tab" id="gt-'+x.id+'-out" data-k="out" aria-selected="false">가는 길 · 인천 → 도쿠시마</button><button class="tab" role="tab" id="gt-'+x.id+'-back" data-k="back" aria-selected="false">오는 길 · 도쿠시마 → 인천</button></div><div role="tabpanel" id="gp-'+x.id+'"></div>'}
+DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서 열기',U.map2]],big:'4시간 39분',sub:'인천 14:10 → 도쿠시마 18:49 · 현지 이동비 '+money(4670),
+ note:'시각은 예상이야. 입국 40분과 JR 17:40 출발은 가정한 값이고, 비행기 시각은 최근 운항 기록 기준이야. 여행 전에 예매 링크와 시간표를 다시 확인해.',
+ steps:[
+  {k:'pt',time:'14:10',title:'인천국제공항 출발',sub:'진에어 LJ299',l:TF},
+  {k:'plane',min:100,title:'LJ299 비행',sub:'약 1시간 40분 · 인천 → 다카마쓰'},
+  {k:'pt',time:'15:50',title:'다카마쓰 공항 도착'},
+  {k:'walk',min:40,title:'입국 심사와 짐 찾기',sub:'약 40분 (추정)'},
+  {k:'pt',time:'16:30',title:'공항 건물 밖으로 나오기'},
+  {k:'walk',min:3,title:'버스 정류장까지 걷기',sub:'약 3분 · 190m (70m → 120m)',tip:'공항 안내 표지를 따라 버스 승차장을 찾아.'},
+  {k:'pt',time:'16:33',title:'공항 버스 정류장',sub:'지도에 적힌 문의 전화 +81 87-821-3033'},
+  {k:'bus',min:50,title:'공항 버스',sub:'약 50분 · 정류장 11개'},
+  {k:'pt',time:'17:23',title:'다카마쓰 시내 하차 (다카마쓰역 부근, 추정)',sub:'정류장 이름은 지도 글자가 깨져서 못 읽었어'},
+  {k:'walk',min:10,title:'JR 다카마쓰역까지 걷기와 대기',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
+  {k:'pt',time:'17:40',title:'JR 다카마쓰역에서 열차 출발 (예시)',sub:'기차표는 17:40 이후 출발로 찾아봐',l:[['기차 예매',U.train]]},
+  {k:'jr',min:67,title:'JR 열차',sub:'약 1시간 7분 · 정차역 8개 · 행선지가 도쿠시마인지 확인',tip:'기차표 가격은 트립닷컴 링크에서 확인해. 버스와 기차 합계는 '+money(4670)+'이야.'},
+  {k:'pt',time:'18:47',title:'도쿠시마역 도착 (T28)'},
+  {k:'walk',min:2,title:'목적지까지 걷기',sub:'약 2분 · 170m (60m → 85m → 30m)'},
+  {k:'pt',time:'18:49',title:'목적지 도착',sub:'770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 1',U.map1],['오는 길 보기','#route-back']]}
+ ]};
+DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서 열기',U.map1]],big:'6시간 1분',sub:'도쿠시마 12:34 → 인천 18:35 · 현지 이동비 '+money(4370),
+ note:'시각은 예상이야. JR이 바로 출발한다고 가정했고, 실제 열차와 버스 시간표에 맞춰 달라져. 계산기에서 비행기 시간을 바꿔 볼 수 있어.',
+ steps:[
+  {k:'pt',time:'12:34',title:'목적지에서 출발 (늦어도)',sub:'770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 2',U.map2]]},
+  {k:'walk',min:3,title:'JR 도쿠시마역까지 걷기',sub:'약 3분 · 170m (30m → 85m → 60m)'},
+  {k:'pt',time:'12:37',title:'JR 도쿠시마역 (예시 출발)',sub:'열차 시각은 예매 링크에서 확인',l:[['기차 예매',U.train]]},
+  {k:'jr',min:60,title:'JR 열차',sub:'약 1시간 · 정차역 7개 · 2번 승강장으로 표시',tip:'행선지가 다카마쓰인지 확인해.'},
+  {k:'pt',time:'13:37',title:'다카마쓰역 도착 (추정)'},
+  {k:'walk',min:17,title:'공항 버스 정류장까지 걷기와 대기',sub:'걷기 약 12분 · 약 830m',tip:'환승 대기가 길 수 있어. 귀국 날은 넉넉하게 잡아.'},
+  {k:'pt',time:'13:54',title:'공항 버스 정류장',sub:'지도에 적힌 문의 전화 +81 87-821-3033'},
+  {k:'bus',min:25,title:'공항 버스',sub:'약 25분 · 정류장 4개'},
+  {k:'pt',time:'14:19',title:'버스에서 내려 공항 건물까지 걷기',sub:'약 1분 · 110m'},
+  {k:'pt',time:'14:20',title:'다카마쓰 공항 도착',sub:'늦어도 14:50까지 도착하는 게 기준이야 (출발 2시간 전)'},
+  {k:'walk',min:150,title:'체크인, 짐 부치기, 출국 심사, 대기',sub:'약 2시간 30분 (여유 포함)'},
+  {k:'pt',time:'16:50',title:'다카마쓰 공항 출발',sub:'진에어 LJ300',l:TF},
+  {k:'plane',min:105,title:'LJ300 비행',sub:'약 1시간 45분 · 다카마쓰 → 인천'},
+  {k:'pt',time:'18:35',title:'인천국제공항 도착'}
+ ]};
+
+/* D-day */
+(function(){
+  var el=document.getElementById('dday'), ms=new Date(TRIP_START).getTime()-Date.now(), d=Math.ceil(ms/86400000);
+  el.textContent = d>0 ? '출발까지 D-'+d : (d>-4 ? '여행 중' : '여행 끝');
+})();
+
+/* 내비게이션 */
 var navHtml='<a href="#schedule">일정</a>';
 DAYS.forEach(function(x){ navHtml+='<a href="#'+x.id+'">'+esc(x.date.split(' ')[0])+'</a>'; });
-navHtml+='<a href="#booking">예매법</a><a href="#live">실시간</a><a href="#weather">날씨</a><a href="#caution">주의사항</a>';
-nav.innerHTML=navHtml;
-box.innerHTML=DAYS.map(function(x){
-  var body = x.steps.length ? x.steps.map(function(s){
-    return '<div class="step"><div class="t">'+esc(s.t)+'</div><div class="d">'+esc(s.d)+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div></div>';
-  }).join('') : '<p class="empty">아직 일정이 안 왔어. 받으면 여기에 채울게.</p>';
+navHtml+='<a href="#route">상세 경로</a><a href="#trans">항공·기차</a><a href="#cost">비용</a><a href="#booking">예매 순서</a><a href="#links">링크</a><a href="#live">실시간</a><a href="#weather">날씨</a><a href="#pack">준비물</a><a href="#caution">주의사항</a>';
+document.getElementById('nav').innerHTML=navHtml;
+
+/* 날짜별 타임라인 */
+document.getElementById('days').innerHTML=DAYS.map(function(x){
+  var body;
+  if(x.steps.length){
+    body=x.g?gTabs(x):'<ul class="tl">'+x.steps.map(function(s){
+      return '<li><div class="t">'+esc(s.t)+'</div><div class="d">'+esc(s.d)+(s.s?'<small>'+esc(s.s)+'</small>':'')+'</div>'+(s.l?'<div class="btns">'+s.l.map(btn).join('')+'</div>':'')+'</li>';
+    }).join('')+'</ul>';
+    if(x.sum) body+='<div class="sum">'+x.sum.map(function(p){return '<span>'+esc(p[0])+' <b>'+esc(p[1])+'</b></span>'}).join('')+'</div>';
+    if(x.calc) body+='<div class="calc"><label for="fdep">귀국 비행기 출발 시간 (LJ300 예정 16:50)</label><input type="time" id="fdep"><output id="fout" for="fdep">시간을 넣으면 도쿠시마를 몇 시에 떠나야 하는지 계산해 줘.</output></div>';
+  } else body='<p class="empty">아직 일정이 안 왔어. 받으면 여기에 채울게.</p>';
   return '<article class="day" id="'+x.id+'"><div class="day-top"><h3>'+esc(x.date)+' · '+esc(x.title)+'</h3><span class="pill '+(x.status==='ok'?'ok':'')+'">'+esc(x.statusText)+'</span></div><div class="day-body">'+body+'</div></article>';
 }).join('');
 
+/* 도쿠시마 출발 시각 계산: 비행기 출발 - 공항 2시간 - 이동 106분 - 여유 30분 */
+(function(){
+  var inp=document.getElementById('fdep'), out=document.getElementById('fout'); if(!inp) return;
+  function p(n){return (n<10?'0':'')+n}
+  function fmt(min){min=((min%1440)+1440)%1440;return p(Math.floor(min/60))+':'+p(min%60)}
+  inp.addEventListener('input',function(){
+    if(!inp.value){out.textContent='시간을 넣으면 도쿠시마를 몇 시에 떠나야 하는지 계산해 줘.';return}
+    var a=inp.value.split(':'), dep=+a[0]*60+ +a[1], leave=dep-120-106-30;
+    out.innerHTML='도쿠시마 출발 <span style="font-size:20px">'+fmt(leave)+'</span> 까지'+(leave<0?' (전날 밤이라 계획을 다시 봐야 해)':'')+'<br><small style="font-weight:400;color:var(--muted)">공항 도착 '+fmt(dep-120)+' · 이동 약 1시간 46분 · 여유 30분 포함</small>';
+  });
+})();
+
+(function(){var i=document.getElementById('fdep'); if(i){i.value='16:50'; i.dispatchEvent(new Event('input'))}})();
+
+(function(){
+  var G={out:DAYS[0].g,back:DAYS[3].g};
+  function show(card,k){
+    card.querySelectorAll('.tab').forEach(function(b){var on=b.getAttribute('data-k')===k;b.setAttribute('aria-selected',on?'true':'false')});
+    card.querySelector('[role=tabpanel]').innerHTML=dayRoute(G[k]);
+    var c=card.querySelector('.calc'); if(c) c.style.display=(k==='back')?'':'none';
+  }
+  document.querySelectorAll('.day').forEach(function(card){
+    var tabs=card.querySelector('.tabs[data-card]'); if(!tabs) return;
+    show(card,card.id==='d4'?'back':'out');
+    tabs.addEventListener('click',function(e){var b=e.target.closest('.tab');if(b)show(card,b.getAttribute('data-k'))});
+  });
+})();
+
+/* 준비물 체크 (이 기기에만 저장) */
+(function(){
+  var KEY='tokushima-pack', saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  var ul=document.getElementById('chk');
+  ul.innerHTML=PACK.map(function(t,i){return '<li><label><input type="checkbox" id="pk'+i+'" data-i="'+i+'"'+(saved[i]?' checked':'')+'><span>'+esc(t)+'</span></label></li>'}).join('');
+  ul.addEventListener('change',function(e){
+    var i=e.target.getAttribute('data-i'); if(i===null) return; saved[i]=e.target.checked;
+    try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(err){}
+  });
+})();
+
+/* 날씨 */
 (function(){
  var P=[['도쿠시마',34.0658,134.5593],['다카마쓰',34.3428,134.0466]],T=['2027-01-19','2027-01-20','2027-01-21','2027-01-22'];
- var out=document.getElementById('wx'),note=document.getElementById('wx-note'),html='',any=false,n=0;
+ var out=document.getElementById('wx'),note=document.getElementById('wx-note'),html='',any=false,n=0,fail=false;
  P.forEach(function(p){
   fetch('https://api.open-meteo.com/v1/forecast?latitude='+p[1]+'&longitude='+p[2]+'&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=16&timezone=Asia%2FTokyo')
   .then(function(r){return r.json()}).then(function(j){
     html+='<div class="fact"><b>'+p[0]+' 지금</b><span>'+Math.round(j.current.temperature_2m)+'°C</span></div>';
-    T.forEach(function(d){var i=j.daily.time.indexOf(d);if(i>=0){any=true;html+='<div class="fact"><b>'+p[0]+' '+d.slice(5).replace('-','/')+'</b><span>'+Math.round(j.daily.temperature_2m_min[i])+'~'+Math.round(j.daily.temperature_2m_max[i])+'°C · 비 '+j.daily.precipitation_probability_max[i]+'%</span></div>';}});
-  }).catch(function(){html+='<div class="fact"><b>'+p[0]+'</b><span>불러오지 못했어</span></div>';})
-  .then(function(){if(++n===P.length){out.innerHTML=html;note.textContent=any?'여행 날짜 예보야.':'아직 여행 날짜 예보는 없어. 지금 기온만 보여줘.';}});
+    T.forEach(function(d){var i=j.daily.time.indexOf(d);if(i>=0){any=true;html+='<div class="fact"><b>'+p[0]+' '+d.slice(5).replace('-','/')+'</b><span>'+Math.round(j.daily.temperature_2m_min[i])+'~'+Math.round(j.daily.temperature_2m_max[i])+'°C</span><small>비 올 확률 '+j.daily.precipitation_probability_max[i]+'%</small></div>';}});
+  }).catch(function(){fail=true;})
+  .then(function(){if(++n===P.length){out.innerHTML=html;note.textContent=fail&&!html?'날씨를 불러오지 못했어. 아래 일본 기상청 링크를 이용해.':(any?'여행 날짜 예보야.':'아직 여행 날짜 예보는 없어. 지금 기온만 보여줘.');}});
  });
 })();
 </script>
