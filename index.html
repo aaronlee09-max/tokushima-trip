@@ -145,6 +145,20 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip{color:#10142a}}
 .rt-foot{padding:12px 18px 16px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
 .rt-foot p{margin:0;font-size:13px;color:var(--muted);flex:1 1 240px}
+.mini{margin:10px 0 2px;background:var(--tint);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.mini-t{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.mini svg{display:block;width:100%;height:auto}
+.mini-n{margin:8px 0 0;font-size:12px;color:var(--muted)}
+.path{display:flex;align-items:flex-start;gap:0}
+.path .n{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;max-width:76px;text-align:center;font-size:12px;font-weight:600;word-break:keep-all}
+.path .n:before{content:"";width:12px;height:12px;border-radius:50%;background:var(--ink);border:2px solid var(--card)}
+.path .n.b:before{width:8px;height:8px;margin:2px;background:var(--muted)}
+.path .n.e:before{background:var(--pin)}
+.path .sg{flex:1;min-width:24px;margin-top:5px;border-top:3px dashed var(--walk);position:relative;height:0}
+.path .sg span{position:absolute;left:0;right:0;top:-22px;text-align:center;font-size:11px;color:var(--muted);white-space:nowrap}
+.hero{margin:14px 0 0;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--tint)}
+.hero svg{display:block;width:100%;height:auto}
+.rmap{margin:0 0 14px}
 .tab{word-break:keep-all}
 .tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
 .tools .btn{font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -174,6 +188,15 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
   <div class="kicker">서울 → 다카마쓰 → 도쿠시마</div>
   <div class="title-row"><h1>도쿠시마 여행 플랜</h1><span class="dday" id="dday"></span></div>
   <p class="sub">날짜별 일정, 예매하는 순서, 링크, 준비물, 조심할 것을 한 페이지에 모았어. 새 정보는 계속 추가돼.</p>
+  <div class="hero"><svg viewBox="0 0 340 96" role="img" aria-label="비행기와 열차 그림">
+<rect width="340" height="96" fill="var(--tint)"/>
+<path d="M0 78 Q50 60 100 74 T200 70 T340 66 V96 H0Z" fill="var(--line)"/>
+<path d="M0 86 Q60 72 120 84 T240 80 T340 78 V96 H0Z" fill="var(--card)" opacity=".7"/>
+<g transform="translate(212 18)"><path d="M0 18 L46 10 L58 0 L64 2 L58 12 L82 14 C86 14 86 20 82 20 L58 22 L64 34 L58 36 L46 26 L0 22Z" fill="var(--accent)" opacity=".9"/></g>
+<path d="M170 30 q22 -4 36 4" stroke="var(--muted)" stroke-width="2" fill="none" stroke-dasharray="2 6" stroke-linecap="round"/>
+<g transform="translate(24 30)"><rect width="104" height="26" rx="10" fill="var(--jr)"/><rect x="10" y="6" width="20" height="9" rx="2" fill="var(--card)"/><rect x="38" y="6" width="20" height="9" rx="2" fill="var(--card)"/><rect x="66" y="6" width="20" height="9" rx="2" fill="var(--card)"/><circle cx="22" cy="28" r="4" fill="var(--ink)"/><circle cx="82" cy="28" r="4" fill="var(--ink)"/></g>
+<text x="170" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">인천 → 다카마쓰 → 도쿠시마</text>
+</svg></div>
   <div class="facts">
     <div class="fact"><b>날짜</b><span>1.19(화) ~ 1.22(금)</span><small>3박 4일</small></div>
     <div class="fact"><b>비행기</b><span>LJ299 / LJ300</span><small>서울 ⇄ 다카마쓰</small></div>
@@ -202,6 +225,18 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     <button class="tab" role="tab" id="tab-out" aria-controls="panel" aria-selected="true" data-k="out">가는 길 · 공항 → 도쿠시마</button>
     <button class="tab" role="tab" id="tab-back" aria-controls="panel" aria-selected="false" data-k="back">오는 길 · 도쿠시마 → 공항</button>
   </div>
+<div class="rmap mini"><div class="mini-t">한눈에 보는 약도 · 공항에서 도쿠시마역까지 (축척 아님)</div>
+<svg viewBox="0 0 340 120" role="img" aria-label="다카마쓰 공항에서 버스로 다카마쓰역, 특급 열차로 도쿠시마역으로 가는 경로">
+<path d="M30 70 H120" stroke="var(--bus)" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 9"/>
+<path d="M120 70 H300" stroke="var(--jr)" stroke-width="5" stroke-linecap="round"/>
+<circle cx="30" cy="70" r="9" fill="var(--ink)"/><circle cx="120" cy="70" r="9" fill="var(--ink)"/><circle cx="300" cy="70" r="10" fill="var(--pin)"/>
+<text x="30" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">다카마쓰</text><text x="30" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">공항</text>
+<text x="120" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">JR</text><text x="120" y="112" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">다카마쓰역</text>
+<text x="300" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)">도쿠시마역</text>
+<text x="75" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="var(--bus)">버스 약 50분</text><text x="75" y="38" text-anchor="middle" font-size="11" fill="var(--muted)">1,000~1,300엔</text>
+<text x="210" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="var(--jr)">특급 우즈시오 약 67분</text><text x="210" y="38" text-anchor="middle" font-size="11" fill="var(--muted)">자유석 2,840엔 · 지정석 3,370엔</text>
+<text x="12" y="16" font-size="11" fill="var(--muted)">인천에서 비행기 약 1시간 40분</text>
+</svg></div>
   <div class="map" id="mapbox"></div>
   <div id="panel" role="tabpanel" aria-labelledby="tab-out"></div>
 </section>
@@ -529,6 +564,14 @@ var DAYS = [
    {t:'16:50 다카마쓰 출발', d:'진에어 LJ300으로 인천 도착 18:35 예정', s:'최근 운항 시각 기준, 예매 링크에서 확인', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]}
  ], sum:[['총 이동 시간','약 1시간 46분'],['비용','4,370엔 (약 3만 6,900원)']], calc:true}
 ];
+var MINI={
+ A:"<div class=\"mini\"><div class=\"mini-t\">약도 · 다카마쓰 공항 도착층에서 버스 타는 곳까지</div>\n<svg viewBox=\"0 0 340 170\" role=\"img\" aria-label=\"공항 터미널 1층 도착 로비에서 2번 출구를 지나 버스 정류장까지 걷는 약도\">\n<rect x=\"8\" y=\"10\" width=\"190\" height=\"96\" rx=\"10\" fill=\"var(--card)\" stroke=\"var(--line)\" stroke-width=\"2\"/>\n<text x=\"20\" y=\"30\" font-size=\"13.5\" font-weight=\"700\" fill=\"var(--muted)\">공항 터미널 1층</text>\n<rect x=\"150\" y=\"98\" width=\"34\" height=\"10\" rx=\"3\" fill=\"var(--tint)\" stroke=\"var(--line)\"/>\n<text x=\"167\" y=\"95\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"700\" fill=\"var(--ink)\">2번 출구</text>\n<circle cx=\"40\" cy=\"64\" r=\"7\" fill=\"var(--ink)\"/><text x=\"40\" y=\"86\" text-anchor=\"middle\" font-size=\"12.5\" font-weight=\"700\" fill=\"var(--ink)\">도착 로비</text>\n<path d=\"M47 64 H110 V102 H167 V128\" fill=\"none\" stroke=\"var(--walk)\" stroke-width=\"3.5\" stroke-dasharray=\"2 7\" stroke-linecap=\"round\"/>\n<text x=\"80\" y=\"57\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">70m</text>\n<text x=\"140\" y=\"124\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">120m</text>\n<rect x=\"8\" y=\"132\" width=\"324\" height=\"30\" rx=\"6\" fill=\"var(--line)\"/>\n<text x=\"20\" y=\"151\" font-size=\"12.5\" fill=\"var(--muted)\">도로 (버스가 서는 곳)</text>\n<rect x=\"150\" y=\"128\" width=\"34\" height=\"16\" rx=\"4\" fill=\"var(--bus)\"/>\n<text x=\"167\" y=\"140\" text-anchor=\"middle\" font-size=\"11.5\" font-weight=\"700\" fill=\"#fff\">버스</text>\n<circle cx=\"167\" cy=\"128\" r=\"6\" fill=\"var(--pin)\" stroke=\"var(--card)\" stroke-width=\"2\"/>\n<text x=\"258\" y=\"40\" text-anchor=\"middle\" font-size=\"13.5\" font-weight=\"700\" fill=\"var(--ink)\">① 표 사기</text>\n<text x=\"258\" y=\"58\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">무인 발매기</text>\n<text x=\"258\" y=\"74\" text-anchor=\"middle\" font-size=\"12.5\" fill=\"var(--muted)\">「2번 다카마쓰 방면」</text>\n<text x=\"258\" y=\"96\" text-anchor=\"middle\" font-size=\"13.5\" font-weight=\"700\" fill=\"var(--ink)\">② 2번 정류장</text>\n</svg><p class=\"mini-n\">합계 약 190m · 약 3분. 위치 관계만 그린 약도야(축척 아님). 정확한 길은 구글 지도를 같이 봐.</p></div>",
+ B:"<div class=\"mini\"><div class=\"mini-t\">약도 · JR 다카마쓰역 안</div><div class=\"path\"><span class=\"n s\">버스 하차 (종점)</span><span class=\"sg\"><span>약 290m · 약 4분</span></span><span class=\"n e\">JR 승강장</span></div><p class=\"mini-n\">역 안을 걸어. 큰 짐은 엘리베이터. 표는 승강장에 가기 전에 사.</p></div>",
+ C:"<div class=\"mini\"><div class=\"mini-t\">약도 · 도쿠시마역 안</div><div class=\"path\"><span class=\"n s\">승강장</span><span class=\"sg\"><span>60m</span></span><span class=\"n b\"></span><span class=\"sg\"><span>85m</span></span><span class=\"n b\"></span><span class=\"sg\"><span>30m</span></span><span class=\"n e\">출구</span></div><p class=\"mini-n\">합계 약 170m · 약 2분. 지도에는 도착지가 도쿠시마역이야.</p></div>",
+ D:"<div class=\"mini\"><div class=\"mini-t\">약도 · 도쿠시마역 안</div><div class=\"path\"><span class=\"n s\">입구</span><span class=\"sg\"><span>30m</span></span><span class=\"n b\"></span><span class=\"sg\"><span>85m</span></span><span class=\"n b\"></span><span class=\"sg\"><span>60m</span></span><span class=\"n e\">승강장(2번)</span></div><p class=\"mini-n\">합계 약 170m · 약 3분. 승강장을 지도에서 한 번 더 확인해.</p></div>",
+ E:"<div class=\"mini\"><div class=\"mini-t\">약도 · JR 다카마쓰역에서 공항 버스 정류장까지</div><div class=\"path\"><span class=\"n s\">JR 다카마쓰역</span><span class=\"sg\"><span>약 830m · 걷기 약 12분</span></span><span class=\"n e\">공항 버스 정류장</span></div><p class=\"mini-n\">걷는 거리가 길어. 짐이 크면 시간을 더 잡아.</p></div>",
+ F:"<div class=\"mini\"><div class=\"mini-t\">약도 · 공항 도착</div><div class=\"path\"><span class=\"n s\">버스 하차</span><span class=\"sg\"><span>110m · 약 1분</span></span><span class=\"n e\">공항 건물</span></div><p class=\"mini-n\">바로 체크인 카운터로 가.</p></div>"
+};
 var PACK = ['여권 (유효기간 확인)','항공권 e-티켓 저장','Visit Japan Web 등록 화면 캡처','엔화 현금','교통 IC카드 (JR·공항버스에서 쓸 수 있는지 확인 필요, 엔화 현금은 필수)','변환 플러그','보조배터리 (기내 휴대)','로밍 또는 eSIM','겉옷과 장갑','구글 지도 경로 저장','부모님 동의서(영문)와 부모님 연락처 인쇄','숙소 이름·주소·전화번호 인쇄','비상 연락처(아래 「만약의 경우」) 캡처','이 페이지 오프라인 저장 (맨 위 버튼)'];
 
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -629,10 +672,10 @@ function dayRoute(g){
     var links=s.l?'<div class="btns" style="margin-top:8px">'+s.l.map(btn).join('')+'</div>':'';
     if(s.k==='pt'){
       var end=(i===last), first=(i===0), nx=g.steps[i+1], c=first&&nx?colorOf2(nx.k):prev;
-      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+'</div></li>';
+      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     } else {
       var w=s.k==='walk', c2=colorOf2(s.k); prev=c2;
-      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+'</div></li>';
+      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     }
   });
   var bar=g.steps.filter(function(s){return s.k!=='pt'&&s.min}).map(function(s){return '<i class="m-'+s.k+'" style="flex:'+s.min+' 1 0" title="'+esc(s.title)+'">'+(s.min>=40?NAME[s.k]:'')+'</i>'}).join('');
@@ -649,31 +692,31 @@ DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서
   {k:'pt',time:'15:50',title:'다카마쓰 공항 도착'},
   {k:'walk',min:40,title:'입국 심사와 짐 찾기',sub:'약 40분 (추정)'},
   {k:'pt',time:'16:30',title:'1층 도착 로비',sub:'무인 발매기에서 "2번 다카마쓰 방면" 버스표를 사. 요금은 1,300엔이라는 안내와 1,000엔이라는 안내가 있어서 현지에서 확인해.'},
-  {k:'walk',min:3,title:'공항 2번 출구 앞 버스 정류장까지 걷기',sub:'약 3분 · 190m (70m → 120m)'},
+  {k:'walk',min:3,title:'공항 2번 출구 앞 버스 정류장까지 걷기',map:'A',sub:'약 3분 · 190m (70m → 120m)'},
   {k:'pt',time:'16:33',title:'공항 2번 출구 앞에서 리무진 버스 탑승',sub:'지도에 적힌 문의 전화 +81 87-821-3033',l:[['버스 안내 1',REF.bus1],['버스 안내 2',REF.bus2]]},
   {k:'bus',min:50,title:'공항 리무진 버스 → JR 다카마쓰역',sub:'약 45~50분 · 정류장 11개 (구글 지도)',tip:'종점이 JR 다카마쓰역(심볼타워 근처)이라는 안내가 있어.'},
   {k:'pt',time:'17:23',title:'JR 다카마쓰역 도착 (버스 종점)'},
-  {k:'walk',min:10,title:'역 안에서 JR 승강장까지 걷기, 표 사기',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
+  {k:'walk',min:10,title:'역 안에서 JR 승강장까지 걷기, 표 사기',map:'B',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
   {k:'pt',time:'17:33',title:'JR 다카마쓰역 승강장',sub:'17:10 우즈시오 23호는 놓쳐. 다음 열차는 18:10이야.'},
   {k:'walk',min:37,title:'다음 열차 기다리기',sub:'약 37분 (역 안에서 쉬거나 먹을 시간)'},
   {k:'pt',time:'18:10',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:67,title:'특급 우즈시오',sub:'약 1시간 7분 · 정차역 8개 · 행선지가 도쿠시마인지 확인'},
   {k:'pt',time:'19:17',title:'도쿠시마역 도착 (T28)'},
-  {k:'walk',min:2,title:'역 안에서 출구까지 걷기',sub:'약 2분 · 170m (60m → 85m → 30m)'},
+  {k:'walk',min:2,title:'역 안에서 출구까지 걷기',map:'C',sub:'약 2분 · 170m (60m → 85m → 30m)'},
   {k:'pt',time:'19:19',title:'도쿠시마역 도착 지점',sub:'구글 지도 도착지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 1',U.map1],['오는 길 보기','#route-back']]}
  ]};
 DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서 열기',U.map1]],big:'6시간 20분',sub:'도쿠시마 12:15 → 인천 18:35 · 현지 이동비 '+money(4370),
  note:'우즈시오 14호(12:24)는 2026년 10월 시각표 기준이야. 13:24 16호를 타면 공항에 15:13쯤 닿아서 출발 2시간 전(14:50)을 넘기니 타지 마. 아래 계산기에서 비행기 시간을 바꿔 볼 수 있어.',
  steps:[
   {k:'pt',time:'12:15',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 2',U.map2]]},
-  {k:'walk',min:9,title:'역 안에서 승강장까지 걷기와 대기',sub:'걷기 약 3분 · 170m (30m → 85m → 60m)'},
+  {k:'walk',min:9,title:'역 안에서 승강장까지 걷기와 대기',map:'D',sub:'걷기 약 3분 · 170m (30m → 85m → 60m)'},
   {k:'pt',time:'12:24',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:66,title:'특급 우즈시오',sub:'약 1시간 6분 · 정차역 7개 · 행선지가 다카마쓰인지 확인'},
   {k:'pt',time:'13:30',title:'JR 다카마쓰역 도착'},
-  {k:'walk',min:17,title:'공항 버스 정류장까지 걷기와 대기',sub:'걷기 약 12분 · 약 830m',tip:'환승 대기가 길 수 있어. 귀국 날은 넉넉하게 잡아.'},
+  {k:'walk',min:17,title:'공항 버스 정류장까지 걷기와 대기',map:'E',sub:'걷기 약 12분 · 약 830m',tip:'환승 대기가 길 수 있어. 귀국 날은 넉넉하게 잡아.'},
   {k:'pt',time:'13:47',title:'공항 버스 정류장',sub:'지도에 적힌 문의 전화 +81 87-821-3033'},
   {k:'bus',min:25,title:'공항 버스',sub:'약 25분 · 정류장 4개 (구글 지도)'},
-  {k:'pt',time:'14:12',title:'버스에서 내려 공항 건물까지 걷기',sub:'약 1분 · 110m'},
+  {k:'pt',time:'14:12',title:'버스에서 내려 공항 건물까지 걷기',map:'F',sub:'약 1분 · 110m'},
   {k:'pt',time:'14:13',title:'다카마쓰 공항 도착',sub:'늦어도 14:50까지 도착하는 게 기준이야 (출발 2시간 전)'},
   {k:'walk',min:157,title:'체크인, 짐 부치기, 출국 심사, 대기',sub:'약 2시간 37분 (여유 포함)'},
   {k:'pt',time:'16:50',title:'다카마쓰 공항 출발',sub:'진에어 LJ300',l:TF.concat([['운항 기록',REF.lj300]])},
