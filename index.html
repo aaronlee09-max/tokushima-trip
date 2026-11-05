@@ -162,6 +162,7 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     <div class="fact"><b>항공권 조회가</b><span>왕복 약 29만 9,700원</span><small>11월 5일 기준, 매일 변동</small></div>
     <div class="fact"><b>현지 이동비 왕복</b><span>약 7만 6,400원</span><small>9,040엔 · 공항 ⇄ 도쿠시마</small></div>
   </div>
+  <div class="btns" style="margin-top:12px"><button class="btn sm" id="savehtml" type="button" style="font-family:inherit;cursor:pointer">오프라인용 HTML 저장</button><span id="savemsg" style="font-size:13px;color:var(--muted);align-self:center">인터넷 없이도 열려. 날씨·지도는 온라인에서만 보여.</span></div>
 </header>
 
 <nav id="nav" aria-label="바로가기"></nav>
@@ -703,6 +704,24 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
    }).catch(function(){});
   Promise.all([f,h]).then(done);
  });
+})();
+
+/* 오프라인용 HTML 저장 */
+(function(){
+  var b=document.getElementById('savehtml'),m=document.getElementById('savemsg'); if(!b) return;
+  function save(t){
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([t],{type:'text/html;charset=utf-8'}));
+    a.download='tokushima-trip-plan.html';document.body.appendChild(a);a.click();a.remove();
+    m.textContent='저장했어. 다운로드 폴더에서 열어.';
+  }
+  b.addEventListener('click',function(){
+    var u=location.href.split('#')[0];
+    fetch(u).then(function(r){if(!r.ok)throw 0;return r.text()})
+     .catch(function(){return '<!doctype html>\n'+document.documentElement.outerHTML})
+     .then(save)
+     .catch(function(){m.textContent='여기서는 저장이 막혀 있어. 사이트 주소에서 눌러 줘.'});
+  });
 })();
 
 /* 실제 지도 (Leaflet + OpenStreetMap). 키가 필요 없다. */
