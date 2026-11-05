@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793921531">
+<meta name="build" content="1793921830">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -165,6 +165,10 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 .stops ol{list-style:none;margin:10px 0 0 6px;padding:0 0 0 14px;border-left:3px solid var(--jr)}
 .stops li{position:relative;padding:3px 0 7px 6px;font-size:15px}
 .stops li:before{content:"";position:absolute;left:-23px;top:9px;width:11px;height:11px;border-radius:50%;background:var(--card);border:3px solid var(--jr)}
+.warnb{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:#fff4df;border:1px solid #f0d9a8;color:#6b4300;font-size:13px;line-height:1.5;word-break:keep-all}
+.warnb b{margin-right:4px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warnb{background:#3a2f17;border-color:#5a4720;color:#f3dca9}}
+:root[data-theme="dark"] .warnb{background:#3a2f17;border-color:#5a4720;color:#f3dca9}
 .stops.bus ol{border-color:var(--bus)}.stops.bus li:before{border-color:var(--bus)}.stops.bus li.end:before{background:var(--bus)}
 .stops li.end{font-weight:700}.stops li.end:before{background:var(--jr)}
 .lmini{display:none;height:190px;border-radius:10px;overflow:hidden;margin-top:8px;border:1px solid var(--line)}
@@ -505,8 +509,15 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
     <p class="note" style="margin:0">처음이라면 모르는 건 공항 안내 직원이나 항공사 카운터에 바로 물어봐. 시간이 부족하면 부끄러워하지 말고 직원에게 먼저 말해.</p>
   </div>
 
-  <div class="how"><h3>3. 일본(다카마쓰 공항) 도착 후</h3>
-    <p style="margin:0">다카마쓰 공항은 작은 공항이야. 비행기에서 내려 표지판을 따라 걸으면 「입국심사(Immigration)」 → 짐 찾기 → 세관 → 도착 로비 순서로 나와. 층 구조는 자세히 확인 못 했어(확인 필요). 위쪽 일정의 약도를 같이 봐.</p>
+  <div class="how"><h3>3. 일본 다카마쓰 공항은 이렇게 생겼어</h3>
+    <ul>
+      <li><b>2층</b>: 탑승구(게이트), 편의점(패밀리마트), 흡연소, 라운지가 있어. 국제선 탑승구는 국내선 탑승구보다 서쪽 편의점 앞 부근이야. (공항 소개 기준)</li>
+      <li><b>1층</b>: 짐 맡기는 곳, 기념품 매장, 전화 부스가 있어. (공항 소개 기준)</li>
+      <li><b>3층</b>: 전망 데크가 있어. 쓸 일은 거의 없어.</li>
+      <li><b>버스 정류장</b>: 다카마쓰역 가는 버스는 구글 지도에 「2번 출구 앞」으로 나와 있어. 출구 번호를 꼭 확인해.</li>
+      <li>도착층과 체크인 카운터의 층 번호는 확인 못 했어(확인 필요). 작은 공항이라 표지판을 따라가면 돼. 정확한 지도는 <a href="https://www.takamatsu-airport.com/guide/map.php" target="_blank" rel="noopener">다카마쓰 공항 공식 지도</a>를 같이 봐.</li>
+    </ul>
+    <p class="note" style="margin:0">흐름은 「입국심사(Immigration) → 짐 찾기 → 세관 → 도착 로비」야.</p>
   </div>
 </section>
 
@@ -690,10 +701,11 @@ var TRIP_START = '2027-01-19T00:00:00+09:00';
 /* 날짜별 데이터. 새 파일이 오면 해당 날짜의 steps만 채우면 된다. l은 버튼 목록. */
 var DAYS = [
  {id:'d1', date:'1/19 (화)', title:'출발, 도쿠시마까지', status:'ok', statusText:'정보 있음', steps:[
-   {t:'14:10 인천 출발', d:'진에어 LJ299로 다카마쓰 공항으로 이동', s:'15:50 도착 예정 (최근 운항 시각 기준, 예매 링크에서 확인)', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]},
-   {t:'15:50 다카마쓰 공항 도착', d:'입국 심사와 짐 찾기를 마치고 공항 버스 정류장으로 이동', s:'입국에 약 40분 걸린다고 보면 16:30쯤 버스를 타'},
-   {t:'공항 버스 약 50분', d:'공항에서 버스를 타고 다카마쓰 시내로 이동', s:'구글 지도 기준 정류장 11개. 시내에서 내려 JR 다카마쓰역으로 걸어가'},
-   {t:'JR 다카마쓰역 → 도쿠시마역 약 1시간 7분', d:'버스에서 내려 JR 열차로 갈아타고 도쿠시마로 이동', s:'정차역 8개. 17:40 이후 열차를 찾아봐', l:[['기차 예매',U.train]]},
+   {t:'10:00 과천청사 → 인천공항 (한국)', d:'공항버스 8842 · 약 2시간 10분', s:'인천T2 12:10 도착. 요금 12,700원. 시간표는 2026년 4월 기준이라 확인 필요', l:[['버스타고 예매',BUSTAGO]]},
+   {t:'14:10 인천 출발', d:'진에어 LJ299로 다카마쓰 공항으로 이동', s:'15:50 도착 예정 (최근 운항 시각 기준, 예매 링크에서 확인)', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky],['진에어 공식 사이트','https://www.jinair.com/']]},
+   {t:'15:50 다카마쓰 공항 도착', d:'입국 심사와 짐 찾기를 마치고 공항 버스 정류장으로 이동', s:'입국에 약 40분 걸린다고 보면 16:30쯤 버스를 타. 입국 전에 Visit Japan Web을 미리 등록해', l:[['Visit Japan Web','https://www.vjw.digital.go.jp/']]},
+   {t:'공항 버스 약 50분', d:'공항에서 버스를 타고 다카마쓰 시내로 이동', s:'구글 지도 기준 정류장 11개. 시내에서 내려 JR 다카마쓰역으로 걸어가', l:[['버스 이용 안내','https://www.tripstore.kr/blog/%EB%8B%A4%EC%B9%B4%EB%A7%88%EC%93%B0-%EA%B3%B5%ED%95%AD-%EC%8B%9C%EB%82%B4-%EA%B0%80%EB%8A%94%EB%B2%95']]},
+   {t:'JR 다카마쓰역 → 도쿠시마역 약 1시간 7분', d:'버스에서 내려 JR 열차로 갈아타고 도쿠시마로 이동', s:'정차역 8개. 17:40 이후 열차를 찾아봐', l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
    {t:'19시 전후 도쿠시마역 도착', d:'역 안에서 출구까지 이동', s:'770-0832 도쿠시마시 데라시마혼초히가시 3초메 (도쿠시마역)', l:[['상세 경로 보기','#route-out'],['경로 지도 1',U.map1]]}
  ], sum:[['총 이동 시간','약 2시간 12분'],['비용','4,670엔 (약 3만 9,500원)']]},
  {id:'d2', date:'1/20 (수)', title:'도쿠시마 1일차', status:'wait', statusText:'정보 받는 중', steps:[]},
@@ -701,7 +713,7 @@ var DAYS = [
  {id:'d4', date:'1/22 (금)', title:'돌아오는 날', status:'ok', statusText:'정보 있음', steps:[
    {t:'늦어도 12:30 도쿠시마역 출발', d:'JR 열차로 다카마쓰역까지 이동 (약 1시간)', s:'LJ300이 16:50 출발이라 공항에 14:50까지 도착하는 기준이야. 아래 계산기에서 바꿔 볼 수 있어', l:[['기차 예매',U.train]]},
    {t:'버스 약 25분', d:'JR에서 내려 공항 버스로 갈아타고 공항까지 이동'},
-   {t:'14:50 다카마쓰 공항 도착', d:'체크인과 짐 부치기, 출국 심사', l:[['상세 경로 보기','#route-back'],['경로 지도 2',U.map2]]},
+   {t:'14:50 다카마쓰 공항 도착', d:'체크인과 짐 부치기, 출국 심사', l:[['진에어 공식 사이트','https://www.jinair.com/'],['상세 경로 보기','#route-back'],['경로 지도 2',U.map2]]},
    {t:'16:50 다카마쓰 출발', d:'진에어 LJ300으로 인천 도착 18:35 예정', s:'최근 운항 시각 기준, 예매 링크에서 확인', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]}
  ], sum:[['총 이동 시간','약 1시간 46분'],['비용','4,370엔 (약 3만 6,900원)']], calc:true}
 ];
@@ -824,10 +836,10 @@ function dayRoute(g){
     var links=s.l?'<div class="btns" style="margin-top:8px">'+s.l.map(btn).join('')+'</div>':'';
     if(s.k==='pt'){
       var end=(i===last), first=(i===0), nx=g.steps[i+1], c=first&&nx?colorOf2(nx.k):prev;
-      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
+      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+(s.warn?'<div class="warnb"><b>⚠ 주의</b>'+esc(s.warn)+'</div>':'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     } else {
       var w=s.k==='walk', c2=colorOf2(s.k); prev=c2;
-      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
+      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+(s.warn?'<div class="warnb"><b>⚠ 주의</b>'+esc(s.warn)+'</div>':'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     }
   });
   var bar=g.steps.filter(function(s){return s.k!=='pt'&&s.min}).map(function(s){return '<i class="m-'+s.k+'" style="flex:'+s.min+' 1 0" title="'+esc(s.title)+'">'+(s.min>=40?NAME[s.k]:'')+'</i>'}).join('');
@@ -839,32 +851,32 @@ function gTabs(x){return '<div class="tabs" role="tablist" aria-label="가는 �
 DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서 열기',U.map2]],big:'5시간 9분',sub:'인천 14:10 → 도쿠시마 19:19 · 현지 이동비 '+money(4670),
  note:'JR 시각은 2026년 10월 시각표 기준이라 1월에 달라질 수 있어. 입국 40분은 가정한 값이고 비행기 시각은 최근 운항 기록 기준이야. 예매 전에 다시 확인해.',
  steps:[
-  {k:'pt',time:'10:00',title:'과천청사에서 공항버스 8842 승차',sub:'정부과천청사역 근처 「과천청사」 정류장. 09:50까지 가서 기다려. 요금 12,700원.',l:[['버스타고 예매',BUSTAGO]]},
+  {k:'pt',time:'10:00',warn:'정류장에 5~10분 먼저 가. 버스 시간표는 4월 기준이라 출발 1주 전에 다시 확인해. 도로가 막히면 도착이 늦어질 수 있어.',title:'과천청사에서 공항버스 8842 승차',sub:'정부과천청사역 근처 「과천청사」 정류장. 09:50까지 가서 기다려. 요금 12,700원.',l:[['버스타고 예매',BUSTAGO]]},
   {k:'bus',title:'공항버스 8842 · 인천공항 T2까지',sub:'약 2시간 10분 · 정류장 6개 (정류장 위치는 확인 필요)',stops:BUS_OUT,so:{cls:'bus',label:'정류장 보기 · 6개 (과천청사 → 인천T2)',note:BNOTE}},
-  {k:'pt',time:'12:10',title:'인천공항 도착',sub:'출발 2시간 전 기준이야. 과천청사 10:00 공항버스(8842)를 타면 인천 T2에 12:10 도착해. 진에어는 T2 D·E 카운터야(출발 전 재확인). 체크인 마감 시각은 확인 필요.',tip:'여권, 항공권 e-티켓, 부모님 동의서(영문), Visit Japan Web QR코드를 꺼내기 쉽게 챙겨.'},
-  {k:'walk',title:'체크인, 짐 부치기, 보안 검색, 출국 심사',sub:'약 1시간 30분 (여유 포함)'},
-  {k:'pt',time:'14:10',title:'인천국제공항 출발',sub:'진에어 LJ299',l:TF.concat([['운항 기록',REF.lj299]])},
+  {k:'pt',time:'12:10',l:[['인천공항 공식 사이트','https://www.airport.kr/']],warn:'여권, 항공권(e-티켓), 부모님 동의서, Visit Japan Web QR코드를 꺼내기 쉽게 챙겨. 기내 가방은 10kg 이하, 위탁은 15kg 이하(아래 「기내 반입·수하물 규정」).',title:'인천공항 도착',sub:'출발 2시간 전 기준이야. 과천청사 10:00 공항버스(8842)를 타면 인천 T2에 12:10 도착해. 진에어는 T2 D·E 카운터야(출발 전 재확인). 체크인 마감 시각은 확인 필요.',tip:'여권, 항공권 e-티켓, 부모님 동의서(영문), Visit Japan Web QR코드를 꺼내기 쉽게 챙겨.'},
+  {k:'walk',warn:'보조배터리와 라이터는 기내 가방에 넣어(위탁 금지). 액체는 100ml 이하 용기만 기내로 가져가고, 칼·가위는 위탁으로 부쳐. 검색대 앞에서는 물을 다 마시거나 버려.',title:'체크인, 짐 부치기, 보안 검색, 출국 심사',sub:'약 1시간 30분 (여유 포함)'},
+  {k:'pt',time:'14:10',warn:'탑승은 보통 출발 30~40분 전에 시작해. 게이트가 멀 수 있으니 면세점에서 시간을 보내다 놓치지 마. 전광판에서 게이트 변경이 없는지 확인해.',title:'인천국제공항 출발',sub:'진에어 LJ299',l:TF.concat([['운항 기록',REF.lj299]])},
   {k:'plane',min:100,title:'LJ299 비행',sub:'약 1시간 40분 · 인천 → 다카마쓰'},
-  {k:'pt',time:'15:50',title:'다카마쓰 공항 도착'},
-  {k:'walk',min:40,title:'입국 심사와 짐 찾기',sub:'약 40분 (추정)'},
-  {k:'pt',time:'16:30',title:'1층 도착 로비',sub:'무인 발매기에서 "2번 다카마쓰 방면" 버스표를 사. 요금은 1,300엔이라는 안내와 1,000엔이라는 안내가 있어서 현지에서 확인해.'},
+  {k:'pt',time:'15:50',l:[['다카마쓰공항 공식 지도','https://www.takamatsu-airport.com/guide/map.php']],warn:'내리자마자 Visit Japan Web QR코드를 꺼내 둬. 입국심사에서 휴대폰 화면이 꺼지거나 배터리가 없으면 곤란하니 종이 캡처도 준비해.',title:'다카마쓰 공항 도착'},
+  {k:'walk',min:40,warn:'심사관에게는 짧고 정확히 답해: 관광, 3박 4일, 도쿠시마역 근처 숙소. 숙소 이름·주소를 바로 보여줄 수 있게 준비해. 혼자 온 미성년자라서 보호자 질문이 나올 수 있어.',title:'입국 심사와 짐 찾기',sub:'약 40분 (추정)'},
+  {k:'pt',time:'16:30',warn:'버스표를 사기 전에 요금 안내를 한 번 더 봐. 1,300엔과 1,000엔 두 가지 안내가 있어서 확인이 필요해. 엔화 현금을 준비해.',title:'1층 도착 로비',sub:'무인 발매기에서 "2번 다카마쓰 방면" 버스표를 사. 요금은 1,300엔이라는 안내와 1,000엔이라는 안내가 있어서 현지에서 확인해.'},
   {k:'walk',min:3,title:'공항 2번 출구 앞 버스 정류장까지 걷기',map:'A',sub:'약 3분 · 190m (70m → 120m)'},
   {k:'pt',time:'16:33',title:'공항 2번 출구 앞에서 리무진 버스 탑승',sub:'지도에 적힌 문의 전화 +81 87-821-3033',l:[['버스 안내 1',REF.bus1],['버스 안내 2',REF.bus2]]},
   {k:'bus',min:50,title:'공항 리무진 버스 → JR 다카마쓰역',sub:'약 45~50분 · 정류장 11개 (구글 지도)',tip:'종점이 JR 다카마쓰역(심볼타워 근처)이라는 안내가 있어.'},
   {k:'pt',time:'17:23',title:'JR 다카마쓰역 도착 (버스 종점)'},
-  {k:'walk',min:10,title:'역 안에서 JR 승강장까지 걷기, 표 사기',map:'B',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
+  {k:'walk',min:10,warn:'일본 JR은 승차권과 특급권 두 장을 사서 개찰기에 같이 넣어. 짐이 크면 엘리베이터를 써. 17:10 열차를 놓치면 다음은 18:10이야.',title:'역 안에서 JR 승강장까지 걷기, 표 사기',map:'B',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
   {k:'pt',time:'17:33',title:'JR 다카마쓰역 승강장',sub:'17:10 우즈시오 23호는 놓쳐. 다음 열차는 18:10이야.'},
   {k:'walk',min:37,title:'다음 열차 기다리기',sub:'약 37분 (역 안에서 쉬거나 먹을 시간)'},
-  {k:'pt',time:'18:10',map:'G',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
+  {k:'pt',time:'18:10',map:'G',warn:'열차 앞의 「うずしお」와 행선지 「徳島」를 확인하고 타. 반대 방향이나 다른 열차를 타지 마. 자유석이면 「自由席」 칸으로 타.',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:67,stops:UZ,title:'특급 우즈시오',sub:'약 1시간 7분 · 정차역 8개 · 행선지가 도쿠시마인지 확인'},
   {k:'pt',time:'19:17',title:'도쿠시마역 도착 (T28)'},
   {k:'walk',min:2,title:'역 안에서 출구까지 걷기',map:'C',sub:'약 2분 · 170m (60m → 85m → 30m)'},
-  {k:'pt',time:'19:19',title:'도쿠시마역 도착 지점',sub:'구글 지도 도착지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 1',U.map1],['오는 길 보기','#route-back']]}
+  {k:'pt',time:'19:19',warn:'저녁 늦은 시간이라 밝은 길로 이동해. 숙소 체크인 시간과 연락처를 미리 확인해 두고, 길을 잃으면 구글 지도와 숙소 연락처를 써.',title:'도쿠시마역 도착 지점',sub:'구글 지도 도착지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 1',U.map1],['오는 길 보기','#route-back']]}
  ]};
 DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서 열기',U.map1]],big:'6시간 20분',sub:'도쿠시마 12:15 → 인천 18:35 · 현지 이동비 '+money(4370),
  note:'우즈시오 14호(12:24)는 2026년 10월 시각표 기준이야. 13:24 16호를 타면 공항에 15:13쯤 닿아서 출발 2시간 전(14:50)을 넘기니 타지 마. 아래 계산기에서 비행기 시간을 바꿔 볼 수 있어.',
  steps:[
-  {k:'pt',time:'12:15',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메. 숙소 체크아웃 시간은 미리 확인해(확인 필요).',l:[['지도 2',U.map2]]},
+  {k:'pt',time:'12:15',warn:'숙소 체크아웃을 먼저 끝내. 12:24 열차를 놓치면 다음 13:24는 공항에 너무 늦게 도착해서 위험해.',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메. 숙소 체크아웃 시간은 미리 확인해(확인 필요).',l:[['지도 2',U.map2]]},
   {k:'walk',min:9,title:'역 안에서 승강장까지 걷기와 대기',map:'D',sub:'걷기 약 3분 · 170m (30m → 85m → 60m)'},
   {k:'pt',time:'12:24',map:'H',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:66,stops:UZ.slice().reverse(),title:'특급 우즈시오',sub:'약 1시간 6분 · 정차역 7개 · 행선지가 다카마쓰인지 확인'},
@@ -873,11 +885,11 @@ DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서
   {k:'pt',time:'13:47',title:'공항 버스 정류장',sub:'지도에 적힌 문의 전화 +81 87-821-3033'},
   {k:'bus',min:25,title:'공항 버스',sub:'약 25분 · 정류장 4개 (구글 지도)'},
   {k:'pt',time:'14:12',title:'버스에서 내려 공항 건물까지 걷기',map:'F',sub:'약 1분 · 110m'},
-  {k:'pt',time:'14:13',title:'다카마쓰 공항 도착',sub:'늦어도 14:50까지 도착하는 게 기준이야 (출발 2시간 전)'},
+  {k:'pt',time:'14:13',l:[['다카마쓰공항 공식 지도','https://www.takamatsu-airport.com/guide/map.php']],warn:'체크인 마감 시각을 확인해. 기념품이 늘어서 위탁 15kg, 기내 10kg을 넘지 않는지 가방을 다시 재 봐. 일본 공항에서도 액체 100ml, 보조배터리는 기내에 넣는 규칙이 같아.',title:'다카마쓰 공항 도착',sub:'늦어도 14:50까지 도착하는 게 기준이야 (출발 2시간 전)'},
   {k:'walk',min:157,title:'체크인, 짐 부치기, 출국 심사, 대기',sub:'약 2시간 37분 (여유 포함)'},
   {k:'pt',time:'16:50',title:'다카마쓰 공항 출발',sub:'진에어 LJ300',l:TF.concat([['운항 기록',REF.lj300]])},
   {k:'plane',min:105,title:'LJ300 비행',sub:'약 1시간 45분 · 다카마쓰 → 인천'},
-  {k:'pt',time:'18:35',title:'인천국제공항 도착'},
+  {k:'pt',time:'18:35',warn:'한국 입국 심사는 내국인 줄로 가. 짐을 찾고 나서 버스 시간(20:30)에 맞춰 이동해. 19:15 버스는 너무 이르니까 서두르지 마.',title:'인천국제공항 도착'},
   {k:'walk',title:'한국 입국 심사와 짐 찾기',sub:'약 1시간 (추정)'},
   {k:'pt',time:'20:30',title:'인천T2에서 공항버스 8842 승차',sub:'19:15 버스는 너무 일러서 못 타. 20:30이 추천이야. 다음은 21:35.',l:[['버스타고 예매',BUSTAGO]]},
   {k:'bus',title:'공항버스 8842 · 과천청사까지',sub:'약 1시간 30분 · 정류장 6개',stops:BUS_BACK,so:{cls:'bus',label:'정류장 보기 · 6개 (인천T2 → 과천청사)',note:BNOTE}},
