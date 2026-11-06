@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
-"""인천공항 공식 API(공공데이터포털)에서 다카마쓰 가는 편(출발)·오는 편(인천 도착)을 편명과 상관없이 받아 status.json 으로 저장.
-- dep: 1/19 인천 → 다카마쓰 (조회일 -3일부터 데이터가 있어 1/12부터)
-- arr: 1/22 다카마쓰 → 인천 도착 (1/19부터)
-전날까지는 1시간에 한 번, 당일은 5분마다. 키는 GitHub Secret INCHEON_API_KEY 로만 쓰고 파일에는 남기지 않는다."""
+"""인천공항 공식 API(공공데이터포털)에서 그날 다카마쓰 가는 편(출발)·오는 편(인천 도착)을 편명과 상관없이 받아 status.json 으로 저장.
+매일 오늘 날짜 자료를 띄운다. 평소 15분마다, 여행 당일(1/19 가는 편, 1/22 오는 편)은 5분마다. 1/23까지.
+키는 GitHub Secret INCHEON_API_KEY 로만 쓰고 파일에는 남기지 않는다."""
 import json, os, sys, urllib.parse, urllib.request, datetime as dt
 
 KEY = os.environ.get("INCHEON_API_KEY", "")
 BASE = "https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/"
 KST = dt.timezone(dt.timedelta(hours=9))
 def D(y, m, d, h=0, mi=0): return dt.datetime(y, m, d, h, mi, tzinfo=KST)
-SECTIONS = [  # (이름, 오퍼레이션, 날짜, 조회 시작, 조회 끝)
-    ("dep", "getFltDeparturesDeOdp", "20270119", D(2027, 1, 12), D(2027, 1, 19, 23, 59)),
-    ("arr", "getFltArrivalsDeOdp", "20270122", D(2027, 1, 19), D(2027, 1, 22, 23, 59)),
+END = D(2027, 1, 23, 23, 59)
+SECTIONS = [  # (이름, 오퍼레이션, 여행 당일)
+    ("dep", "getFltDeparturesDeOdp", "20270119"),
+    ("arr", "getFltArrivalsDeOdp", "20270122"),
 ]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "status.json")
 
@@ -60,19 +60,20 @@ def main():
     except Exception:
         pass
     new, changed = dict(old), False
-    for name, op, day, start, end in SECTIONS:
-        if not (start <= now <= end or force):
-            continue
+    if now > END and not force:
+        print("여행 끝남:", now.isoformat()); return
+    today = now.strftime("%Y%m%d")
+    for name, op, trip in SECTIONS:
         prev = old.get(name) if isinstance(old.get(name), dict) else {}
         age = age_of(prev)
-        # 당일 전까지는 1시간에 한 번만
-        if now.date() < dt.datetime.strptime(day, "%Y%m%d").date() and age < 55 * 60 and not force:
-            print(name, "전날까지는 1시간에 한 번:", int(age // 60), "분 전에 조회"); continue
+        # 여행 당일이면 5분마다, 평소엔 15분마다(cron 은 5분마다 도니 분이 0~4 일 때만)
+        if today != trip and now.minute % 15 >= 5 and not force:
+            continue
         if not KEY:
             print("INCHEON_API_KEY 없음"); continue
         try:
             flights = {}
-            for i in items(call(op, day)):
+            for i in items(call(op, today)):
                 if pick(i, "codeshare").lower() == "slave":   # 공동운항 중복 줄은 뺀다
                     continue
                 fid = pick(i, "flightId")
@@ -89,9 +90,9 @@ def main():
         except Exception as e:
             print(name, "호출 실패:", type(e).__name__); continue
         # 내용이 같아도 25분마다는 갱신 시각을 새로 적는다(사이트는 3시간 넘은 자료를 숨김)
-        if prev.get("flights") == flights and age < 25 * 60:
+        if prev.get("flights") == flights and prev.get("date") == now.strftime("%Y-%m-%d") and age < 25 * 60:
             print(name, "변화 없음"); continue
-        new[name] = {"updated": now.isoformat(timespec="seconds"), "flights": flights}
+        new[name] = {"updated": now.isoformat(timespec="seconds"), "date": now.strftime("%Y-%m-%d"), "flights": flights}
         changed = True
         print(name, "저장:", json.dumps(flights, ensure_ascii=False))
     new.pop("updated", None); new.pop("flights", None)   # 옛 형식 정리

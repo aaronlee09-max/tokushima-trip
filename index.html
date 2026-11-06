@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793949530">
+<meta name="build" content="1793949639">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -891,7 +891,7 @@ var EVS={
 };
 function fltBoards(sec,ev){
   var dep=sec==='dep',E=EVS[ev];
-  return '<div class="board fids"><div class="bh"><b>'+(dep?'가는 편 · 출발 전광판':'오는 편 · 도착 전광판')+'</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+ev+'"></div><div class="bt">'+(dep?'인천 → 다카마쓰 · 인천공항 출발 현황':'다카마쓰 → 인천 · 인천공항 도착 현황')+'</div><div class="fh"><span>시각</span><span>편명</span><span>'+(dep?'게이트':'수하물·출구')+'</span></div><div class="br" data-flt="'+sec+'"></div><div class="bf">인천공항 공식 운항 현황 · ★ = 내 비행기 · T1=제1터미널, T2=제2터미널 · '+(dep?'게이트는 바뀔 수 있으니 출발 전 공항 전광판으로 다시 확인':'수하물·출구는 착륙 가까이 되면 나와')+' · 5분 간격(전날까지는 1시간) 갱신</div></div>';
+  return '<div class="board fids"><div class="bh"><b>'+(dep?'가는 편 · 출발 전광판':'오는 편 · 도착 전광판')+'</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+ev+'"></div><div class="bt">'+(dep?'인천 → 다카마쓰 · 인천공항 출발 현황':'다카마쓰 → 인천 · 인천공항 도착 현황')+'</div><div class="fh"><span>시각</span><span>편명</span><span>'+(dep?'게이트':'수하물·출구')+'</span></div><div class="br" data-flt="'+sec+'"></div><div class="bf">인천공항 공식 운항 현황 · ★ = 내 비행기 · T1=제1터미널, T2=제2터미널 · '+(dep?'게이트는 바뀔 수 있으니 출발 전 공항 전광판으로 다시 확인':'수하물·출구는 착륙 가까이 되면 나와')+' · 여행 당일 5분·평소 15분 간격 갱신</div></div>';
 }
 function bdHtml(t){
   if(t==='bus81') return '<div class="board"><div class="bh"><b>버스 전광판</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">정류장 「나눔초등학교.오뚜기식품.두산벤처다임」(10168) · 평촌동행정복지센터 방면</div><div class="br" data-bus="1"></div><div class="bf">441·502·540·777 중 가까운 순서 · 경기도 버스위치 정보 5분 간격 갱신 · 남은 시간·도착 예상은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
@@ -1245,15 +1245,16 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   function hm(iso){var d=new Date(iso);var j=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);return z(j.getHours())+':'+z(j.getMinutes())}
   function fltRows(sec){
     var arr=sec==='arr',mine=arr?'LJ300':'LJ299',S=FLT&&FLT[sec];
-    if(!S||!S.flights)return '<div class="none">아직 자료가 없어. 인천공항 자료는 출발 6일 전쯤부터 올라와.</div>';
+    if(!S||!S.flights)return '<div class="none">아직 자료가 없어. 인천공항 자료가 올라오면 바로 보여줄게.</div>';
+    var trip=S.date===(arr?'2027-01-22':'2027-01-19');
     if(Date.now()-new Date(S.updated).getTime()>10800000)return '<div class="none">자료가 오래됐어(마지막 갱신 '+hm(S.updated)+').</div>';
     var F=S.flights,ids=Object.keys(F).filter(function(k){return F[k]&&F[k].sched});
     if(!ids.length)return '<div class="none">이 날 다카마쓰 '+(arr?'발':'행')+' 편 자료가 아직 없어.</div>';
     ids.sort(function(a,c){return new Date(F[a].est||F[a].sched)-new Date(F[c].est||F[c].sched)});
     var tm={P01:'T1',P02:'탑승동',P03:'T2'},out=[];
-    if(!F[mine])out.push('<div class="fr mine"><span class="t">--:--</span><span class="f"><b>★ '+mine+'</b><small>내 비행기 · 정보가 아직 없어</small></span><span class="g">-</span></div>');
+    if(trip&&!F[mine])out.push('<div class="fr mine"><span class="t">--:--</span><span class="f"><b>★ '+mine+'</b><small>내 비행기 · 정보가 아직 없어</small></span><span class="g">-</span></div>');
     ids.forEach(function(id){
-      var f=F[id],est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),sub=[],me=id===mine;
+      var f=F[id],est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),sub=[],me=trip&&id===mine;
       if(f.airline)sub.push(esc(f.airline));
       if(!arr&&f.counter)sub.push('카운터 '+esc(f.counter));
       if(f.terminal)sub.push(tm[f.terminal]||esc(f.terminal));
@@ -1262,7 +1263,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       var g=arr?((f.belt&&f.belt!=='-'?esc(f.belt):'-')+'<i>/</i>'+(f.exit&&f.exit!=='-'?esc(f.exit):'-')):(f.gate?esc(f.gate):'미정');
       out.push('<div class="fr'+(me?' mine':'')+(dm>=10?' late':'')+'"><span class="t">'+hm(est)+(dm?'<s>'+hm(f.sched)+'</s>':'')+'</span><span class="f"><b>'+(me?'★ ':'')+esc(id)+'</b>'+'<small>'+sub.join(' · ')+(st?' · <u>'+st+'</u>':'')+'</small></span><span class="g">'+g+'</span></div>');
     });
-    return out.join('')+'<div class="fup">갱신 '+hm(S.updated)+'</div>';
+    return out.join('')+'<div class="fup">기준일 '+(S.date?S.date.slice(5).replace('-','/'):'')+(trip?' · 여행 당일':' · 오늘 운항 현황')+' · 갱신 '+hm(S.updated)+'</div>';
   }
   function evRow(key,one){
     var E=EVS[key],at=new Date(E[1]).getTime(),d=Math.floor((at-Date.now())/1000),cls='row',txt;
@@ -1386,7 +1387,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261106071850';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261106072040';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>

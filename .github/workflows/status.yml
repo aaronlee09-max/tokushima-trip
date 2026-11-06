@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: "버스도 지금 바로 조회(시험용)"
+        description: "버스·항공편을 지금 바로 조회(시험용)"
         type: boolean
         default: false
 permissions:
@@ -21,7 +21,7 @@ jobs:
       - name: 상태 받아 오기
         env:
           INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
-        run: python3 scripts/fetch_status.py
+        run: python3 scripts/fetch_status.py ${{ inputs.force && '--force' || '' }}
       - name: 8-1번 버스 위치 받아 오기
         env:
           INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
