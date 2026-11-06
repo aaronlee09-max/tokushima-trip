@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793948138">
+<meta name="build" content="1793948905">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -1220,9 +1220,9 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   loadFlt(); setInterval(loadFlt,300000);
   function hm(iso){var d=new Date(iso);var j=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);return z(j.getHours())+':'+z(j.getMinutes())}
   function fltLive(key){
-    var nm={f1:'LJ299',f4:'LJ300'}[key];if(!nm||!FLT||!FLT.flights)return '';
+    var nm={f1:'LJ299'}[key];if(!nm||!FLT||!FLT.flights)return '';
     var f=FLT.flights[nm];if(!f||f.error||!f.sched)return '';
-    if(Date.now()-new Date(FLT.updated).getTime()>3600000)return '';
+    if(Date.now()-new Date(FLT.updated).getTime()>10800000)return '';
     var arr=nm==='LJ300',est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),bits=[];
     bits.push((arr?'인천 도착 ':'')+'예정 '+hm(f.sched)+(dm?' → 변경 '+hm(est)+(dm>0?' (+'+dm+'분 지연)':' ('+dm+'분)'):' (변동 없음)'));
     bits.push('모든 시각은 한국 시각');
@@ -1354,7 +1354,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261106065538';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261106070825';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>

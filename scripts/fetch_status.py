@@ -8,9 +8,9 @@ BASE = "https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/"
 JST = dt.timezone(dt.timedelta(hours=9))
 # 호출 한도(개발 계정 하루 500건)를 지키려고 필요한 시간대에만 부른다.
 def T(y, m, d, h, mi): return dt.datetime(y, m, d, h, mi, tzinfo=dt.timezone(dt.timedelta(hours=9)))
-TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜, 조회 시작, 조회 끝)
-    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 19, 0, 0), T(2027, 1, 19, 23, 59)),
-    ("LJ300", "LJ300", "getFltArrivalsDeOdp", "20270122", T(2027, 1, 22, 0, 0), T(2027, 1, 22, 23, 59)),
+TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜, 조회 시작, 조회 끝) — 다카마쓰로 가는 LJ299만
+    # 인천 API는 조회일 기준 -3일~+6일만 주므로 1/12부터 조회가 의미 있다.
+    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 12, 0, 0), T(2027, 1, 19, 23, 59)),
 ]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "status.json")
 
@@ -47,6 +47,14 @@ def main():
     now = dt.datetime.now(JST)
     force = "--force" in sys.argv
     active = [t for t in TARGETS if t[4] <= now <= t[5] or force]
+    # 당일(1/19)은 5분마다, 그 전날들은 하루 종일 1시간에 한 번만 조회(호출량 절약)
+    try:
+        _prev = json.load(open(OUT, encoding="utf-8")).get("updated", "")
+        _age = (now - dt.datetime.fromisoformat(_prev)).total_seconds()
+    except Exception:
+        _age = 1e9
+    if now.date() < dt.date(2027, 1, 19) and _age < 55 * 60 and not force:
+        print("전날까지는 1시간에 한 번:", int(_age // 60), "분 전에 조회"); return
     if not active:
         print("조회 시간대 밖:", now.isoformat()); return
     if not KEY:
