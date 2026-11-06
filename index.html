@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793949164">
+<meta name="build" content="1793949290">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -205,6 +205,8 @@ a.btn{text-decoration:none}
 .board .bh b,.board .bh span{white-space:nowrap}
 .board .bh{flex-wrap:wrap}
 .board small.live{display:block;color:#7fe3a1;margin-top:3px;font-size:12px}
+.board small.live b,.body small.live b{display:inline;font-weight:700}
+.body small.live{display:block;color:#2f8f5b;margin-top:4px;line-height:1.5}
 .board .bh i{font-style:normal;color:#7dff9b}
 .board .bt{font-size:12px;color:#8fb4ff;margin:8px 0 2px}
 .board .row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:4px 0;border-bottom:1px dashed #1f2832}
@@ -1220,21 +1222,27 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   loadFlt(); setInterval(loadFlt,300000);
   function hm(iso){var d=new Date(iso);var j=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);return z(j.getHours())+':'+z(j.getMinutes())}
   function fltLive(key){
-    if(key!=='f1'||!FLT||!FLT.flights)return '';
-    if(Date.now()-new Date(FLT.updated).getTime()>10800000)return '';
-    var F=FLT.flights,ids=Object.keys(F).filter(function(k){return F[k]&&F[k].dep&&F[k].sched}).sort(function(a,c){return new Date(F[a].sched)-new Date(F[c].sched)});
+    var sec=key==='f1'?'dep':key==='f4'?'arr':'',mine=key==='f1'?'LJ299':'LJ300',arr=key==='f4';
+    if(!sec||!FLT||!FLT[sec]||!FLT[sec].flights)return '';
+    if(Date.now()-new Date(FLT[sec].updated).getTime()>10800000)return '';
+    var F=FLT[sec].flights,ids=Object.keys(F).filter(function(k){return F[k]&&F[k].sched}).sort(function(a,c){return new Date(F[a].sched)-new Date(F[c].sched)});
     if(!ids.length)return '';
     var tm={P01:'제1터미널',P02:'탑승동',P03:'제2터미널'};
-    var lines=ids.map(function(id){
+    function line(id){
       var f=F[id],est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),bits=[];
-      bits.push('<b>'+esc((f.airline?f.airline+' ':'')+id)+'</b> 예정 '+hm(f.sched)+(dm?' → 변경 '+hm(est)+(dm>0?' (+'+dm+'분 지연)':' ('+dm+'분)'):' (변동 없음)'));
+      bits.push('<b>'+esc((f.airline?f.airline+' ':'')+id)+'</b> '+(arr?'인천 도착 ':'')+'예정 '+hm(f.sched)+(dm?' → 변경 '+hm(est)+(dm>0?' (+'+dm+'분 지연)':' ('+dm+'분)'):' (변동 없음)'));
       if(f.remark)bits.push(esc(f.remark));
-      if(f.gate)bits.push('게이트 '+esc(f.gate));
-      if(f.counter)bits.push('카운터 '+esc(f.counter));
+      if(!arr&&f.gate)bits.push('게이트 '+esc(f.gate));
+      if(!arr&&f.counter)bits.push('카운터 '+esc(f.counter));
       if(f.terminal)bits.push(tm[f.terminal]||esc(f.terminal));
+      if(arr&&f.belt&&f.belt!=='-')bits.push('수하물 '+esc(f.belt)+'번');
+      if(arr&&f.exit&&f.exit!=='-')bits.push('출구 '+esc(f.exit));
       return bits.join(' · ');
-    });
-    return '<small class="live">실시간(인천공항 공식) · 이 날 다카마쓰행 전 편 · 모든 시각은 한국 시각<br>'+lines.join('<br>')+'<br>갱신 '+hm(FLT.updated)+'</small>';
+    }
+    var others=ids.filter(function(k){return k!==mine}),h='<small class="live">';
+    h+='<b>내 비행기</b> · 실시간(인천공항 공식) · 한국 시각<br>'+(F[mine]&&F[mine].sched?line(mine):esc(mine)+' 정보가 아직 없어');
+    if(others.length)h+='<span style="display:block;height:5px"></span><b>같은 날 다카마쓰'+(arr?'발':'행')+' 다른 편</b><br>'+others.map(line).join('<br>');
+    return h+'<br>갱신 '+hm(FLT[sec].updated)+'</small>';
   }
   function evRow(key,one){
     var E=EVS[key],at=new Date(E[1]).getTime(),d=Math.floor((at-Date.now())/1000),cls='row',txt;
@@ -1356,7 +1364,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261106071244';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261106071450';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>
