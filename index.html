@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793928515">
+<meta name="build" content="1793928749">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -265,9 +265,10 @@ a.btn{text-decoration:none}
 
 <section id="trans"><h2>항공·기차 정보</h2>
   <div class="how"><h3>열차 실시간 지연 확인</h3>
-    <p style="margin:0 0 8px">JR시코쿠는 열차 위치를 실시간으로 보여 주는 공개 데이터(API)를 내놓지 않는 것으로 보여. 그래서 사이트에서 자동으로 불러오지는 못해. 대신 아래 공식 페이지에서 지연·운휴를 확인해.</p>
+    <p style="margin:0 0 8px">JR시코쿠는 열차가 지금 어디를 달리는지 지도로 보여 주는 공식 페이지가 있어. 고토쿠선(다카마쓰~도쿠시마)도 노선 목록에 있고 한국어를 지원해. 다만 다른 사이트에 자동으로 가져다 쓸 수 있는 공개 데이터(API)는 없어서, 이 사이트에서는 링크로 연결해 둬. 표시되는 위치는 실제와 다를 수 있어.</p>
     <ul>
-      <li><a href="https://www.jr-shikoku.co.jp/info/" target="_blank" rel="noopener">JR시코쿠 운행 정보</a>: 지연이나 운휴가 있으면 여기에 올라와(일본어, 평소에는 「지연 등의 정보는 없습니다」라고 나와).</li>
+      <li><a href="https://train.jr-shikoku.co.jp/sp.html" target="_blank" rel="noopener">JR시코쿠 열차 위치(지도, 폰용)</a>: 열차가 달리는 위치를 지도로 봐. 노선 목록에서 「고토쿠선」을 골라. 매일 새벽 1:30~6:30(일본 시간)은 점검으로 안 될 수 있어. <a href="https://train.jr-shikoku.co.jp/index.html" target="_blank" rel="noopener">컴퓨터용</a></li>
+      <li><a href="https://www.jr-shikoku.co.jp/info/index_kr.html" target="_blank" rel="noopener">JR시코쿠 운행 정보(한국어)</a>: 30분 이상 지연이나 운휴가 있으면 여기에 올라와(일본어, 평소에는 「지연 등의 정보는 없습니다」라고 나와).</li>
       <li><a href="https://www.jr-shikoku.co.jp/emergency/kr.html" target="_blank" rel="noopener">JR시코쿠 긴급 안내(한국어)</a></li>
       <li>역 전광판과 안내 방송, 승무원에게 물어보는 게 가장 정확해. 우즈시오 25호는 18:10, 놓치면 19:10이 다음 열차야.</li>
     </ul>
@@ -942,7 +943,7 @@ DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서
   {k:'walk',min:10,warn:'일본 JR은 승차권과 특급권 두 장을 사서 개찰기에 같이 넣어. 짐이 크면 엘리베이터를 써. 17:10 열차를 놓치면 다음은 18:10이야.',title:'역 안에서 JR 승강장까지 걷기, 표 사기',map:'B',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
   {k:'pt',time:'17:33',title:'JR 다카마쓰역 승강장',sub:'17:10 우즈시오 23호는 놓쳐. 다음 열차는 18:10이야.'},
   {k:'walk',min:37,title:'다음 열차 기다리기',sub:'약 37분 (역 안에서 쉬거나 먹을 시간)'},
-  {k:'pt',time:'18:10',map:'G',warn:'열차 앞의 「うずしお」와 행선지 「徳島」를 확인하고 타. 반대 방향이나 다른 열차를 타지 마. 자유석이면 「自由席」 칸으로 타.',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 운행 정보(실시간)','https://www.jr-shikoku.co.jp/info/'],['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
+  {k:'pt',time:'18:10',map:'G',warn:'열차 앞의 「うずしお」와 행선지 「徳島」를 확인하고 타. 반대 방향이나 다른 열차를 타지 마. 자유석이면 「自由席」 칸으로 타.',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 열차 위치(지도)','https://train.jr-shikoku.co.jp/sp.html'],['JR시코쿠 운행 정보(한국어)','https://www.jr-shikoku.co.jp/info/index_kr.html'],['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:67,stops:UZ,title:'특급 우즈시오',sub:'약 1시간 7분 · 정차역 8개 · 행선지가 도쿠시마인지 확인'},
   {k:'pt',time:'19:17',title:'도쿠시마역 도착 (T28)'},
   {k:'walk',min:2,title:'역 안에서 출구까지 걷기',map:'C',sub:'약 2분 · 170m (60m → 85m → 30m)'},
@@ -953,7 +954,7 @@ DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서
  steps:[
   {k:'pt',time:'12:15',warn:'숙소 체크아웃을 먼저 끝내. 12:24 열차를 놓치면 다음 13:24는 공항에 너무 늦게 도착해서 위험해.',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메. 숙소 체크아웃 시간은 미리 확인해(확인 필요).',l:[['지도 2',U.map2]]},
   {k:'walk',min:9,title:'역 안에서 승강장까지 걷기와 대기',map:'D',sub:'걷기 약 3분 · 170m (30m → 85m → 60m)'},
-  {k:'pt',time:'12:24',map:'H',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 운행 정보(실시간)','https://www.jr-shikoku.co.jp/info/'],['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
+  {k:'pt',time:'12:24',map:'H',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 열차 위치(지도)','https://train.jr-shikoku.co.jp/sp.html'],['JR시코쿠 운행 정보(한국어)','https://www.jr-shikoku.co.jp/info/index_kr.html'],['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:66,stops:UZ.slice().reverse(),title:'특급 우즈시오',sub:'약 1시간 6분 · 정차역 7개 · 행선지가 다카마쓰인지 확인'},
   {k:'pt',time:'13:30',title:'JR 다카마쓰역 도착'},
   {k:'walk',min:17,title:'공항 버스 정류장까지 걷기와 대기',map:'E',sub:'걷기 약 12분 · 약 830m',tip:'환승 대기가 길 수 있어. 귀국 날은 넉넉하게 잡아.'},
