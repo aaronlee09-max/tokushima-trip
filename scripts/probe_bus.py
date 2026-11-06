@@ -50,6 +50,9 @@ for name, path, q in [("노선조회", "busrouteservice/v2/getBusRouteListv2", {
                       ("도착정보", "busarrivalservice/v2/getBusArrivalListv2", {"stationId": "0"})]:
     r = get(path, **q)
     print(name, "→", json.dumps(r, ensure_ascii=False)[:250].replace(KEY, "***"))
+print("\n=== 8-1번(routeId 208000010) 위치 ===")
+r81 = get("buslocationservice/v2/getBusLocationListv2", routeId="208000010")
+print(json.dumps(r81, ensure_ascii=False, indent=1)[:2500].replace(KEY, "***"))
 routes = get("busrouteservice/v2/getBusRouteListv2", keyword="8842")
 show("노선 검색(8842)", routes)
 lst = find(routes, "busRouteList")
