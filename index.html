@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793949290">
+<meta name="build" content="1793949359">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -873,9 +873,15 @@ var EVS={
  f4:['진에어 LJ300 · 다카마쓰 → 인천','2027-01-22T16:50:00+09:00','16:50 출발(일본 시각) · 18:35 인천 도착(한국 시각) · 예정 시각'],
  bus2:['공항버스 8842 · 인천T2 → 과천청사','2027-01-22T20:30:00+09:00','인천T2 승차 · 22:00쯤 과천청사 도착 (추천 시각)']
 };
+function fltBoards(sec){
+  var dep=sec==='dep',nm=dep?'가는 편':'오는 편',w=dep?'인천 → 다카마쓰':'다카마쓰 → 인천 도착';
+  function bd(mode,title){return '<div class="board"><div class="bh"><b>'+nm+' · '+title+'</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+w+'</div><div class="br" data-flt="'+sec+':'+mode+'"></div><div class="bf">인천공항 공식 운항 현황 · 5분 간격(출발 전날까지는 1시간) 갱신</div></div>'}
+  return bd('mine','내 비행기')+bd('other','다른 편');
+}
 function bdHtml(t){
   if(t==='bus81') return '<div class="board"><div class="bh"><b>버스 전광판</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">정류장 「나눔초등학교.오뚜기식품.두산벤처다임」(10168) · 평촌동행정복지센터 방면</div><div class="br" data-bus="1"></div><div class="bf">441·502·540·777 중 가까운 순서 · 경기도 버스위치 정보 5분 간격 갱신 · 남은 시간·도착 예상은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
-  if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return '<div class="board"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>';}
+  if(t==='flt:arr') return fltBoards('arr');
+  if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return (t==='e:f1'?'':'')+'<div class="board"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>'+(t==='e:f1'?fltBoards('dep'):'');}
   var C={a:['다카마쓰역 · 도쿠시마 방면 출발','a','dep','도쿠시마'],b:['도쿠시마역 · 다카마쓰 방면 출발','b','dep','다카마쓰'],c:['도쿠시마역 · 도착 예정 (다카마쓰발)','a','arr','도쿠시마']}[t];
   if(!C) return '';
   return '<div class="board"><div class="bh"><b>특급 우즈시오 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+C[0]+'</div><div class="br" data-k="'+C[1]+'" data-m="'+C[2]+'" data-d="'+C[3]+'"></div><div class="bf">시각표 기준 · 실제 지연은 반영되지 않아</div></div>';
@@ -1066,7 +1072,7 @@ DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서
   {k:'walk',min:157,title:'체크인, 짐 부치기, 출국 심사, 대기',sub:'약 2시간 37분 (여유 포함)'},
   {k:'pt',time:'16:50',bd:'e:f4',title:'다카마쓰 공항 출발',sub:'진에어 LJ300',l:TF.concat([['운항 기록',REF.lj300]])},
   {k:'plane',min:105,title:'LJ300 비행',sub:'약 1시간 45분 · 다카마쓰 → 인천'},
-  {k:'pt',time:'18:35',icn:1,warn:'한국 입국 심사는 내국인 줄로 가. 짐을 찾고 나서 버스 시간(20:30)에 맞춰 이동해. 19:15 버스는 너무 이르니까 서두르지 마.',title:'인천국제공항 도착'},
+  {k:'pt',time:'18:35',bd:'flt:arr',icn:1,warn:'한국 입국 심사는 내국인 줄로 가. 짐을 찾고 나서 버스 시간(20:30)에 맞춰 이동해. 19:15 버스는 너무 이르니까 서두르지 마.',title:'인천국제공항 도착'},
   {k:'walk',title:'한국 입국 심사와 짐 찾기',sub:'약 1시간 (추정)'},
   {k:'pt',time:'20:30',bd:'e:bus2',title:'인천T2에서 공항버스 8842 승차',sub:'19:15 버스는 너무 일러서 못 타. 20:30이 추천이야. 다음은 21:35.',l:[['버스타고 예매',BUSTAGO]]},
   {k:'bus',title:'공항버스 8842 · 과천청사까지',sub:'약 1시간 30분 · 정류장 6개',stops:BUS_BACK,so:{cls:'bus',label:'정류장 보기 · 6개 (인천T2 → 과천청사)',note:BNOTE}},
@@ -1221,28 +1227,25 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   function loadFlt(){try{fetch('status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){FLT=j}).catch(function(){})}catch(e){}}
   loadFlt(); setInterval(loadFlt,300000);
   function hm(iso){var d=new Date(iso);var j=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);return z(j.getHours())+':'+z(j.getMinutes())}
-  function fltLive(key){
-    var sec=key==='f1'?'dep':key==='f4'?'arr':'',mine=key==='f1'?'LJ299':'LJ300',arr=key==='f4';
-    if(!sec||!FLT||!FLT[sec]||!FLT[sec].flights)return '';
-    if(Date.now()-new Date(FLT[sec].updated).getTime()>10800000)return '';
-    var F=FLT[sec].flights,ids=Object.keys(F).filter(function(k){return F[k]&&F[k].sched}).sort(function(a,c){return new Date(F[a].sched)-new Date(F[c].sched)});
-    if(!ids.length)return '';
+  function fltRows(spec){
+    var p=spec.split(':'),sec=p[0],mode=p[1],arr=sec==='arr',mine=arr?'LJ300':'LJ299',S=FLT&&FLT[sec];
+    if(!S||!S.flights)return '<div class="none">아직 자료가 없어. 인천공항 자료는 출발 6일 전쯤부터 올라와.</div>';
+    var age=Date.now()-new Date(S.updated).getTime();
+    if(age>10800000)return '<div class="none">자료가 오래됐어(마지막 갱신 '+hm(S.updated)+').</div>';
+    var F=S.flights,ids=Object.keys(F).filter(function(k){return F[k]&&F[k].sched&&(mode==='mine'?k===mine:k!==mine)}).sort(function(a,c){return new Date(F[a].sched)-new Date(F[c].sched)});
+    if(!ids.length)return '<div class="none">'+(mode==='mine'?esc(mine)+' 정보가 아직 없어.':'같은 날 다른 편이 없어.')+'</div>';
     var tm={P01:'제1터미널',P02:'탑승동',P03:'제2터미널'};
-    function line(id){
-      var f=F[id],est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),bits=[];
-      bits.push('<b>'+esc((f.airline?f.airline+' ':'')+id)+'</b> '+(arr?'인천 도착 ':'')+'예정 '+hm(f.sched)+(dm?' → 변경 '+hm(est)+(dm>0?' (+'+dm+'분 지연)':' ('+dm+'분)'):' (변동 없음)'));
-      if(f.remark)bits.push(esc(f.remark));
-      if(!arr&&f.gate)bits.push('게이트 '+esc(f.gate));
-      if(!arr&&f.counter)bits.push('카운터 '+esc(f.counter));
-      if(f.terminal)bits.push(tm[f.terminal]||esc(f.terminal));
-      if(arr&&f.belt&&f.belt!=='-')bits.push('수하물 '+esc(f.belt)+'번');
-      if(arr&&f.exit&&f.exit!=='-')bits.push('출구 '+esc(f.exit));
-      return bits.join(' · ');
-    }
-    var others=ids.filter(function(k){return k!==mine}),h='<small class="live">';
-    h+='<b>내 비행기</b> · 실시간(인천공항 공식) · 한국 시각<br>'+(F[mine]&&F[mine].sched?line(mine):esc(mine)+' 정보가 아직 없어');
-    if(others.length)h+='<span style="display:block;height:5px"></span><b>같은 날 다카마쓰'+(arr?'발':'행')+' 다른 편</b><br>'+others.map(line).join('<br>');
-    return h+'<br>갱신 '+hm(FLT[sec].updated)+'</small>';
+    return ids.map(function(id){
+      var f=F[id],est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),sub=[];
+      sub.push('예정 '+hm(f.sched)+(dm>0?' · +'+dm+'분 지연':dm<0?' · '+(-dm)+'분 빠름':' · 변동 없음'));
+      if(f.remark&&!(dm>0&&f.remark==='지연'))sub.push(esc(f.remark));
+      if(!arr&&f.gate)sub.push('게이트 '+esc(f.gate));
+      if(!arr&&f.counter)sub.push('카운터 '+esc(f.counter));
+      if(f.terminal)sub.push(tm[f.terminal]||esc(f.terminal));
+      if(arr&&f.belt&&f.belt!=='-')sub.push('수하물 '+esc(f.belt)+'번');
+      if(arr&&f.exit&&f.exit!=='-')sub.push('출구 '+esc(f.exit));
+      return '<div class="row'+(dm>=10?' soon':'')+'"><b>'+esc((f.airline?f.airline+' ':'')+id)+'</b><span>'+hm(est)+(arr?' 도착':' 출발')+'</span><small>'+sub.join(' · ')+' · 갱신 '+hm(S.updated)+'</small></div>';
+    }).join('');
   }
   function evRow(key,one){
     var E=EVS[key],at=new Date(E[1]).getTime(),d=Math.floor((at-Date.now())/1000),cls='row',txt;
@@ -1250,12 +1253,13 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     else if(d<=0){cls+=' soon';txt='곧 출발'}
     else{var days=Math.floor(d/86400),r2=d%86400;
       txt=(days?days+'일 ':'')+fmt(r2);if(d<60)cls+=' soon'}
-    return '<div class="'+cls+(one?' one':'')+'">'+(one?'':'<b>'+E[0]+'</b>')+'<span>'+txt+'</span><small>'+E[2]+'</small>'+fltLive(key)+'</div>';
+    return '<div class="'+cls+(one?' one':'')+'">'+(one?'':'<b>'+E[0]+'</b>')+'<span>'+txt+'</span><small>'+E[2]+'</small></div>';
   }
   function tick(){
     var n=jst(),hh=z(n.getHours())+':'+z(n.getMinutes())+':'+z(n.getSeconds());
     document.querySelectorAll('.nxnow').forEach(function(e){e.textContent=hh});
     document.querySelectorAll('.br[data-ev]').forEach(function(el){var k=el.getAttribute('data-ev');el.innerHTML=k==='next'?['bus1','f1','lim1','f4','bus2'].filter(function(x){return new Date(EVS[x][1]).getTime()>Date.now()-60000}).slice(0,3).map(evRow).join(''):evRow(k,true)});
+    document.querySelectorAll('.br[data-flt]').forEach(function(el){el.innerHTML=fltRows(el.getAttribute('data-flt'))});
     document.querySelectorAll('.br[data-bus]').forEach(function(el){el.innerHTML=busRows()});
     document.querySelectorAll('.br[data-k]').forEach(function(el){rows(el,el.getAttribute('data-k'),el.getAttribute('data-m'),el.getAttribute('data-d'))});
   }
@@ -1364,7 +1368,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261106071450';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261106071600';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>
