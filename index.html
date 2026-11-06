@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793927765">
+<meta name="build" content="1793927999">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -194,6 +194,7 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
   .how,.fact,.glance,.warn li{break-inside:avoid;box-shadow:none!important}
   a{color:inherit!important;text-decoration:none!important}
 }
+a.btn{text-decoration:none}
 .lmap{height:300px;width:100%}
 .leaflet-container{font-family:inherit}
 </style>
@@ -229,11 +230,11 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
   <div class="how"><h3>1/22(금) 오는 날 출발 시간표</h3><div class="tbl"><table class="src"><thead><tr><th>시각</th><th>무엇을 · 어디서</th></tr></thead><tbody><tr><td><b>12:15</b></td><td>늦어도 이 시각까지 역 도착<br><span style="color:var(--muted)">도쿠시마역</span></td></tr><tr><td><b>12:24</b></td><td>특급 우즈시오 14호 출발<br><span style="color:var(--muted)">JR 도쿠시마역</span></td></tr><tr><td><b>13:47</b></td><td>공항 버스 탑승<br><span style="color:var(--muted)">다카마쓰역 앞</span></td></tr><tr><td><b>14:13</b></td><td>공항 도착 · 체크인<br><span style="color:var(--muted)">다카마쓰 공항</span></td></tr><tr><td><b>16:50</b></td><td>LJ300 출발<br><span style="color:var(--muted)">다카마쓰 → 인천</span></td></tr><tr><td><b>18:35</b></td><td>도착 · 입국 · 짐 찾기<br><span style="color:var(--muted)">인천공항 제2터미널</span></td></tr><tr><td><b>20:30</b></td><td>공항버스 8842 승차<br><span style="color:var(--muted)">인천공항 제2터미널</span></td></tr><tr><td><b>22:00</b></td><td>과천청사 도착<br><span style="color:var(--muted)">정부과천청사</span></td></tr></tbody></table></div></div>
   <p class="note" style="margin:0 0 10px">항공 시각은 최근 운항 기록의 예정 시각이고, 열차·버스는 2026년 10월 시각표 기준이야. 예매 후 꼭 다시 확인해.</p>
   <div class="tools">
-    <button class="btn sm" id="savehtml" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>오프라인 HTML 저장</button>
-    <button class="btn sm" id="printpg" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>PDF·인쇄</button>
+    <a class="btn sm" id="savehtml" href="tokushima-trip-plan-offline.html" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>오프라인 HTML 받기</a>
+    <a class="btn sm" id="printpg" href="tokushima-trip-plan.pdf" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M7 14h10v7H7z"/></svg>PDF 받기</a>
     <button class="btn sm" id="copylink" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>링크 복사</button>
-    <p class="msg" style="margin:6px 0"><b>바로 받기(최신 파일)</b>: <a href="tokushima-trip-plan.pdf" download>PDF 받기</a> · <a href="tokushima-trip-plan-offline.html" download>오프라인 HTML 받기</a></p>
-    <p class="msg" id="savemsg">HTML 파일은 인터넷 없이도 열려. 날씨·지도는 온라인에서만 보여. 폰에서 안 열리면 PDF로 저장해.</p>
+    
+    <p class="msg" id="savemsg">받는 파일은 항상 최신이고 모두 같은 파일이야. HTML은 인터넷 없이도 열려(날씨·지도는 온라인에서만 보여). 폰은 「파일」 앱의 다운로드 폴더에서 열고, 안 열리면 PDF를 써.</p>
   </div>
 </header>
 
@@ -1019,6 +1020,11 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 (function(){
   var b=document.getElementById('savehtml'),m=document.getElementById('savemsg'); if(!b) return;
   function say(t){m.textContent=t}
+  document.getElementById('copylink').addEventListener('click',function(){
+    var u=location.href.split('#')[0];
+    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){say('주소를 복사했어.')})
+     .catch(function(){say('복사가 안 돼. 주소창의 주소를 직접 복사해 줘.')});
+  });
   function ymd(){var d=new Date();function z(n){return (n<10?'0':'')+n}return d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())}
   function save(t){
     var day=ymd();
@@ -1029,6 +1035,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     setTimeout(function(){URL.revokeObjectURL(url)},30000);
     say('저장했어. 폰은 「파일」 앱의 다운로드 폴더에서 열어. 안 열리면 PDF·인쇄를 써.');
   }
+  if(b.getAttribute('href')) return; /* 사이트 버전: 모두 같은 고정 파일을 받는다 */
   b.addEventListener('click',function(){
     say('저장하는 중...');
     var u=location.href.split('#')[0];
@@ -1039,11 +1046,6 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   });
   document.getElementById('printpg').addEventListener('click',function(){
     try{window.print()}catch(e){say('여기서는 인쇄가 막혀 있어. 브라우저 메뉴의 공유 → PDF를 써.')}
-  });
-  document.getElementById('copylink').addEventListener('click',function(){
-    var u=location.href.split('#')[0];
-    (navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){say('주소를 복사했어.')})
-     .catch(function(){say('복사가 안 돼. 주소창의 주소를 직접 복사해 줘.')});
   });
 })();
 
