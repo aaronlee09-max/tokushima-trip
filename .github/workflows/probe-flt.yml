@@ -1,0 +1,14 @@
+name: 인천 출발편 응답 확인
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 응답 확인
+        env:
+          INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
+        run: python3 scripts/probe_flt.py
