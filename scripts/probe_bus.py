@@ -50,6 +50,19 @@ for name, path, q in [("노선조회", "busrouteservice/v2/getBusRouteListv2", {
                       ("도착정보", "busarrivalservice/v2/getBusArrivalListv2", {"stationId": "0"})]:
     r = get(path, **q)
     print(name, "→", json.dumps(r, ensure_ascii=False)[:250].replace(KEY, "***"))
+print("\n=== 정류소 검색(오뚜기식품) ===")
+st = get("busstationservice/v2/getBusStationListv2", keyword="오뚜기식품")
+print(json.dumps(st, ensure_ascii=False, indent=1)[:2200].replace(KEY, "***"))
+sl = find(st, "busStationList")
+if isinstance(sl, dict): sl = [sl]
+for x in (sl or []):
+    if str(x.get("mobileNo", "")).strip() == "10164" or "10164" in json.dumps(x, ensure_ascii=False):
+        sid = x.get("stationId")
+        print("\n--- 10164 정류소 stationId", sid, "---")
+        via = get("busstationservice/v2/getBusStationViaRouteListv2", stationId=sid)
+        print(json.dumps(via, ensure_ascii=False, indent=1)[:4500].replace(KEY, "***"))
+        arr = get("busarrivalservice/v2/getBusArrivalListv2", stationId=sid)
+        print("도착정보 →", json.dumps(arr, ensure_ascii=False)[:600].replace(KEY, "***"))
 print("\n=== 8-1번(routeId 208000010) 위치 ===")
 r81 = get("buslocationservice/v2/getBusLocationListv2", routeId="208000010")
 print(json.dumps(r81, ensure_ascii=False, indent=1)[:2500].replace(KEY, "***"))
