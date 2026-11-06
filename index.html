@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793929520">
+<meta name="build" content="1793929812">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -195,6 +195,21 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
   a{color:inherit!important;text-decoration:none!important}
 }
 a.btn{text-decoration:none}
+.board{background:#0b0f14;color:#ffd24a;border-radius:12px;padding:10px 12px;margin:0 0 10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Noto Sans KR",monospace}
+.board .bh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border-bottom:1px solid #2a3340;padding-bottom:6px;margin-bottom:4px;color:#e8edf3}
+.board .bh b,.board .bh span{white-space:nowrap}
+.board .bh{flex-wrap:wrap}
+.board .bh i{font-style:normal;color:#7dff9b}
+.board .bt{font-size:12px;color:#8fb4ff;margin:8px 0 2px}
+.board .row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:4px 0;border-bottom:1px dashed #1f2832}
+.board .row b{font-weight:600;color:#ffd24a}
+.board .row span{color:#7dff9b;text-align:right;white-space:nowrap}
+.board .row small{grid-column:1/3;color:#9aa7b5;font-size:11px}
+.board .row.soon span{color:#ff6b5e;animation:bl 1s steps(2) infinite}
+.board .none{color:#9aa7b5;padding:4px 0;font-size:13px}
+.board .bf{margin-top:8px;font-size:11px;color:#7d8a98}
+@keyframes bl{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.board .row.soon span{animation:none}}
 .lmap{height:300px;width:100%}
 .leaflet-container{font-family:inherit}
 </style>
@@ -265,8 +280,13 @@ a.btn{text-decoration:none}
 
 <section id="trans"><h2>항공·기차 정보</h2>
   <div class="how"><h3>다음 우즈시오 찾기 (시각표 기준)</h3>
-    <div class="calc" id="nxlive" aria-live="polite"><label>지금 일본 시각 <b id="nxnow">--:--:--</b> (시각표 기준 자동 갱신)</label>
-      <output id="nxl1">계산 중...</output><output id="nxl2" style="margin-top:6px">계산 중...</output></div>
+    <div class="board" id="board" aria-live="off">
+      <div class="bh"><b>특급 우즈시오 전광판</b><span>일본 시각 <i id="nxnow">--:--:--</i></span></div>
+      <div class="bt">다카마쓰역 · 도쿠시마 방면 출발</div><div class="br" id="bd1"></div>
+      <div class="bt">도쿠시마역 · 다카마쓰 방면 출발</div><div class="br" id="bd2"></div>
+      <div class="bt">도쿠시마역 · 도착 예정 (다카마쓰발)</div><div class="br" id="bd3"></div>
+      <div class="bf">시각표 기준 · 실제 지연은 반영되지 않아</div>
+    </div>
     <div class="calc"><label for="nxdir">방향</label>
       <select id="nxdir"><option value="a">다카마쓰 → 도쿠시마 (1/19)</option><option value="b">도쿠시마 → 다카마쓰 (1/22)</option></select>
       <label for="nxt" style="margin-top:8px">이 시각 이후에 탈 거야</label>
@@ -1097,20 +1117,30 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   var d=document.getElementById('nxdir'),t=document.getElementById('nxt'),o=document.getElementById('nxout'); if(!d||!t||!o) return;
   function m(x){var p=x.split(':');return +p[0]*60+ +p[1]}
   var TT=T;
-  function jst(){var n=new Date(Date.now()+(9*60+new Date().getTimezoneOffset())*60000);return n}
+  function jst(){return new Date(Date.now()+(9*60+new Date().getTimezoneOffset())*60000)}
   function z(n){return (n<10?'0':'')+n}
-  function line(k,name){
-    var n=jst(),sec=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),L=TT[k],i,r,dep,arr;
-    for(i=0;i<L.length;i++){r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;
-      if(sec>=dep&&sec<arr){var left=Math.ceil((arr-sec)/60);return name+': 우즈시오 '+r[0]+' 운행 중 · 도착까지 약 '+left+'분 ('+r[2]+' 도착 예정)'}
-      if(sec<dep){var w=Math.ceil((dep-sec)/60);return name+': 다음 우즈시오 '+r[0]+' '+r[1]+' 출발 · '+(w>=60?Math.floor(w/60)+'시간 ':'')+w%60+'분 뒤 ('+(m(r[2])-m(r[1]))+'분 걸려, '+r[2]+' 도착)'}}
-    return name+(k==='b'?': 내가 가진 시각표(11:24~13:24 열차)는 끝났어. 그 뒤 열차는 JR 공식 시각표로 확인해.':': 오늘 시각표의 열차는 모두 끝났어(막차 22:22). 내일 시각표를 확인해.');
+  function fmt(sec){var mn=Math.ceil(sec/60);if(mn<=0)return '곧';return (mn>=60?Math.floor(mn/60)+'시간 ':'')+(mn%60?mn%60+'분 ':'')+'후'}
+  function rows(el,k,mode,dest){
+    var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,cls,txt,sub;
+    for(i=0;i<L.length&&out.length<3;i++){
+      r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;key=mode==='dep'?dep:arr;
+      if(mode==='dep'&&now>=dep) continue;
+      if(mode==='arr'&&now>=arr) continue;
+      left=key-now;
+      if(mode==='dep'){txt=left<60?'곧 출발':fmt(left)+' 출발';sub=r[1]+' 출발 · '+r[2]+' 도착'}
+      else{txt=now>=dep?(left<60?'곧 도착':fmt(left)+' 도착'):fmt(left)+' 도착';sub=(now>=dep?'운행 중 · ':'출발 전 · ')+r[1]+' 출발 · '+r[2]+' 도착'}
+      cls=left<60?'row soon':'row';
+      out.push('<div class="'+cls+'"><b>'+r[0]+' '+dest+'행</b><span>'+txt+'</span><small>'+sub+'</small></div>');
+    }
+    el.innerHTML=out.length?out.join(''):'<div class="none">'+(k==='b'&&mode==='dep'?'내가 가진 시각표(11:24~13:24)의 열차는 끝났어. 그 뒤는 JR 공식 시각표로 확인해.':'오늘 시각표의 열차는 모두 끝났어.')+'</div>';
   }
   function tick(){
-    var n=jst(),e=document.getElementById('nxnow'),a=document.getElementById('nxl1'),b=document.getElementById('nxl2');
-    if(!e||!a||!b) return;
+    var n=jst(),e=document.getElementById('nxnow');
+    if(!e) return;
     e.textContent=z(n.getHours())+':'+z(n.getMinutes())+':'+z(n.getSeconds());
-    a.textContent=line('a','다카마쓰 → 도쿠시마'); b.textContent=line('b','도쿠시마 → 다카마쓰');
+    rows(document.getElementById('bd1'),'a','dep','도쿠시마');
+    rows(document.getElementById('bd2'),'b','dep','다카마쓰');
+    rows(document.getElementById('bd3'),'a','arr','도쿠시마');
   }
   tick(); setInterval(tick,1000);
   function run(){
