@@ -8,9 +8,9 @@ BASE = "https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/"
 JST = dt.timezone(dt.timedelta(hours=9))
 # 호출 한도(개발 계정 하루 500건)를 지키려고 필요한 시간대에만 부른다.
 def T(y, m, d, h, mi): return dt.datetime(y, m, d, h, mi, tzinfo=dt.timezone(dt.timedelta(hours=9)))
-TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜, 조회 시작, 조회 끝) — 다카마쓰로 가는 LJ299만
+TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜, 조회 시작, 조회 끝) — 다카마쓰행 전 편(편명 무관)
     # 인천 API는 조회일 기준 -3일~+6일만 주므로 1/12부터 조회가 의미 있다.
-    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 12, 0, 0), T(2027, 1, 19, 23, 59)),
+    ("TAK", "", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 12, 0, 0), T(2027, 1, 19, 23, 59)),
 ]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "status.json")
 
@@ -21,8 +21,9 @@ def iso(s):
     return ""
 
 def call(op, flight, day):
-    q = {"serviceKey": KEY, "type": "json", "searchdtCode": "S", "searchDate": day, "flightId": flight,
-         "searchFrom": "0000", "searchTo": "2400", "passengerOrCargo": "P", "numOfRows": "20", "pageNo": "1"}
+    # 편명과 상관없이 목적지(다카마쓰 TAK)로 거른다. 확인용 호출에서 airportCode 로 걸러짐을 확인함
+    q = {"serviceKey": KEY, "type": "json", "searchdtCode": "S", "searchDate": day, "airportCode": "TAK",
+         "searchFrom": "0000", "searchTo": "2400", "passengerOrCargo": "P", "numOfRows": "50", "pageNo": "1"}
     url = BASE + op + "?" + urllib.parse.urlencode(q, safe="%")
     with urllib.request.urlopen(url, timeout=25) as r:
         return json.loads(r.read().decode("utf-8"))
@@ -64,20 +65,22 @@ def main():
         old = json.load(open(OUT, encoding="utf-8"))
     except Exception:
         pass
-    flights = dict(old.get("flights") or {})
+    flights = {}
     for name, flight, op, day, _s, _e in active:
         try:
-            lst = [i for i in items(call(op, flight, day)) if pick(i, "flightId", "flightid") == flight]
-            if not lst:
-                flights[name] = {"error": "해당 편 정보 없음"}; continue
-            i = lst[0]
-            flights[name] = {
-                "sched": iso(pick(i, "scheduleDateTime")), "est": iso(pick(i, "estimatedDateTime")),
-                "remark": pick(i, "remark"), "gate": pick(i, "gateNumber"),
-                "counter": pick(i, "chkinRange"), "terminal": pick(i, "terminalId"),
-                "belt": pick(i, "carousel"), "exit": pick(i, "exitNumber")}
+            for i in items(call(op, flight, day)):
+                if pick(i, "codeshare").lower() == "slave":   # 공동운항 중복 줄은 뺀다
+                    continue
+                fid = pick(i, "flightId")
+                if not fid:
+                    continue
+                flights[fid] = {
+                    "dep": 1, "airline": pick(i, "airline"),
+                    "sched": iso(pick(i, "scheduleDateTime")), "est": iso(pick(i, "estimatedDateTime")),
+                    "remark": pick(i, "remark"), "gate": pick(i, "gateNumber"),
+                    "counter": pick(i, "chkinRange"), "terminal": pick(i, "terminalId")}
         except Exception as e:
-            flights[name] = {"error": type(e).__name__}
+            print("호출 실패:", type(e).__name__); return
     out = {"updated": now.isoformat(timespec="seconds"), "flights": flights}
     # 내용이 같아도 25분마다는 갱신 시각을 새로 적어 둔다(사이트는 1시간 넘은 자료를 숨기기 때문)
     try:
