@@ -7,8 +7,8 @@ KEY = os.environ.get("INCHEON_API_KEY", "")
 BASE = "https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/"
 JST = dt.timezone(dt.timedelta(hours=9))
 TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜)
-    ("LJ299", "LJ299", "getPassengerDeparturesDeOdp", "20270119"),
-    ("LJ300", "LJ300", "getPassengerArrivalsDeOdp", "20270122"),
+    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119"),
+    ("LJ300", "LJ300", "getFltArrivalsDeOdp", "20270122"),
 ]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "status.json")
 
@@ -19,8 +19,8 @@ def iso(s):
     return ""
 
 def call(op, flight, day):
-    q = {"serviceKey": KEY, "type": "json", "searchday": day, "flight_id": flight,
-         "from_time": "0000", "to_time": "2400", "lang": "K", "numOfRows": "20", "pageNo": "1"}
+    q = {"serviceKey": KEY, "type": "json", "searchdtCode": "S", "searchDate": day, "flightId": flight,
+         "searchFrom": "0000", "searchTo": "2400", "passengerOrCargo": "P", "numOfRows": "20", "pageNo": "1"}
     url = BASE + op + "?" + urllib.parse.urlencode(q, safe="%")
     with urllib.request.urlopen(url, timeout=25) as r:
         return json.loads(r.read().decode("utf-8"))
@@ -60,7 +60,7 @@ def main():
                 "sched": iso(pick(i, "scheduleDateTime")), "est": iso(pick(i, "estimatedDateTime")),
                 "remark": pick(i, "remark"), "gate": pick(i, "gatenumber"),
                 "counter": pick(i, "chkinrange"), "terminal": pick(i, "terminalId"),
-                "belt": pick(i, "carousel", "exitnumber")}
+                "belt": pick(i, "carousel"), "exit": pick(i, "exitNumber")}
         except Exception as e:
             out["flights"][name] = {"error": type(e).__name__}
     old = None
