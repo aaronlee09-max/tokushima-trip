@@ -71,7 +71,12 @@ def main():
         except Exception as e:
             flights[name] = {"error": type(e).__name__}
     out = {"updated": now.isoformat(timespec="seconds"), "flights": flights}
-    if old.get("flights") == flights:
+    # 내용이 같아도 25분마다는 갱신 시각을 새로 적어 둔다(사이트는 1시간 넘은 자료를 숨기기 때문)
+    try:
+        age = (now - dt.datetime.fromisoformat(old.get("updated", ""))).total_seconds()
+    except Exception:
+        age = 1e9
+    if old.get("flights") == flights and age < 25 * 60:
         print("변화 없음"); return
     json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("저장:", json.dumps(flights, ensure_ascii=False))
