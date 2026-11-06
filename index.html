@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793922331">
+<meta name="build" content="1793926715">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -500,7 +500,7 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 </svg><p class="mini-n">층 구조는 일반적인 인천공항 이용 순서를 그린 거야. 진에어는 T2의 D·E 카운터를 쓴다고 해(뉴스 기준). 출발 전에 예약 안내나 앱에서 한 번 더 확인해.</p></div>
 
   <div class="how"><h3>2. 공항에서 하는 순서 (처음 타는 사람용)</h3>
-    <p class="note" style="margin:0 0 6px">층별·시설 위치는 <a href="https://airport.kr/geomap/ap_ko/view.do?type=2&amp;alertType=0&amp;tmnlId=P01#/search" target="_blank" rel="noopener">인천공항 공식 지도</a>에서 볼 수 있어. 이 링크는 터미널 1 기준일 수 있어. 진에어는 터미널 2라서, 열리면 터미널을 2로 바꿔서 봐(확인 필요).</p>
+    <p class="note" style="margin:0 0 6px">층별·시설 위치는 <a href="https://airport.kr/geomap/ap_ko/view.do?type=2&amp;alertType=0&amp;tmnlId=P01#/search" target="_blank" rel="noopener">인천공항 공식 지도</a>에서 볼 수 있어. 제1터미널과 제2터미널이 같은 지도에 나와. 진에어는 제2터미널이야.</p>
     <iframe src="https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01" title="인천공항 공식 지도" loading="lazy" style="width:100%;height:480px;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 8px;background:#f4f7fb"></iframe><p class="note" style="margin:0 0 8px">지도가 안 보이면 위의 「인천공항 공식 지도」 링크로 열어 봐.</p>
     <ol>
       <li><b>체크인(탑승 수속)</b>: 항공사 카운터나 무인 체크인 기계에서 여권을 보여 줘. 탑승권(보딩패스)을 받고 큰 짐은 여기서 부쳐. 기내 반입 짐 무게 기준은 항공권에 적혀 있어(확인 필요).</li>
@@ -721,7 +721,7 @@ var DAYS = [
    {t:'16:50 다카마쓰 출발', d:'진에어 LJ300으로 인천 도착 18:35 예정', s:'최근 운항 시각 기준, 예매 링크에서 확인', l:[['트립닷컴',U.trip_fl],['스카이스캐너',U.sky]]}
  ], sum:[['총 이동 시간','약 1시간 46분'],['비용','4,370엔 (약 3만 6,900원)']], calc:true}
 ];
-var ICNMAP='<iframe src="https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01" title="인천공항 공식 지도" loading="lazy" style="width:100%;height:480px;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 8px;background:#f4f7fb"></iframe><p class="note" style="margin:0 0 8px">인천공항 공식 지도야. 터미널 2(진에어)로 바꿔서 봐.</p>';
+var ICNMAP='<iframe src="https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01" title="인천공항 공식 지도" loading="lazy" style="width:100%;height:480px;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 8px;background:#f4f7fb"></iframe><p class="note" style="margin:0 0 8px">인천공항 공식 지도야. 제1·제2터미널이 같이 나와. 진에어는 제2터미널이야.</p>';
 var TAKMAP='<a href="https://www.takamatsu-airport.com/guide/map.php" target="_blank" rel="noopener"><img src="https://www.takamatsu-airport.com/assets/images/guide/map_261015.png" alt="다카마쓰 공항 공식 안내 지도" loading="lazy" style="width:100%;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 6px;background:#fff" onerror="this.parentNode.style.display=\'none\'"></a><p class="note" style="margin:0 0 8px">다카마쓰 공항 공식 지도야. 누르면 공식 페이지가 열려.</p>';
 var BUSTAGO='https://m.bustago.or.kr:444/mobus/btmho/BTMHORN0001.do?type=k';
 var BNOTE='공항버스 8842 시간표(2026-04-11 기준)로 만들었어. 도로 사정과 1월 시간표 변경으로 달라질 수 있어(확인 필요).';
