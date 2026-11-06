@@ -1,0 +1,14 @@
+name: 경기도 버스 노선 확인
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 확인
+        env:
+          INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
+        run: python3 scripts/probe_bus2.py
