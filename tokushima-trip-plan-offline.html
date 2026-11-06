@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793929335">
+<meta name="build" content="1793929520">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -284,6 +284,8 @@ a.btn{text-decoration:none}
 
 <section id="trans"><h2>항공·기차 정보</h2>
   <div class="how"><h3>다음 우즈시오 찾기 (시각표 기준)</h3>
+    <div class="calc" id="nxlive" aria-live="polite"><label>지금 일본 시각 <b id="nxnow">10:45:20</b> (시각표 기준 자동 갱신)</label>
+      <output id="nxl1">다카마쓰 → 도쿠시마: 다음 우즈시오 23호 17:10 출발 · 6시간 25분 뒤 (67분 걸려, 18:17 도착)</output><output id="nxl2" style="margin-top:6px">도쿠시마 → 다카마쓰: 다음 우즈시오 12호 11:24 출발 · 39분 뒤 (66분 걸려, 12:30 도착)</output></div>
     <div class="calc"><label for="nxdir">방향</label>
       <select id="nxdir"><option value="a">다카마쓰 → 도쿠시마 (1/19)</option><option value="b">도쿠시마 → 다카마쓰 (1/22)</option></select>
       <label for="nxt" style="margin-top:8px">이 시각 이후에 탈 거야</label>
@@ -1113,6 +1115,23 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
          b:[['12호','11:24','12:30'],['14호','12:24','13:30'],['16호','13:24','14:30']]};
   var d=document.getElementById('nxdir'),t=document.getElementById('nxt'),o=document.getElementById('nxout'); if(!d||!t||!o) return;
   function m(x){var p=x.split(':');return +p[0]*60+ +p[1]}
+  var TT=T;
+  function jst(){var n=new Date(Date.now()+(9*60+new Date().getTimezoneOffset())*60000);return n}
+  function z(n){return (n<10?'0':'')+n}
+  function line(k,name){
+    var n=jst(),sec=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),L=TT[k],i,r,dep,arr;
+    for(i=0;i<L.length;i++){r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;
+      if(sec>=dep&&sec<arr){var left=Math.ceil((arr-sec)/60);return name+': 우즈시오 '+r[0]+' 운행 중 · 도착까지 약 '+left+'분 ('+r[2]+' 도착 예정)'}
+      if(sec<dep){var w=Math.ceil((dep-sec)/60);return name+': 다음 우즈시오 '+r[0]+' '+r[1]+' 출발 · '+(w>=60?Math.floor(w/60)+'시간 ':'')+w%60+'분 뒤 ('+(m(r[2])-m(r[1]))+'분 걸려, '+r[2]+' 도착)'}}
+    return name+(k==='b'?': 내가 가진 시각표(11:24~13:24 열차)는 끝났어. 그 뒤 열차는 JR 공식 시각표로 확인해.':': 오늘 시각표의 열차는 모두 끝났어(막차 22:22). 내일 시각표를 확인해.');
+  }
+  function tick(){
+    var n=jst(),e=document.getElementById('nxnow'),a=document.getElementById('nxl1'),b=document.getElementById('nxl2');
+    if(!e||!a||!b) return;
+    e.textContent=z(n.getHours())+':'+z(n.getMinutes())+':'+z(n.getSeconds());
+    a.textContent=line('a','다카마쓰 → 도쿠시마'); b.textContent=line('b','도쿠시마 → 다카마쓰');
+  }
+  tick(); setInterval(tick,1000);
   function run(){
     if(!t.value){o.textContent='시각을 넣으면 다음 열차와 걸리는 시간을 알려줘.';return}
     var now=m(t.value),L=T[d.value].filter(function(r){return m(r[1])>=now}).slice(0,2);
