@@ -24,8 +24,9 @@ def lst(x):
     return [x] if isinstance(x, dict) else (x or [])
 def routes(sid):
     return {str(r["routeId"]): (r.get("routeName"), r.get("staOrder"), r.get("routeDestName")) for r in lst(find(get("busstationservice/v2/getBusStationViaRouteListv2", stationId=sid), "busRouteList"))}
-mine = routes(209000029)
-print("10164 경유 노선:", {v[0]: (k, v[1]) for k, v in mine.items()})
+opp = routes(209000113)
+print("10168(나눔초등학교.오뚜기식품) 경유 노선:", {v[0]: (k, v[1], v[2]) for k, v in opp.items()})
+mine = opp
 for kw in ("정부과천청사", "인덕원역", "인덕원"):
     ss = lst(find(get("busstationservice/v2/getBusStationListv2", keyword=kw), "busStationList"))
     print("\n=== 정류소 검색:", kw, "→", len(ss), "곳 ===")
