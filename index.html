@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793935403">
+<meta name="build" content="1793935538">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -167,6 +167,11 @@ footer{margin-top:36px;color:var(--muted);font-size:13px}
 .stops li:before{content:"";position:absolute;left:-23px;top:9px;width:11px;height:11px;border-radius:50%;background:var(--card);border:3px solid var(--jr)}
 .warnb{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:#fff4df;border:1px solid #f0d9a8;color:#6b4300;font-size:13px;line-height:1.5;word-break:keep-all}
 .warnb b{margin-right:4px}
+.jpb{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:#eef5fb;border:1px solid #cfe0ef;font-size:13px;line-height:1.5;word-break:keep-all}
+.jpb>b{display:block;margin-bottom:4px;color:#245}
+.jpb div{padding:5px 0;border-top:1px dashed #cfe0ef}.jpb>b+div{border-top:0}
+.jpb .ja{font-size:15px;font-weight:700}.jpb .rd,.jpb .ko{color:#556}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .jpb{background:#1c2a38;border-color:#33485c}:root:not([data-theme="light"]) .jpb>b{color:#cfe3f5}:root:not([data-theme="light"]) .jpb .rd,:root:not([data-theme="light"]) .jpb .ko{color:#b6c2cf}}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .warnb{background:#3a2f17;border-color:#5a4720;color:#f3dca9}}
 :root[data-theme="dark"] .warnb{background:#3a2f17;border-color:#5a4720;color:#f3dca9}
 .stops.bus ol{border-color:var(--bus)}.stops.bus li:before{border-color:var(--bus)}.stops.bus li.end:before{background:var(--bus)}
@@ -963,16 +968,25 @@ setTab('out'); window.addEventListener('hashchange',fromHash); fromHash();
 ICON.plane='<svg viewBox="0 0 24 24"><path d="M3 13l18-8-6 15-3-6-9-1z"/><path d="M12 14l9-9"/></svg>';
 NAME.plane='비행기';
 function colorOf2(m){return m==='plane'?'var(--plane)':colorOf(m)}
+var JP={
+ chk:[['체크인하고 싶어요.','チェックインをお願いします。','첵쿠인오 오네가이시마스'],['창가(통로) 자리로 주세요.','窓側(通路側)の席をお願いします。','마도가와(쓰-로가와)노 세키오 오네가이시마스'],['이 짐은 기내에 들고 탈 수 있어요?','この荷物は機内に持ち込めますか？','고노 니모츠와 기나이니 모치코메마스카']],
+ imm:[['관광으로 왔어요. 3일 있어요.','観光で来ました。三日間滞在します。','칸코-데 키마시타. 믹카칸 타이자이시마스'],['도쿠시마에서 묵어요.','徳島のホテルに泊まります。','도쿠시마노 호테루니 토마리마스']],
+ bus:[['다카마쓰역 가는 리무진 표 한 장 주세요.','高松駅までのリムジンバスの切符を一枚ください。','다카마쓰에키마데노 리무진바스노 킵푸오 이치마이 쿠다사이'],['이 버스 다카마쓰역에 가요?','このバスは高松駅に行きますか？','고노 바스와 다카마쓰에키니 이키마스카']],
+ tk:[['도쿠시마행 우즈시오 ○시 ○분, 지정석으로 한 장 주세요.','徳島行きのうずしお、○時○分、指定席を一枚ください。','도쿠시마유키노 우즈시오, ○지 ○분, 시테이세키오 이치마이 쿠다사이'],['몇 번 승강장이에요?','何番線ですか？','남반센데스카'],['이 열차가 도쿠시마에 가요?','この電車は徳島に行きますか？','고노 덴샤와 도쿠시마니 이키마스카']],
+ tk2:[['다카마쓰행 우즈시오 12시 24분, 지정석으로 한 장 주세요.','高松行きのうずしお、十二時二十四分、指定席を一枚ください。','다카마쓰유키노 우즈시오, 쥬-니지 니쥬-욘분, 시테이세키오 이치마이 쿠다사이'],['몇 번 승강장이에요?','何番線ですか？','남반센데스카']],
+ htl:[['예약한 ○○입니다. 체크인 부탁해요.','予約した○○です。チェックインをお願いします。','요야쿠시타 ○○데스. 첵쿠인오 오네가이시마스'],['체크아웃할 때까지 짐을 맡길 수 있어요?','荷物を預かってもらえますか？','니모츠오 아즈캇테 모라에마스카']]
+};
+function jpHtml(a){var t=JP[a];if(!t)return '';return '<div class="jpb"><b>🗣 직원에게 이렇게 말해 (일본어를 화면으로 보여 줘도 돼)</b>'+t.map(function(r){return '<div><span class="ko">'+esc(r[0])+'</span><br><span class="ja" lang="ja">'+esc(r[1])+'</span><br><span class="rd">'+esc(r[2])+'</span></div>'}).join('')+'</div>'}
 function dayRoute(g){
   var rows='', last=g.steps.length-1, prev='var(--walk)';
   g.steps.forEach(function(s,i){
     var links=s.l?'<div class="btns" style="margin-top:8px">'+s.l.map(btn).join('')+'</div>':'';
     if(s.k==='pt'){
       var end=(i===last), first=(i===0), nx=g.steps[i+1], c=first&&nx?colorOf2(nx.k):prev;
-      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+(s.warn?'<div class="warnb"><b>⚠ 주의</b>'+esc(s.warn)+'</div>':'')+(s.icn?ICNMAP:'')+(s.tak?TAKMAP:'')+(s.bd?bdHtml(s.bd):'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
+      rows+='<li style="--c:'+(end?'var(--pin)':c)+'"><div class="el">'+esc(s.time||'')+'</div><div class="rail'+(end?' last':'')+'"><span class="node '+(end?'end':'pt')+'"></span></div><div class="body"><b>'+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+(s.warn?'<div class="warnb"><b>⚠ 주의</b>'+esc(s.warn)+'</div>':'')+(s.icn?ICNMAP:'')+(s.tak?TAKMAP:'')+(s.bd?bdHtml(s.bd):'')+(s.jp?jpHtml(s.jp):'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     } else {
       var w=s.k==='walk', c2=colorOf2(s.k); prev=c2;
-      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+(s.warn?'<div class="warnb"><b>⚠ 주의</b>'+esc(s.warn)+'</div>':'')+(s.icn?ICNMAP:'')+(s.tak?TAKMAP:'')+(s.bd?bdHtml(s.bd):'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
+      rows+='<li style="--c:'+c2+'"><div class="el"></div><div class="rail'+(w?' walk':'')+'"><span class="ico '+(w?'walk':s.k)+'">'+ICON[s.k]+'</span></div><div class="body"><b>'+(w?'':'<span class="chip '+s.k+'">'+NAME[s.k]+'</span>')+esc(s.title)+'</b>'+(s.sub?'<small>'+esc(s.sub)+'</small>':'')+(s.tip?'<small class="tip">'+esc(s.tip)+'</small>':'')+(s.warn?'<div class="warnb"><b>⚠ 주의</b>'+esc(s.warn)+'</div>':'')+(s.icn?ICNMAP:'')+(s.tak?TAKMAP:'')+(s.bd?bdHtml(s.bd):'')+(s.jp?jpHtml(s.jp):'')+links+(s.stops?stopsHtml(s.stops,s.so):'')+(s.map&&MINI[s.map]?MINI[s.map]:'')+'</div></li>';
     }
   });
   var bar=g.steps.filter(function(s){return s.k!=='pt'&&s.min}).map(function(s){return '<i class="m-'+s.k+'" style="flex:'+s.min+' 1 0" title="'+esc(s.title)+'">'+(s.min>=40?NAME[s.k]:'')+'</i>'}).join('');
@@ -986,39 +1000,39 @@ DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서
  steps:[
   {k:'pt',time:'10:00',bd:'e:bus1',warn:'정류장에 5~10분 먼저 가. 버스 시간표는 4월 기준이라 출발 1주 전에 다시 확인해. 도로가 막히면 도착이 늦어질 수 있어.',title:'과천청사에서 공항버스 8842 승차',sub:'정부과천청사역 근처 「과천청사」 정류장. 09:50까지 가서 기다려. 요금 12,700원.',l:[['버스타고 예매',BUSTAGO]]},
   {k:'bus',title:'공항버스 8842 · 인천공항 T2까지',sub:'약 2시간 10분 · 정류장 6개 (정류장 위치는 확인 필요)',stops:BUS_OUT,so:{cls:'bus',label:'정류장 보기 · 6개 (과천청사 → 인천T2)',note:BNOTE}},
-  {k:'pt',time:'12:10',icn:1,l:[['인천 출발 시간표(LJ299)','https://www.airport.kr/ap_ko/869/subview.do'],['제2터미널 출국장 대기시간','https://www.airport.kr/ap_ko/6652/subview.do'],['인천공항 공식 지도','https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01#/search'],['인천공항 공식 사이트','https://www.airport.kr/']],warn:'여권, 항공권(e-티켓), 부모님 동의서, Visit Japan Web QR코드를 꺼내기 쉽게 챙겨. 기내 가방은 10kg 이하, 위탁은 15kg 이하(아래 「기내 반입·수하물 규정」).',title:'인천공항 도착',sub:'출발 2시간 전 기준이야. 과천청사 10:00 공항버스(8842)를 타면 인천 T2에 12:10 도착해. 진에어는 T2 D·E 카운터야(출발 전 재확인). 체크인 마감 시각은 확인 필요.',tip:'여권, 항공권 e-티켓, 부모님 동의서(영문), Visit Japan Web QR코드를 꺼내기 쉽게 챙겨.'},
+  {k:'pt',time:'12:10',jp:'chk',icn:1,l:[['인천 출발 시간표(LJ299)','https://www.airport.kr/ap_ko/869/subview.do'],['제2터미널 출국장 대기시간','https://www.airport.kr/ap_ko/6652/subview.do'],['인천공항 공식 지도','https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01#/search'],['인천공항 공식 사이트','https://www.airport.kr/']],warn:'여권, 항공권(e-티켓), 부모님 동의서, Visit Japan Web QR코드를 꺼내기 쉽게 챙겨. 기내 가방은 10kg 이하, 위탁은 15kg 이하(아래 「기내 반입·수하물 규정」).',title:'인천공항 도착',sub:'출발 2시간 전 기준이야. 과천청사 10:00 공항버스(8842)를 타면 인천 T2에 12:10 도착해. 진에어는 T2 D·E 카운터야(출발 전 재확인). 체크인 마감 시각은 확인 필요.',tip:'여권, 항공권 e-티켓, 부모님 동의서(영문), Visit Japan Web QR코드를 꺼내기 쉽게 챙겨.'},
   {k:'walk',warn:'보조배터리와 라이터는 기내 가방에 넣어(위탁 금지). 액체는 100ml 이하 용기만 기내로 가져가고, 칼·가위는 위탁으로 부쳐. 검색대 앞에서는 물을 다 마시거나 버려.',title:'체크인, 짐 부치기, 보안 검색, 출국 심사',sub:'약 1시간 30분 (여유 포함)'},
   {k:'pt',time:'14:10',bd:'e:f1',warn:'탑승은 보통 출발 30~40분 전에 시작해. 게이트가 멀 수 있으니 면세점에서 시간을 보내다 놓치지 마. 전광판에서 게이트 변경이 없는지 확인해.',title:'인천국제공항 출발',sub:'진에어 LJ299',l:TF.concat([['운항 기록',REF.lj299]])},
   {k:'plane',min:100,title:'LJ299 비행',sub:'약 1시간 40분 · 인천 → 다카마쓰'},
-  {k:'pt',time:'15:50',tak:1,l:[['다카마쓰공항 공식 지도','https://www.takamatsu-airport.com/guide/map.php']],warn:'내리자마자 Visit Japan Web QR코드를 꺼내 둬. 입국심사에서 휴대폰 화면이 꺼지거나 배터리가 없으면 곤란하니 종이 캡처도 준비해.',title:'다카마쓰 공항 도착'},
+  {k:'pt',time:'15:50',jp:'imm',tak:1,l:[['다카마쓰공항 공식 지도','https://www.takamatsu-airport.com/guide/map.php']],warn:'내리자마자 Visit Japan Web QR코드를 꺼내 둬. 입국심사에서 휴대폰 화면이 꺼지거나 배터리가 없으면 곤란하니 종이 캡처도 준비해.',title:'다카마쓰 공항 도착'},
   {k:'walk',min:40,warn:'심사관에게는 짧고 정확히 답해: 관광, 3박 4일, 도쿠시마역 근처 숙소. 숙소 이름·주소를 바로 보여줄 수 있게 준비해. 혼자 온 미성년자라서 보호자 질문이 나올 수 있어.',title:'입국 심사와 짐 찾기',sub:'약 40분 (추정)'},
   {k:'pt',time:'16:30',warn:'버스표를 사기 전에 요금 안내를 한 번 더 봐. 1,300엔과 1,000엔 두 가지 안내가 있어서 확인이 필요해. 엔화 현금을 준비해.',title:'1층 도착 로비',sub:'무인 발매기에서 "2번 다카마쓰 방면" 버스표를 사. 요금은 1,300엔이라는 안내와 1,000엔이라는 안내가 있어서 현지에서 확인해.'},
   {k:'walk',min:3,title:'공항 2번 출구 앞 버스 정류장까지 걷기',map:'A',sub:'약 3분 · 190m (70m → 120m)'},
-  {k:'pt',time:'16:33',bd:'e:lim1',title:'공항 2번 출구 앞에서 리무진 버스 탑승',sub:'지도에 적힌 문의 전화 +81 87-821-3033',l:[['버스 안내 1',REF.bus1],['버스 안내 2',REF.bus2]]},
+  {k:'pt',time:'16:33',jp:'bus',bd:'e:lim1',title:'공항 2번 출구 앞에서 리무진 버스 탑승',sub:'지도에 적힌 문의 전화 +81 87-821-3033',l:[['버스 안내 1',REF.bus1],['버스 안내 2',REF.bus2]]},
   {k:'bus',min:50,title:'공항 리무진 버스 → JR 다카마쓰역',sub:'약 45~50분 · 정류장 11개 (구글 지도)',tip:'종점이 JR 다카마쓰역(심볼타워 근처)이라는 안내가 있어.'},
-  {k:'pt',time:'17:23',title:'JR 다카마쓰역 도착 (버스 종점)'},
+  {k:'pt',time:'17:23',jp:'tk',title:'JR 다카마쓰역 도착 (버스 종점)'},
   {k:'walk',min:10,warn:'일본 JR은 승차권과 특급권 두 장을 사서 개찰기에 같이 넣어. 짐이 크면 엘리베이터를 써. 17:10 열차를 놓치면 다음은 18:10이야.',title:'역 안에서 JR 승강장까지 걷기, 표 사기',map:'B',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
   {k:'pt',time:'17:33',bd:'a',title:'JR 다카마쓰역 승강장',sub:'17:10 우즈시오 23호는 놓쳐. 다음 열차는 18:10이야.'},
   {k:'walk',min:37,title:'다음 열차 기다리기',sub:'약 37분 (역 안에서 쉬거나 먹을 시간)'},
   {k:'pt',time:'18:10',map:'G',bd:'c',warn:'열차 앞의 「うずしお」와 행선지 「徳島」를 확인하고 타. 반대 방향이나 다른 열차를 타지 마. 자유석이면 「自由席」 칸으로 타.',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 열차 위치(지도)','https://train.jr-shikoku.co.jp/sp.html'],['JR시코쿠 운행 정보(한국어)','https://www.jr-shikoku.co.jp/info/index_kr.html'],['기차 예매',U.train],['시각표(개인 사이트)',REF.tt],['요금(개인 사이트)',REF.fare]]},
   {k:'jr',min:67,stops:UZ,title:'특급 우즈시오',sub:'약 1시간 7분 · 정차역 8개 · 행선지가 도쿠시마인지 확인'},
-  {k:'pt',time:'19:17',title:'도쿠시마역 도착 (T28)'},
+  {k:'pt',time:'19:17',jp:'htl',title:'도쿠시마역 도착 (T28)'},
   {k:'walk',min:2,title:'역 안에서 출구까지 걷기',map:'C',sub:'약 2분 · 170m (60m → 85m → 30m)'},
   {k:'pt',time:'19:19',warn:'저녁 늦은 시간이라 밝은 길로 이동해. 숙소 체크인 시간과 연락처를 미리 확인해 두고, 길을 잃으면 구글 지도와 숙소 연락처를 써.',title:'도쿠시마역 도착 지점',sub:'구글 지도 도착지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메',l:[['지도 1',U.map1],['오는 길 보기','#route-back']]}
  ]};
 DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서 열기',U.map1]],big:'6시간 20분',sub:'도쿠시마 12:15 → 인천 18:35 · 현지 이동비 '+money(4370),
  note:'우즈시오 14호(12:24)는 2026년 10월 시각표 기준이야. 13:24 16호를 타면 공항에 15:13쯤 닿아서 출발 2시간 전(14:50)을 넘기니 타지 마. 아래 계산기에서 비행기 시간을 바꿔 볼 수 있어.',
  steps:[
-  {k:'pt',time:'12:15',bd:'b',warn:'숙소 체크아웃을 먼저 끝내. 12:24 열차를 놓치면 다음 13:24는 공항에 너무 늦게 도착해서 위험해.',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메. 숙소 체크아웃 시간은 미리 확인해(확인 필요).',l:[['지도 2',U.map2]]},
+  {k:'pt',time:'12:15',jp:'tk2',bd:'b',warn:'숙소 체크아웃을 먼저 끝내. 12:24 열차를 놓치면 다음 13:24는 공항에 너무 늦게 도착해서 위험해.',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메. 숙소 체크아웃 시간은 미리 확인해(확인 필요).',l:[['지도 2',U.map2]]},
   {k:'walk',min:9,title:'역 안에서 승강장까지 걷기와 대기',map:'D',sub:'걷기 약 3분 · 170m (30m → 85m → 60m)'},
   {k:'pt',time:'12:24',map:'H',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 열차 위치(지도)','https://train.jr-shikoku.co.jp/sp.html'],['JR시코쿠 운행 정보(한국어)','https://www.jr-shikoku.co.jp/info/index_kr.html'],['기차 예매',U.train],['시각표(개인 사이트)',REF.tt],['요금(개인 사이트)',REF.fare]]},
   {k:'jr',min:66,stops:UZ.slice().reverse(),title:'특급 우즈시오',sub:'약 1시간 6분 · 정차역 7개 · 행선지가 다카마쓰인지 확인'},
   {k:'pt',time:'13:30',title:'JR 다카마쓰역 도착'},
   {k:'walk',min:17,title:'공항 버스 정류장까지 걷기와 대기',map:'E',sub:'걷기 약 12분 · 약 830m',tip:'환승 대기가 길 수 있어. 귀국 날은 넉넉하게 잡아.'},
-  {k:'pt',time:'13:47',title:'공항 버스 정류장',sub:'지도에 적힌 문의 전화 +81 87-821-3033'},
+  {k:'pt',time:'13:47',jp:'bus',title:'공항 버스 정류장',sub:'지도에 적힌 문의 전화 +81 87-821-3033'},
   {k:'bus',min:25,title:'공항 버스',sub:'약 25분 · 정류장 4개 (구글 지도)'},
   {k:'pt',time:'14:12',title:'버스에서 내려 공항 건물까지 걷기',map:'F',sub:'약 1분 · 110m'},
-  {k:'pt',tak:1,time:'14:13',l:[['다카마쓰 출발 실시간 현황','https://www.takamatsu-airport.com/flight-info.php'],['다카마쓰공항 공식 지도','https://www.takamatsu-airport.com/guide/map.php']],warn:'체크인 마감 시각을 확인해. 기념품이 늘어서 위탁 15kg, 기내 10kg을 넘지 않는지 가방을 다시 재 봐. 일본 공항에서도 액체 100ml, 보조배터리는 기내에 넣는 규칙이 같아.',title:'다카마쓰 공항 도착',sub:'늦어도 14:50까지 도착하는 게 기준이야 (출발 2시간 전)'},
+  {k:'pt',tak:1,time:'14:13',jp:'chk',l:[['다카마쓰 출발 실시간 현황','https://www.takamatsu-airport.com/flight-info.php'],['다카마쓰공항 공식 지도','https://www.takamatsu-airport.com/guide/map.php']],warn:'체크인 마감 시각을 확인해. 기념품이 늘어서 위탁 15kg, 기내 10kg을 넘지 않는지 가방을 다시 재 봐. 일본 공항에서도 액체 100ml, 보조배터리는 기내에 넣는 규칙이 같아.',title:'다카마쓰 공항 도착',sub:'늦어도 14:50까지 도착하는 게 기준이야 (출발 2시간 전)'},
   {k:'walk',min:157,title:'체크인, 짐 부치기, 출국 심사, 대기',sub:'약 2시간 37분 (여유 포함)'},
   {k:'pt',time:'16:50',bd:'e:f4',title:'다카마쓰 공항 출발',sub:'진에어 LJ300',l:TF.concat([['운항 기록',REF.lj300]])},
   {k:'plane',min:105,title:'LJ300 비행',sub:'약 1시간 45분 · 다카마쓰 → 인천'},
