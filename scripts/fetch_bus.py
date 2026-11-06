@@ -9,6 +9,7 @@ FORCE = os.environ.get("FORCE", "").lower() == "true"
 # 정부과천청사역에 서는 노선: (번호, 노선ID, 이 정류장의 노선 내 순서)
 ROUTES = [("441", "100100070", 30), ("502", "100100410", 30), ("540", "100100083", 21), ("777", "233000007", 56)]
 MAX_BEHIND = 20
+DAILY_CAP = 900  # 경기도 API 일일 한도 1,000건보다 낮게 잡은 안전선(하루 호출 합계)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bus_status.json")
 KST = dt.timezone(dt.timedelta(hours=9))
 
@@ -19,8 +20,18 @@ def main():
         print("실행 시간대 밖:", now.isoformat()); return
     if not KEY:
         print("INCHEON_API_KEY 없음"); return
+    # 오늘(KST) 이미 몇 번 불렀는지 bus_status.json 안에 적어 두고, 안전선을 넘으면 멈춘다
+    today = now.strftime("%Y-%m-%d"); used = 0
+    try:
+        prev = json.load(open(OUT, encoding="utf-8")).get("calls") or {}
+        if prev.get("date") == today: used = int(prev.get("n", 0))
+    except Exception:
+        pass
+    if used + len(ROUTES) > DAILY_CAP:
+        print("오늘 호출 안전선 도달:", used); return
     buses = []
     for name, rid, target in ROUTES:
+        used += 1
         q = {"serviceKey": KEY, "format": "json", "routeId": rid}
         url = "https://apis.data.go.kr/6410000/buslocationservice/v2/getBusLocationListv2?" + urllib.parse.urlencode(q, safe="%")
         try:
@@ -37,7 +48,7 @@ def main():
             if 0 <= d <= MAX_BEHIND:
                 buses.append({"n": name, "d": d, "seat": b.get("remainSeatCnt")})
     buses.sort(key=lambda x: x["d"])
-    out = {"updated": now.isoformat(timespec="seconds"), "stop": "10168", "buses": buses[:8]}
+    out = {"updated": now.isoformat(timespec="seconds"), "stop": "10168", "buses": buses[:8], "calls": {"date": today, "n": used}}
     json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("저장:", json.dumps(out["buses"], ensure_ascii=False))
 
