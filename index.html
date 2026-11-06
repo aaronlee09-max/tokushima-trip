@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793927999">
+<meta name="build" content="1793928110">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -224,7 +224,7 @@ a.btn{text-decoration:none}
   <div class="glance"><b>한눈에 보기</b><ul>
     <li><i>1/19</i><span>인천 14:10 출발 → 도쿠시마역 19:19 도착 (5시간 9분)</span></li>
     <li><i>1/22</i><span>도쿠시마역 12:15 도착 → 인천 18:35 도착 (6시간 20분)</span></li>
-    <li><i>1/20~21</i><span>도쿠시마 자유 일정 (친구에게 받으면 채울게)</span></li>
+    <li><i>1/20~21</i><span>도쿠시마 자유 일정 (아래 「일정·숙소 추천」 3가지 안 참고)</span></li>
   </ul></div>
   <div class="how"><h3>1/19(화) 가는 날 출발 시간표</h3><div class="tbl"><table class="src"><thead><tr><th>시각</th><th>무엇을 · 어디서</th></tr></thead><tbody><tr><td><b>10:00</b></td><td>공항버스 8842 승차<br><span style="color:var(--muted)">정부과천청사</span></td></tr><tr><td><b>12:10</b></td><td>공항 도착(출발 2시간 전)<br><span style="color:var(--muted)">인천공항 제2터미널</span></td></tr><tr><td><b>14:10</b></td><td>LJ299 출발<br><span style="color:var(--muted)">인천 → 다카마쓰</span></td></tr><tr><td><b>15:50</b></td><td>도착 · 입국심사<br><span style="color:var(--muted)">다카마쓰 공항</span></td></tr><tr><td><b>16:33</b></td><td>리무진 버스 탑승<br><span style="color:var(--muted)">공항 2번 출구 앞</span></td></tr><tr><td><b>18:10</b></td><td>특급 우즈시오 25호 출발<br><span style="color:var(--muted)">JR 다카마쓰역</span></td></tr><tr><td><b>19:17</b></td><td>도쿠시마역 도착<br><span style="color:var(--muted)">JR 도쿠시마역</span></td></tr></tbody></table></div></div>
   <div class="how"><h3>1/22(금) 오는 날 출발 시간표</h3><div class="tbl"><table class="src"><thead><tr><th>시각</th><th>무엇을 · 어디서</th></tr></thead><tbody><tr><td><b>12:15</b></td><td>늦어도 이 시각까지 역 도착<br><span style="color:var(--muted)">도쿠시마역</span></td></tr><tr><td><b>12:24</b></td><td>특급 우즈시오 14호 출발<br><span style="color:var(--muted)">JR 도쿠시마역</span></td></tr><tr><td><b>13:47</b></td><td>공항 버스 탑승<br><span style="color:var(--muted)">다카마쓰역 앞</span></td></tr><tr><td><b>14:13</b></td><td>공항 도착 · 체크인<br><span style="color:var(--muted)">다카마쓰 공항</span></td></tr><tr><td><b>16:50</b></td><td>LJ300 출발<br><span style="color:var(--muted)">다카마쓰 → 인천</span></td></tr><tr><td><b>18:35</b></td><td>도착 · 입국 · 짐 찾기<br><span style="color:var(--muted)">인천공항 제2터미널</span></td></tr><tr><td><b>20:30</b></td><td>공항버스 8842 승차<br><span style="color:var(--muted)">인천공항 제2터미널</span></td></tr><tr><td><b>22:00</b></td><td>과천청사 도착<br><span style="color:var(--muted)">정부과천청사</span></td></tr></tbody></table></div></div>
@@ -264,6 +264,14 @@ a.btn{text-decoration:none}
 </section>
 
 <section id="trans"><h2>항공·기차 정보</h2>
+  <div class="how"><h3>열차 실시간 지연 확인</h3>
+    <p style="margin:0 0 8px">JR시코쿠는 열차 위치를 실시간으로 보여 주는 공개 데이터(API)를 내놓지 않는 것으로 보여. 그래서 사이트에서 자동으로 불러오지는 못해. 대신 아래 공식 페이지에서 지연·운휴를 확인해.</p>
+    <ul>
+      <li><a href="https://www.jr-shikoku.co.jp/info/" target="_blank" rel="noopener">JR시코쿠 운행 정보</a>: 지연이나 운휴가 있으면 여기에 올라와(일본어, 평소에는 「지연 등의 정보는 없습니다」라고 나와).</li>
+      <li><a href="https://www.jr-shikoku.co.jp/emergency/kr.html" target="_blank" rel="noopener">JR시코쿠 긴급 안내(한국어)</a></li>
+      <li>역 전광판과 안내 방송, 승무원에게 물어보는 게 가장 정확해. 우즈시오 25호는 18:10, 놓치면 19:10이 다음 열차야.</li>
+    </ul>
+  </div>
   <div class="how">
     <h3>비행기 · 진에어</h3>
     <div class="tbl"><table class="src">
@@ -315,6 +323,58 @@ a.btn{text-decoration:none}
       <tr><td>공항버스 (한국)</td><td><b>25,400원</b></td><td>과천청사 ↔ 인천공항 왕복(편도 12,700원), 위 합계에는 미포함</td></tr>
     </tbody></table></div>
     <p style="margin:10px 0 0;font-size:13px;color:var(--muted)">환율 100엔당 845.17원(2026-11-04 한국수출입은행 매매기준율). 현금 환전이나 카드 결제는 은행과 카드사에 따라 더 들 수 있어.</p>
+  </div>
+</section>
+
+<section id="plan"><h2>1/20~21 일정·숙소 추천 (안)</h2>
+  <p class="note" style="margin:0 0 10px">친구가 정해 주기 전에 쓸 수 있는 추천 안이야. 적은 돈으로 많이 보는 쪽으로 골랐어. 1/19는 19:19에 역에 도착하고, 1/22는 12:15까지 역에 가야 해서 <b>온전한 날은 1/20, 1/21 이틀</b>이야.</p>
+
+  <div class="how"><h3>안 1. 시내만 걸어서 (가장 싸고 쉬움)</h3>
+    <ol>
+      <li><b>1/20</b> 도쿠시마역 → 걸어서 10분, 아와오도리 회관(비잔 로프웨이 타는 곳은 5층). 로프웨이 왕복 <b>1,030엔</b>, 겨울에는 <b>9:00~17:30</b>이고 쉬는 날 없이 운영해. <a href="https://discovertokushima.net/en/spots/bizan-ropeway" target="_blank" rel="noopener">비잔 로프웨이 안내</a></li>
+      <li>아와오도리 회관 공연은 낮 <b>11:00, 14:00, 15:00, 16:00</b>(각 40분)이고 저녁은 20:00~20:50이야. 박물관은 9:00~17:00(입장 16:45까지). 입장료는 공식 자료에서 확인 못 했어(확인 필요). <a href="https://www.city.tokushima.tokushima.jp/multilingual/english_portal/tourism_culture/awa_odori/kaikanhall.html" target="_blank" rel="noopener">공식 안내</a></li>
+      <li><b>1/21</b> 역 주변과 상점가를 천천히 돌며 우동·라멘 같은 현지 음식 먹기. 교통비가 거의 안 들어.</li>
+    </ol>
+    <p class="price">교통·입장 약 <b>1,030엔 + 박물관/공연 요금(확인 필요)</b></p>
+  </div>
+
+  <div class="how"><h3>안 2. 나루토 소용돌이 하루 (볼거리 1순위)</h3>
+    <ol>
+      <li><b>1/20</b>은 시내(안 1처럼 비잔 로프웨이)로 쓰고, <b>1/21</b>에 나루토에 가.</li>
+      <li>도쿠시마역에서 나루토공원 쪽 버스로 <b>약 70~80분</b>(블로그 기준). 내려서 우즈노미치까지 걸어서 10~15분. 직통 전철은 없어. <a href="https://www.trvlogue.com/ko/naruto-whirlpools-tokushima-guide" target="_blank" rel="noopener">참고한 글</a></li>
+      <li>우즈노미치 입장료는 성인 510엔, <b>중·고등학생 410엔</b>(현금만)이고 <b>9:00~18:00</b>(입장 17:30까지)이야. 발밑 유리 바닥에서 소용돌이를 내려다봐.</li>
+      <li>소용돌이는 하루 두 번쯤 강하게 생기고 만조·간조 전후가 가장 잘 보여. 당일 물때는 우즈노미치 공식 조류 달력에서 확인해. 소용돌이는 봄·가을이 가장 크다고 해서 1월에는 작을 수 있어.</li>
+      <li>1/22 12:15까지 역에 가야 하니, 1/21은 저녁 전에 도쿠시마역으로 돌아와.</li>
+    </ol>
+    <p class="price">교통 + 입장 <b>410엔</b> <span>(버스 요금은 확인 못 했어, 확인 필요)</span></p>
+  </div>
+
+  <div class="how"><h3>안 3. 시내 + 근교 반반</h3>
+    <ol>
+      <li><b>1/20 오전</b> 비잔 로프웨이로 산 위 전망 보기. 겨울 해는 짧으니 17:30 운행 종료 전에 내려와.</li>
+      <li><b>1/20 오후</b> 아와오도리 회관 공연(14:00 또는 15:00 회)을 보고 시내 먹거리.</li>
+      <li><b>1/21</b> 나루토 소용돌이를 반나절만 다녀오기. 아침 일찍 가고, 오후에 돌아와 역 주변에서 짐 챙기고 쉬기.</li>
+    </ol>
+    <p class="note" style="margin:0">세 안 모두 돈이 많이 드는 것은 없어. 날씨가 나쁘면 안 1로 바꾸면 돼.</p>
+  </div>
+
+  <div class="how"><h3>숙소 추천 (도쿠시마역 근처, 3박)</h3>
+    <div class="tbl"><table class="src">
+      <thead><tr><th>숙소</th><th>위치</th><th>요금 참고</th></tr></thead>
+      <tbody>
+        <tr><td><b>토요코인 도쿠시마 에키마에</b><br><span style="color:var(--muted)">체크인 15:00 · 체크아웃 10:00 · 조식은 일부 요금만 무료</span></td><td>역 앞(역과의 거리는 확인 필요)</td><td>1박 약 6만원부터(예약 사이트 표시, 날짜마다 달라) <a href="https://www.hotelscombined.co.kr/Hotel/Toyoko_Inn_Tokushima_Ekimae.htm" target="_blank" rel="noopener">요금 보기</a></td></tr>
+        <tr><td><b>JR 호텔 클레멘트 도쿠시마</b><br><span style="color:var(--muted)">체크인 14:00 · 체크아웃 12:00</span></td><td>도쿠시마역에서 걸어서 약 3분</td><td>1박 약 7만 6천원(성인 2명 기준 최저가, 11월 23일 조회, 세금 포함) <a href="https://www.expedia.co.kr/Tokushima-Hotels-JR-Hotel-Clement-Tokushima.h428379.Hotel-Information" target="_blank" rel="noopener">요금 보기</a></td></tr>
+      </tbody></table></div>
+    <p class="note">1월 19~22일 요금은 아직 조회하지 못했어. 예약할 때 날짜를 넣어서 다시 봐야 해. 가격은 더 싼 곳이 있을 수 있어.</p>
+  </div>
+
+  <div class="how"><h3>⚠ 미성년자 혼자 숙박할 때 꼭 확인</h3>
+    <ul>
+      <li>일본 호텔은 18세 미만이 혼자 묵으면 <b>보호자 동의서</b>를 요구하는 곳이 많아. 동의서가 없으면 숙박을 거절당할 수 있어. 양식은 호텔마다 달라서 공식 사이트에서 받는 곳이 많고, 체크인 때 내거나 미리 보내라고 하는 곳도 있어. <a href="https://happyell.co.jp/underagehotel" target="_blank" rel="noopener">참고한 글</a> (2023년 기준)</li>
+      <li>그래서 <b>예약하기 전에 호텔에 이메일이나 전화로 미성년자 단독 투숙이 되는지 먼저 물어봐.</b> 가능하다고 답하면 그 답장을 캡처해 두고, 동의서가 필요하면 부모님 서명을 받아서 챙겨 가.</li>
+      <li>체크인이 늦어지면 호텔에 꼭 연락해. 마지막 체크인 시각이 지나면 자동 취소되고 요금이 청구될 수 있어. 1/19는 도착이 19:19라서 이 점이 중요해.</li>
+      <li>예약과 결제는 부모님 이름이나 부모님 카드로 하는 게 가장 안전해.</li>
+    </ul>
   </div>
 </section>
 
@@ -880,7 +940,7 @@ DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서
   {k:'walk',min:10,warn:'일본 JR은 승차권과 특급권 두 장을 사서 개찰기에 같이 넣어. 짐이 크면 엘리베이터를 써. 17:10 열차를 놓치면 다음은 18:10이야.',title:'역 안에서 JR 승강장까지 걷기, 표 사기',map:'B',sub:'걷기 약 4분 · 약 290m',tip:'역 안 이동 구간이 있어. 짐이 크면 엘리베이터를 찾아.'},
   {k:'pt',time:'17:33',title:'JR 다카마쓰역 승강장',sub:'17:10 우즈시오 23호는 놓쳐. 다음 열차는 18:10이야.'},
   {k:'walk',min:37,title:'다음 열차 기다리기',sub:'약 37분 (역 안에서 쉬거나 먹을 시간)'},
-  {k:'pt',time:'18:10',map:'G',warn:'열차 앞의 「うずしお」와 행선지 「徳島」를 확인하고 타. 반대 방향이나 다른 열차를 타지 마. 자유석이면 「自由席」 칸으로 타.',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
+  {k:'pt',time:'18:10',map:'G',warn:'열차 앞의 「うずしお」와 행선지 「徳島」를 확인하고 타. 반대 방향이나 다른 열차를 타지 마. 자유석이면 「自由席」 칸으로 타.',title:'특급 우즈시오 25호 다카마쓰역 출발',sub:'지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 운행 정보(실시간)','https://www.jr-shikoku.co.jp/info/'],['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:67,stops:UZ,title:'특급 우즈시오',sub:'약 1시간 7분 · 정차역 8개 · 행선지가 도쿠시마인지 확인'},
   {k:'pt',time:'19:17',title:'도쿠시마역 도착 (T28)'},
   {k:'walk',min:2,title:'역 안에서 출구까지 걷기',map:'C',sub:'약 2분 · 170m (60m → 85m → 30m)'},
@@ -891,7 +951,7 @@ DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서
  steps:[
   {k:'pt',time:'12:15',warn:'숙소 체크아웃을 먼저 끝내. 12:24 열차를 놓치면 다음 13:24는 공항에 너무 늦게 도착해서 위험해.',title:'도쿠시마역에 늦어도 12:15까지 도착',sub:'구글 지도 출발지 · 770-0832 도쿠시마시 데라시마혼초히가시 3초메. 숙소 체크아웃 시간은 미리 확인해(확인 필요).',l:[['지도 2',U.map2]]},
   {k:'walk',min:9,title:'역 안에서 승강장까지 걷기와 대기',map:'D',sub:'걷기 약 3분 · 170m (30m → 85m → 60m)'},
-  {k:'pt',time:'12:24',map:'H',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
+  {k:'pt',time:'12:24',map:'H',title:'특급 우즈시오 14호 도쿠시마역 출발',sub:'지도에 2번 승강장으로 표시. 지정석 3,370엔 / 자유석 2,840엔 (통상기)',l:[['JR시코쿠 운행 정보(실시간)','https://www.jr-shikoku.co.jp/info/'],['기차 예매',U.train],['시각표',REF.tt],['요금',REF.fare]]},
   {k:'jr',min:66,stops:UZ.slice().reverse(),title:'특급 우즈시오',sub:'약 1시간 6분 · 정차역 7개 · 행선지가 다카마쓰인지 확인'},
   {k:'pt',time:'13:30',title:'JR 다카마쓰역 도착'},
   {k:'walk',min:17,title:'공항 버스 정류장까지 걷기와 대기',map:'E',sub:'걷기 약 12분 · 약 830m',tip:'환승 대기가 길 수 있어. 귀국 날은 넉넉하게 잡아.'},
@@ -918,7 +978,7 @@ DAYS[3].g={maps:[['구글 지도 2에서 열기',U.map2],['구글 지도 1에서
 /* 내비게이션 */
 var navHtml='<a href="#schedule">일정</a>';
 DAYS.forEach(function(x){ navHtml+='<a href="#'+x.id+'">'+esc(x.date.split(' ')[0])+'</a>'; });
-navHtml+='<a href="#bookgo">예매 바로가기</a><a href="#route">상세 경로</a><a href="#trans">항공·기차</a><a href="#cost">비용</a><a href="#booking">예매 순서</a><a href="#icn">인천공항 타는 법</a><a href="#bag">수하물 규정</a><a href="#entry">입국 준비</a><a href="#links">링크</a><a href="#refs">참고</a><a href="#live">실시간</a><a href="#weather">날씨</a><a href="#pack">준비물</a><a href="#safety">만약의 경우</a><a href="#caution">주의사항</a>';
+navHtml+='<a href="#plan">일정·숙소 추천</a><a href="#bookgo">예매 바로가기</a><a href="#route">상세 경로</a><a href="#trans">항공·기차</a><a href="#cost">비용</a><a href="#booking">예매 순서</a><a href="#icn">인천공항 타는 법</a><a href="#bag">수하물 규정</a><a href="#entry">입국 준비</a><a href="#links">링크</a><a href="#refs">참고</a><a href="#live">실시간</a><a href="#weather">날씨</a><a href="#pack">준비물</a><a href="#safety">만약의 경우</a><a href="#caution">주의사항</a>';
 document.getElementById('nav').innerHTML=navHtml;
 
 /* 날짜별 타임라인 */
