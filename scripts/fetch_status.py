@@ -6,9 +6,11 @@ import json, os, sys, urllib.parse, urllib.request, datetime as dt
 KEY = os.environ.get("INCHEON_API_KEY", "")
 BASE = "https://apis.data.go.kr/B551177/statusOfAllFltDeOdp/"
 JST = dt.timezone(dt.timedelta(hours=9))
-TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜)
-    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119"),
-    ("LJ300", "LJ300", "getFltArrivalsDeOdp", "20270122"),
+# 호출 한도(개발 계정 하루 500건)를 지키려고 필요한 시간대에만 부른다.
+def T(y, m, d, h, mi): return dt.datetime(y, m, d, h, mi, tzinfo=dt.timezone(dt.timedelta(hours=9)))
+TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜, 조회 시작, 조회 끝)
+    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 19, 8, 0), T(2027, 1, 19, 14, 20)),
+    ("LJ300", "LJ300", "getFltArrivalsDeOdp", "20270122", T(2027, 1, 22, 14, 0), T(2027, 1, 22, 19, 30)),
 ]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "status.json")
 
@@ -43,34 +45,35 @@ def pick(d, *names):
 
 def main():
     now = dt.datetime.now(JST)
-    # 조회 가능 범위(D-3~D+6) 밖이면 아무것도 하지 않는다.
-    first = dt.datetime(2027, 1, 12, tzinfo=JST); last = dt.datetime(2027, 1, 23, tzinfo=JST)
-    if not (first <= now <= last) and "--force" not in sys.argv:
-        print("조회 기간 밖:", now.isoformat()); return
+    force = "--force" in sys.argv
+    active = [t for t in TARGETS if t[4] <= now <= t[5] or force]
+    if not active:
+        print("조회 시간대 밖:", now.isoformat()); return
     if not KEY:
         print("INCHEON_API_KEY 없음"); sys.exit(0)
-    out = {"updated": now.isoformat(timespec="seconds"), "flights": {}}
-    for name, flight, op, day in TARGETS:
-        try:
-            lst = [i for i in items(call(op, flight, day)) if pick(i, "flightId", "flightid") == flight] or items(call(op, flight, day))
-            if not lst:
-                out["flights"][name] = {"error": "해당 편 정보 없음"}; continue
-            i = lst[0]
-            out["flights"][name] = {
-                "sched": iso(pick(i, "scheduleDateTime")), "est": iso(pick(i, "estimatedDateTime")),
-                "remark": pick(i, "remark"), "gate": pick(i, "gatenumber"),
-                "counter": pick(i, "chkinrange"), "terminal": pick(i, "terminalId"),
-                "belt": pick(i, "carousel"), "exit": pick(i, "exitNumber")}
-        except Exception as e:
-            out["flights"][name] = {"error": type(e).__name__}
-    old = None
+    old = {}
     try:
         old = json.load(open(OUT, encoding="utf-8"))
     except Exception:
         pass
-    if old and old.get("flights") == out["flights"]:
+    flights = dict(old.get("flights") or {})
+    for name, flight, op, day, _s, _e in active:
+        try:
+            lst = [i for i in items(call(op, flight, day)) if pick(i, "flightId", "flightid") == flight]
+            if not lst:
+                flights[name] = {"error": "해당 편 정보 없음"}; continue
+            i = lst[0]
+            flights[name] = {
+                "sched": iso(pick(i, "scheduleDateTime")), "est": iso(pick(i, "estimatedDateTime")),
+                "remark": pick(i, "remark"), "gate": pick(i, "gateNumber"),
+                "counter": pick(i, "chkinRange"), "terminal": pick(i, "terminalId"),
+                "belt": pick(i, "carousel"), "exit": pick(i, "exitNumber")}
+        except Exception as e:
+            flights[name] = {"error": type(e).__name__}
+    out = {"updated": now.isoformat(timespec="seconds"), "flights": flights}
+    if old.get("flights") == flights:
         print("변화 없음"); return
     json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print("저장:", json.dumps(out["flights"], ensure_ascii=False))
+    print("저장:", json.dumps(flights, ensure_ascii=False))
 
 main()
