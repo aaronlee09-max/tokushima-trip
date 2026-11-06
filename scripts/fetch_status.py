@@ -9,8 +9,8 @@ JST = dt.timezone(dt.timedelta(hours=9))
 # 호출 한도(개발 계정 하루 500건)를 지키려고 필요한 시간대에만 부른다.
 def T(y, m, d, h, mi): return dt.datetime(y, m, d, h, mi, tzinfo=dt.timezone(dt.timedelta(hours=9)))
 TARGETS = [  # (표시 이름, 편명, 오퍼레이션, 날짜, 조회 시작, 조회 끝)
-    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 19, 8, 0), T(2027, 1, 19, 14, 20)),
-    ("LJ300", "LJ300", "getFltArrivalsDeOdp", "20270122", T(2027, 1, 22, 14, 0), T(2027, 1, 22, 19, 30)),
+    ("LJ299", "LJ299", "getFltDeparturesDeOdp", "20270119", T(2027, 1, 19, 0, 0), T(2027, 1, 19, 23, 59)),
+    ("LJ300", "LJ300", "getFltArrivalsDeOdp", "20270122", T(2027, 1, 22, 0, 0), T(2027, 1, 22, 23, 59)),
 ]
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "status.json")
 

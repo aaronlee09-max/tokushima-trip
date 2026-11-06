@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """경기도 버스위치정보 API로 441·502·540·777번이 내 정류장까지 몇 정류장 남았는지 bus_status.json 에 저장.
-1/19 아침(07:30~10:30 일본·한국 시각)에만 돌고, 수동 실행에서 FORCE=true 면 언제든 돈다."""
+1/18~1/19 하루 종일(05:30~23:30, 한국·일본 같은 시각)만 돌고, 수동 실행에서 FORCE=true 면 언제든 돈다."""
 import json, os, urllib.error, urllib.parse, urllib.request, datetime as dt
 
 KEY = os.environ.get("INCHEON_API_KEY", "")
@@ -9,14 +9,16 @@ FORCE = os.environ.get("FORCE", "").lower() == "true"
 # 정부과천청사역에 서는 노선: (번호, 노선ID, 이 정류장의 노선 내 순서)
 ROUTES = [("441", "100100070", 30), ("502", "100100410", 30), ("540", "100100083", 21), ("777", "233000007", 56)]
 MAX_BEHIND = 20
-DAILY_CAP = 900  # 경기도 API 일일 한도 1,000건보다 낮게 잡은 안전선(하루 호출 합계)
+DAILY_CAP = 950  # 경기도 API 일일 한도 1,000건보다 낮게 잡은 안전선(하루 호출 합계)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "bus_status.json")
 KST = dt.timezone(dt.timedelta(hours=9))
 
 def main():
     now = dt.datetime.now(KST)
-    s, e = dt.datetime(2027, 1, 19, 7, 30, tzinfo=KST), dt.datetime(2027, 1, 19, 10, 30, tzinfo=KST)
-    if not (s <= now <= e) and not FORCE:
+    # 5분 간격 × 4노선 × 18시간 ≈ 870건 → 일일 한도 1,000건 안
+    ok_day = now.date() in (dt.date(2027, 1, 18), dt.date(2027, 1, 19))
+    ok_time = (5, 30) <= (now.hour, now.minute) <= (23, 30)
+    if not (ok_day and ok_time) and not FORCE:
         print("실행 시간대 밖:", now.isoformat()); return
     if not KEY:
         print("INCHEON_API_KEY 없음"); return

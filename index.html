@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793946930">
+<meta name="build" content="1793947146">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -872,7 +872,7 @@ var EVS={
  bus2:['공항버스 8842 · 인천T2 → 과천청사','2027-01-22T20:30:00+09:00','인천T2 승차 · 22:00쯤 과천청사 도착 (추천 시각)']
 };
 function bdHtml(t){
-  if(t==='bus81') return '<div class="board"><div class="bh"><b>버스 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">집 근처 정류장 · 정부과천청사역 가는 버스</div><div class="br" data-bus="1"></div><div class="bf">441·502·540·777 중 가까운 순서 · 경기도 버스위치 정보 5분 간격 갱신 · 분은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
+  if(t==='bus81') return '<div class="board"><div class="bh"><b>버스 전광판</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">집 근처 정류장 · 정부과천청사역 가는 버스</div><div class="br" data-bus="1"></div><div class="bf">441·502·540·777 중 가까운 순서 · 경기도 버스위치 정보 5분 간격 갱신 · 분은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
   if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return '<div class="board"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>';}
   var C={a:['다카마쓰역 · 도쿠시마 방면 출발','a','dep','도쿠시마'],b:['도쿠시마역 · 다카마쓰 방면 출발','b','dep','다카마쓰'],c:['도쿠시마역 · 도착 예정 (다카마쓰발)','a','arr','도쿠시마']}[t];
   if(!C) return '';
@@ -1224,6 +1224,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     if(Date.now()-new Date(FLT.updated).getTime()>3600000)return '';
     var arr=nm==='LJ300',est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),bits=[];
     bits.push((arr?'인천 도착 ':'')+'예정 '+hm(f.sched)+(dm?' → 변경 '+hm(est)+(dm>0?' (+'+dm+'분 지연)':' ('+dm+'분)'):' (변동 없음)'));
+    bits.push('모든 시각은 한국 시각');
     if(f.remark)bits.push('상태: '+f.remark);
     if(!arr&&f.gate)bits.push('게이트 '+f.gate);
     if(!arr&&f.counter)bits.push('체크인 카운터 '+f.counter);
