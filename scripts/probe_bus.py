@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """경기도 버스 API 시험 호출: 8842 노선 ID, 정류장 목록, 현재 버스 위치를 로그로 출력한다.
 키는 환경변수 INCHEON_API_KEY(같은 공공데이터포털 키)를 쓰고, 출력에는 키를 찍지 않는다."""
-import json, os, urllib.parse, urllib.request
+import json, os, urllib.error, urllib.parse, urllib.request
 
 KEY = os.environ.get("INCHEON_API_KEY", "")
 ROOT = "https://apis.data.go.kr/6410000/"
@@ -12,8 +12,15 @@ def get(path, **q):
     try:
         with urllib.request.urlopen(url, timeout=25) as r:
             txt = r.read().decode("utf-8", "replace")
+    except urllib.error.HTTPError as e:
+        body = ""
+        try:
+            body = e.read().decode("utf-8", "replace")[:300].replace(KEY, "***")
+        except Exception:
+            pass
+        return {"_error": "HTTPError", "_code": e.code, "_body": body}
     except Exception as e:
-        return {"_error": type(e).__name__, "_detail": str(getattr(e, "code", ""))}
+        return {"_error": type(e).__name__}
     try:
         return json.loads(txt)
     except Exception:
@@ -37,6 +44,12 @@ def find(o, key):
 
 if not KEY:
     print("INCHEON_API_KEY 없음"); raise SystemExit
+print("\n=== 서비스별 접근 점검 ===")
+for name, path, q in [("노선조회", "busrouteservice/v2/getBusRouteListv2", {"keyword": "8842"}),
+                      ("버스위치", "buslocationservice/v2/getBusLocationListv2", {"routeId": "0"}),
+                      ("도착정보", "busarrivalservice/v2/getBusArrivalListv2", {"stationId": "0"})]:
+    r = get(path, **q)
+    print(name, "→", json.dumps(r, ensure_ascii=False)[:250].replace(KEY, "***"))
 routes = get("busrouteservice/v2/getBusRouteListv2", keyword="8842")
 show("노선 검색(8842)", routes)
 lst = find(routes, "busRouteList")
