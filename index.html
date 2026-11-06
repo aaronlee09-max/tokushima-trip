@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793930414">
+<meta name="build" content="1793935364">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -326,8 +326,8 @@ a.btn{text-decoration:none}
     <div class="tbl"><table class="src">
       <thead><tr><th>구간</th><th>열차 (출발 → 도착)</th><th>소요</th></tr></thead>
       <tbody>
-        <tr><td>다카마쓰 → 도쿠시마</td><td>23호 17:10 → 18:17<br>25호 18:10 → 19:17<br>27호 19:10 → 20:20</td><td>약 1시간 7분</td></tr>
-        <tr><td>도쿠시마 → 다카마쓰</td><td>12호 11:24 → 12:30<br>14호 12:24 → 13:30<br>16호 13:24 → 14:30</td><td>약 1시간 6분</td></tr>
+        <tr><td>다카마쓰 → 도쿠시마</td><td>첫차 1호 06:10 → 07:29<br>매시 10분 출발(21:14·22:22 막차까지)<br>23호 17:10 → 18:17 · 25호 18:10 → 19:17<br>27호 19:10 → 20:20 · 33호 22:22 → 23:34</td><td>약 1시간 7분</td></tr>
+        <tr><td>도쿠시마 → 다카마쓰</td><td>첫차 2호 05:41 → 06:55<br>대부분 매시 24분 출발(막차 20:27)<br>12호 11:24 → 12:30 · 14호 12:24 → 13:30<br>16호 13:24 → 14:30</td><td>약 1시간 6분</td></tr>
       </tbody></table></div>
     <div class="tbl"><table class="src">
       <thead><tr><th>좌석</th><th>구성</th><th>편도 (원화)</th></tr></thead>
@@ -1130,8 +1130,8 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 
 /* 다음 우즈시오 찾기 */
 (function(){
-  var T={a:[['23호','17:10','18:17'],['25호','18:10','19:17'],['27호','19:10','20:20'],['29호','20:10','21:20'],['31호','21:14','22:24'],['33호','22:22','23:34']],
-         b:[['12호','11:24','12:30'],['14호','12:24','13:30'],['16호','13:24','14:30']]};
+  var T={a:[['1호','06:10','07:29'],['3호','07:05','08:15'],['5호','08:24','09:36'],['7호','09:10','10:16'],['9호','10:10','11:16'],['11호','11:10','12:16'],['13호','12:10','13:16'],['15호','13:10','14:16'],['17호','14:10','15:16'],['19호','15:10','16:16'],['21호','16:10','17:17'],['23호','17:10','18:17'],['25호','18:10','19:17'],['27호','19:10','20:20'],['29호','20:10','21:20'],['31호','21:14','22:24'],['33호','22:22','23:34']],
+         b:[['2호','05:41','06:55'],['4호','06:58','08:13'],['6호','08:24','09:31'],['8호','09:24','10:30'],['10호','10:24','11:30'],['12호','11:24','12:30'],['14호','12:24','13:30'],['16호','13:24','14:30'],['18호','14:24','15:30'],['20호','15:24','16:30'],['22호','16:24','17:30'],['24호','17:24','18:30'],['26호','18:24','19:30'],['28호','19:24','20:33'],['30호','20:27','21:35']]};
   var d=document.getElementById('nxdir'),t=document.getElementById('nxt'),o=document.getElementById('nxout'); if(!d||!t||!o) return;
   function m(x){var p=x.split(':');return +p[0]*60+ +p[1]}
   var TT=T;
@@ -1140,7 +1140,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   function fmt(sec){var mn=Math.ceil(sec/60);if(mn<=0)return '곧';return (mn>=60?Math.floor(mn/60)+'시간 ':'')+(mn%60?mn%60+'분 ':'')+'후'}
   function rows(el,k,mode,dest){
     var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,cls,txt,sub;
-    for(i=0;i<L.length&&out.length<3;i++){
+    for(i=0;i<L.length&&out.length<5;i++){
       r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;key=mode==='dep'?dep:arr;
       if(mode==='dep'&&now>=dep) continue;
       if(mode==='arr'&&now>=arr) continue;
@@ -1150,7 +1150,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       cls=left<60?'row soon':'row';
       out.push('<div class="'+cls+'"><b>'+r[0]+' '+dest+'행</b><span>'+txt+'</span><small>'+sub+'</small></div>');
     }
-    el.innerHTML=out.length?out.join(''):'<div class="none">'+(k==='b'&&mode==='dep'?'내가 가진 시각표(11:24~13:24)의 열차는 끝났어. 그 뒤는 JR 공식 시각표로 확인해.':'오늘 시각표의 열차는 모두 끝났어.')+'</div>';
+    el.innerHTML=out.length?out.join(''):'<div class="none">'+(k==='b'&&mode==='dep'?'오늘 막차(20:27)까지 모두 끝났어. 내일 첫차는 05:41이야.':(k==='a'&&mode==='dep'?'오늘 막차(22:22)까지 모두 끝났어. 내일 첫차는 06:10이야.':'오늘 도착 예정 열차는 모두 끝났어.'))+'</div>';
   }
   function evRow(key,one){
     var E=EVS[key],at=new Date(E[1]).getTime(),d=Math.floor((at-Date.now())/1000),cls='row',txt;
