@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793940451">
+<meta name="build" content="1793940564">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -872,6 +872,7 @@ var EVS={
  bus2:['공항버스 8842 · 인천T2 → 과천청사','2027-01-22T20:30:00+09:00','인천T2 승차 · 22:00쯤 과천청사 도착 (추천 시각)']
 };
 function bdHtml(t){
+  if(t==='bus81') return '<div class="board"><div class="bh"><b>8-1번 버스 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">집 근처 정류장 · 인덕원 방면</div><div class="br" data-bus="1"></div><div class="bf">경기도 버스위치 정보 · 5분 간격 갱신 · 분은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
   if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return '<div class="board"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>';}
   var C={a:['다카마쓰역 · 도쿠시마 방면 출발','a','dep','도쿠시마'],b:['도쿠시마역 · 다카마쓰 방면 출발','b','dep','다카마쓰'],c:['도쿠시마역 · 도착 예정 (다카마쓰발)','a','arr','도쿠시마']}[t];
   if(!C) return '';
@@ -1022,7 +1023,7 @@ function gTabs(x){return '<div class="tabs" role="tablist" aria-label="가는 �
 DAYS[0].g={maps:[['구글 지도 1에서 열기',U.map1],['구글 지도 2에서 열기',U.map2]],big:'5시간 9분',sub:'인천 14:10 → 도쿠시마 19:19 · 현지 이동비 '+money(4670),
  note:'JR 시각은 2026년 10월 시각표 기준이라 1월에 달라질 수 있어. 입국 40분은 가정한 값이고 비행기 시각은 최근 운항 기록 기준이야. 예매 전에 다시 확인해.',
  steps:[
-  {k:'pt',time:'08:40',warn:'반대편 정류장 「나눔초등학교.오뚜기식품.두산벤처다임」(평촌동행정복지센터 방면)은 반대 방향이야. 건너편에서 타지 마. 소요시간은 내 추정이야. 출근 시간이라 버스가 늦을 수 있으니 안 되면 택시를 타.',title:'집 근처 정류장에서 8-1번 승차',sub:'정류장 「오뚜기식품.두산벤처다임」(민백마을 방면, 번호 10164). 네이버지도 버스 탭에서 8-1번 도착 시간을 봐.'},
+  {k:'pt',time:'08:40',bd:'bus81',warn:'반대편 정류장 「나눔초등학교.오뚜기식품.두산벤처다임」(평촌동행정복지센터 방면)은 반대 방향이야. 건너편에서 타지 마. 소요시간은 내 추정이야. 출근 시간이라 버스가 늦을 수 있으니 안 되면 택시를 타.',title:'집 근처 정류장에서 8-1번 승차',sub:'정류장 「오뚜기식품.두산벤처다임」(민백마을 방면, 번호 10164). 네이버지도 버스 탭에서 8-1번 도착 시간을 봐.'},
   {k:'bus',title:'8-1번 버스 → 인덕원',sub:'약 20~25분 · 인덕원 근처 「인덕원센트럴자이아파트사거리」까지(내 추정)'},
   {k:'walk',title:'인덕원역으로 걸어서 4호선 타기',sub:'약 5~10분(내 추정) · 4호선 한 정거장'},
   {k:'walk',title:'4호선 인덕원 → 정부과천청사역 (약 3분)',sub:'정부과천청사역에서 내려 8842 「과천청사」 정류장까지 걸어. 약 5분(내 추정)'},
@@ -1202,6 +1203,18 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     }
     el.innerHTML=out.length?out.join(''):'<div class="none">'+(k==='b'&&mode==='dep'?'오늘 막차(20:27)까지 모두 끝났어. 내일 첫차는 05:41이야.':(k==='a'&&mode==='dep'?'오늘 막차(22:22)까지 모두 끝났어. 내일 첫차는 06:10이야.':'오늘 도착 예정 열차는 모두 끝났어.'))+'</div>';
   }
+  var BUS=null;
+  function loadBus(){try{fetch('bus_status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){BUS=j}).catch(function(){})}catch(e){}}
+  loadBus(); setInterval(loadBus,60000);
+  function busRows(){
+    var age=BUS&&BUS.updated?Math.floor((Date.now()-new Date(BUS.updated).getTime())/1000):-1;
+    if(!BUS||age<0||age>1800)return '<div class="none">버스 위치는 1/19 아침 07:30~10:30에 5분마다 갱신돼. 지금은 데이터가 없어.</div>';
+    if(!BUS.buses||!BUS.buses.length)return '<div class="none">지금 오는 8-1번 버스가 없어(갱신 '+Math.floor(age/60)+'분 전).</div>';
+    return BUS.buses.slice(0,3).map(function(b){
+      var d=b.d,mn=Math.max(1,Math.round(d*1.3)),txt=d<=0?'곧 도착':(d+'정류장 전'),cls='row'+(d<=1?' soon':'');
+      return '<div class="'+cls+'"><b>8-1번</b><span>'+txt+'</span><small>'+(d<=0?'정류장에 있어':'약 '+mn+'분 · ')+'갱신 '+(age<60?age+'초':Math.floor(age/60)+'분')+' 전</small></div>';
+    }).join('');
+  }
   var FLT=null;
   function loadFlt(){try{fetch('status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){FLT=j}).catch(function(){})}catch(e){}}
   loadFlt(); setInterval(loadFlt,300000);
@@ -1232,6 +1245,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     var n=jst(),hh=z(n.getHours())+':'+z(n.getMinutes())+':'+z(n.getSeconds());
     document.querySelectorAll('.nxnow').forEach(function(e){e.textContent=hh});
     document.querySelectorAll('.br[data-ev]').forEach(function(el){var k=el.getAttribute('data-ev');el.innerHTML=k==='next'?['bus1','f1','lim1','f4','bus2'].filter(function(x){return new Date(EVS[x][1]).getTime()>Date.now()-60000}).slice(0,3).map(evRow).join(''):evRow(k,true)});
+    document.querySelectorAll('.br[data-bus]').forEach(function(el){el.innerHTML=busRows()});
     document.querySelectorAll('.br[data-k]').forEach(function(el){rows(el,el.getAttribute('data-k'),el.getAttribute('data-m'),el.getAttribute('data-d'))});
   }
   tick(); setInterval(tick,1000);
