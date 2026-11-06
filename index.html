@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1793939079">
+<meta name="build" content="1793939297">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -1182,7 +1182,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   var TT=T;
   function jst(){return new Date(Date.now()+(9*60+new Date().getTimezoneOffset())*60000)}
   function z(n){return (n<10?'0':'')+n}
-  function fmt(sec){sec=Math.max(0,Math.floor(sec));var h=Math.floor(sec/3600),mn=Math.floor(sec%3600/60),sc=sec%60;return (h?h+':'+z(mn):mn)+':'+z(sc)+' 후'}
+  function fmt(sec){sec=Math.max(0,Math.floor(sec));var h=Math.floor(sec/3600),mn=Math.floor(sec%3600/60),sc=sec%60;return (h?h+'시간 '+z(mn)+'분 ':(mn?mn+'분 ':''))+z(sc)+'초'}
   function rows(el,k,mode,dest){
     var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,cls,txt,sub;
     for(i=0;i<L.length&&out.length<5;i++){
@@ -1190,8 +1190,8 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       if(mode==='dep'&&now>=dep) continue;
       if(mode==='arr'&&now>=arr) continue;
       left=key-now;
-      if(mode==='dep'){txt=fmt(left)+' 출발';sub=r[1]+' 출발 · '+r[2]+' 도착'}
-      else{txt=fmt(left)+' 도착';sub=(now>=dep?'운행 중 · ':'출발 전 · ')+r[1]+' 출발 · '+r[2]+' 도착'}
+      if(mode==='dep'){txt=fmt(left);sub=r[1]+' 출발 · '+r[2]+' 도착'}
+      else{txt=fmt(left);sub=(now>=dep?'운행 중 · ':'출발 전 · ')+r[1]+' 출발 · '+r[2]+' 도착'}
       cls=left<60?'row soon':'row';
       out.push('<div class="'+cls+'"><b>'+r[0]+' '+dest+'행</b><span>'+txt+'</span><small>'+sub+'</small></div>');
     }
@@ -1220,7 +1220,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     if(d<=-60){cls+=' past';txt='출발함'}
     else if(d<=0){cls+=' soon';txt='곧 출발'}
     else{var days=Math.floor(d/86400),r2=d%86400;
-      txt=days?days+'일 '+fmt(r2).replace(' 후',''):fmt(r2)+' 출발';if(d<60)cls+=' soon'}
+      txt=(days?days+'일 ':'')+fmt(r2);if(d<60)cls+=' soon'}
     return '<div class="'+cls+(one?' one':'')+'">'+(one?'':'<b>'+E[0]+'</b>')+'<span>'+txt+'</span><small>'+E[2]+'</small>'+fltLive(key)+'</div>';
   }
   function tick(){
