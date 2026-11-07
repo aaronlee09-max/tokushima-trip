@@ -1,7 +1,7 @@
-name: 항공편 상태 갱신
+name: 항공편·버스 상태 갱신
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "7,37 * * * *"   # 반복 실행의 시작용. 밀려도 이어서 돌도록 한 번에 55분씩 돈다
   workflow_dispatch:
     inputs:
       force:
@@ -16,24 +16,18 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 58
     steps:
       - uses: actions/checkout@v4
-      - name: 상태 받아 오기
-        env:
-          INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
-        run: python3 scripts/fetch_status.py ${{ inputs.force && '--force' || '' }}
-      - name: 8-1번 버스 위치 받아 오기
+        with:
+          fetch-depth: 0
+      - name: git 사용자 설정
+        run: |
+          git config user.name "flight-status-bot"
+          git config user.email "actions@users.noreply.github.com"
+      - name: 55분 동안 5분마다 받아 오기
         env:
           INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
           FORCE: ${{ inputs.force }}
-        run: python3 scripts/fetch_bus.py
-      - name: 바뀌면 저장
-        run: |
-          if [ -n "$(git status --porcelain status.json bus_status.json)" ]; then
-            git config user.name "flight-status-bot"
-            git config user.email "actions@users.noreply.github.com"
-            for f in status.json bus_status.json; do [ -e "$f" ] && git add "$f"; done
-            git commit -m "항공편 상태 갱신"
-            git pull --rebase origin main
-            git push origin main
-          fi
+          FORCE_FLAG: ${{ inputs.force && '--force' || '' }}
+        run: bash scripts/live_loop.sh

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """경기도 버스위치정보 API로 441·502·540·777번이 내 정류장까지 몇 정류장 남았는지 bus_status.json 에 저장.
-1/18~1/19 하루 종일(05:30~23:30, 한국·일본 같은 시각)만 돌고, 수동 실행에서 FORCE=true 면 언제든 돈다."""
+매일 05:30~23:30(버스 운행 시간)에 돌고(여행 직전 1/18~1/19는 5분마다, 평소엔 15분마다, 1/19 이후는 멈춤), 수동 실행에서 FORCE=true 면 언제든 돈다."""
 import json, os, urllib.error, urllib.parse, urllib.request, datetime as dt
 
 KEY = os.environ.get("INCHEON_API_KEY", "")
@@ -16,9 +16,11 @@ KST = dt.timezone(dt.timedelta(hours=9))
 def main():
     now = dt.datetime.now(KST)
     # 5분 간격 × 4노선 × 18시간 ≈ 870건 → 일일 한도 1,000건 안
-    ok_day = now.date() in (dt.date(2027, 1, 18), dt.date(2027, 1, 19))
+    trip = now.date() in (dt.date(2027, 1, 18), dt.date(2027, 1, 19))
+    ok_day = now.date() <= dt.date(2027, 1, 19)
     ok_time = (5, 30) <= (now.hour, now.minute) <= (23, 30)
-    if not (ok_day and ok_time) and not FORCE:
+    slot = trip or now.minute % 15 < 5      # 평소엔 15분마다, 여행 직전·당일엔 5분마다
+    if not (ok_day and ok_time and slot) and not FORCE:
         print("실행 시간대 밖:", now.isoformat()); return
     if not KEY:
         print("INCHEON_API_KEY 없음"); return
