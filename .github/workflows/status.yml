@@ -10,6 +10,7 @@ on:
         default: false
 permissions:
   contents: write
+  actions: write   # 다음 실행을 스스로 예약하기 위해
 concurrency:
   group: flight-status
   cancel-in-progress: false
@@ -25,6 +26,16 @@ jobs:
         run: |
           git config user.name "flight-status-bot"
           git config user.email "actions@users.noreply.github.com"
+      - name: 다음 실행 미리 예약(이어 달리기)
+        # GitHub 예약 실행(cron)은 몇 시간씩 밀리므로, 실행이 시작되자마자 다음 실행을 대기열에 넣는다.
+        # 같은 그룹은 한 번에 하나만 돌고 대기는 1개만 남으므로, 앞 실행이 끝나면 바로 이어서 시작된다.
+        # 여행(1/23)이 끝나면 더 이어지지 않는다.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(TZ=Asia/Seoul date +%Y%m%d)" -lt 20270123 ]; then
+            gh api -X POST "repos/${{ github.repository }}/actions/workflows/status.yml/dispatches" -f ref=main || true
+          fi
       - name: 55분 동안 5분마다 받아 오기
         env:
           INCHEON_API_KEY: ${{ secrets.INCHEON_API_KEY }}
