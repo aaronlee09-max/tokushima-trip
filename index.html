@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1794111114">
+<meta name="build" content="1794111460">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -204,21 +204,60 @@ a.btn{text-decoration:none}
 .board .bh{display:flex;justify-content:space-between;gap:8px;align-items:baseline;border-bottom:1px solid #2a3340;padding-bottom:6px;margin-bottom:4px;color:#e8edf3}
 .board .bh b,.board .bh span{white-space:nowrap}
 .board .bh{flex-wrap:wrap}
-.board.fids .fh,.board.fids .fr{display:grid;grid-template-columns:46px minmax(0,1fr) 40px;gap:5px;align-items:center}
-.board.fids .fh{font-size:10px;color:#8fb4ff;border-bottom:1px solid #2a3340;padding:2px 0;margin-top:4px}
-.board.fids .fh span:last-child,.board.fids .fr .g{text-align:right}
-.board.fids .fr{padding:6px 3px;border-bottom:1px dashed #1f2832;border-radius:6px}
-.board.fids .fr .t{color:#7dff9b;font-weight:700;font-size:15px;line-height:1.1}
-.board.fids .fr .t s{display:block;color:#7d8a98;font-weight:400;font-size:10px}
-.board.fids .fr .f b{color:#ffd24a;font-size:14px}
-.board.fids .fr .f em{font-style:normal;font-size:10px;background:#ffd24a;color:#0b0f14;border-radius:4px;padding:1px 5px;margin-left:4px;font-weight:700}
-.board.fids .fr .f small{display:block;color:#9aa7b5;font-size:11px;margin-top:1px}
-.board.fids .fr .f u{text-decoration:none;color:#ff8a7a}
-.board.fids .fr .g{color:#7dff9b;font-weight:700;font-size:18px}
-.board.fids .fr .g i{font-style:normal;color:#7d8a98;padding:0 2px}
-.board.fids .fr.mine{background:#17201a;outline:1px solid #ffd24a}
-.board.fids .fr.late .t{color:#ff8a7a}
-.board.fids .fup{margin-top:4px;font-size:10px;color:#7d8a98;text-align:right}
+/* 분할 플랩(솔라리) 전광판 */
+.board.flap{background:linear-gradient(#3a382e,#25241d);color:#efe8cf;border:2px solid #14130e;border-radius:8px;box-shadow:inset 0 0 18px #0008;container-type:inline-size}
+.board.flap .bh{color:#f4efdc;border-bottom:1px solid #5a5642}
+.board.flap .bh i{color:#ffe27a}
+.board.flap .bt{color:#d2c58f}
+.board.flap .row{border-bottom:1px dashed #4a4636}
+.board.flap .row b{color:#f4efdc}
+.board.flap .row span{color:#ffe27a}
+.board.flap .row small{color:#bdb594}
+.board.flap .none{color:#c9c19f}
+.board.flap .bf{color:#a8a083}
+.fxh{display:none;grid-template-columns:90px minmax(0,1fr) 72px 48px;gap:8px;font:700 10px/1 "Noto Sans KR",sans-serif;color:#ffe27a;border-bottom:1px solid #5a5642;padding:4px 0;margin-top:4px}
+.fx{padding:7px 3px 8px;border-bottom:1px solid #46422f;border-radius:4px}
+.fxp{margin-bottom:4px}
+.fxp .plate{display:inline-block;background:#12110d;color:#f4efdc;border-radius:3px;padding:1px 7px;font:700 11px/1.5 "Noto Sans KR",sans-serif}
+.fxr{display:flex;flex-wrap:wrap;gap:5px 10px;align-items:center}
+.fno,.fde,.fti,.fga{display:flex;gap:1px}
+.fno{order:1}.fti{order:2}.fde{order:3}.fga{order:4}
+.fno,.fga{justify-content:flex-end}
+.fc{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:12px;height:21px;background:linear-gradient(#26251b 49%,#0c0b08 50%,#1c1b13 51%);color:#f4efdc;font:700 15px/1 ui-monospace,Menlo,Consolas,monospace;border-radius:2px;box-shadow:inset 0 0 0 1px #0b0a07}
+.fc::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#050403;opacity:.9}
+.fc b{font-weight:700;position:relative;z-index:1}
+.fc.w{width:19px;font-family:"Noto Sans KR",sans-serif;font-size:13px}
+.fc.n{width:6px;background:none;box-shadow:none;color:#ffe27a}
+.fc.n::after{display:none}
+.fc.fp{animation:fpl .085s linear}
+@keyframes fpl{0%{transform:scaleY(1)}45%{transform:scaleY(.06)}55%{transform:scaleY(.06)}100%{transform:scaleY(1)}}
+.fxs{font-size:11px;color:#c9c19f;margin-top:5px;line-height:1.45}
+.fx.mine{background:#ffe27a14;outline:1px solid #ffe27a66}
+.fx.mine .fc{color:#ffe27a}
+.fx.mine .plate{background:#ffe27a;color:#14130e}
+.fx.late .fti .fc{color:#ff9b7a}
+.fx.soon .fti .fc{color:#ff8a66}
+.board.flap .fup{margin-top:6px;font-size:10px;color:#a8a083;text-align:right}
+@container (min-width:430px){
+  .fxh{display:grid}
+  .fxr{flex-wrap:nowrap;gap:10px}
+  .fno{order:1}.fde{order:2;flex:1}.fti{order:3}.fga{order:4}
+}
+@media (prefers-reduced-motion:reduce){.fc.fp{animation:none}}
+/* 버스 정류장 안내기(BIS) */
+.board.bis{background:#050607;border:2px solid #23272b;border-radius:6px;color:#ffb347;box-shadow:inset 0 0 14px #000}
+.board.bis .bh{color:#f2f4f5;border-bottom:1px solid #2c3136}
+.board.bis .bh i{color:#6dff9a}
+.board.bis .bt{color:#6dff9a;font-weight:700}
+.bsr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px;align-items:center;padding:8px 2px;border-bottom:1px solid #1b1f22}
+.bsr .rn{font-style:normal;font-weight:800;font-size:17px;line-height:1;background:#1d8f4e;color:#fff;border-radius:6px;padding:6px 7px;min-width:42px;text-align:center;font-family:system-ui,"Noto Sans KR",sans-serif}
+.bsr .bd{color:#e7eaec;font:600 13px/1.3 "Noto Sans KR",sans-serif}
+.bsr .bd small,.bsr .be small{display:block;color:#8d979e;font-weight:400;font-size:11px;margin-top:2px}
+.bsr .be{text-align:right;white-space:nowrap}
+.bsr .be b{font:800 19px/1 ui-monospace,Menlo,Consolas,monospace;color:#ffb347;text-shadow:0 0 8px #ff9a1f80;letter-spacing:.02em}
+.bsr.soon .be b{color:#ff5b4a;text-shadow:0 0 8px #ff3b2a80;animation:bl 1s steps(2) infinite}
+.board.bis .fup{margin-top:6px;font-size:10px;color:#7d878e;text-align:right}
+@media (prefers-reduced-motion:reduce){.bsr.soon .be b{animation:none}}
 .board small.live{display:block;color:#7fe3a1;margin-top:3px;font-size:12px}
 .board small.live b,.body small.live b{display:inline;font-weight:700}
 .body small.live{display:block;color:#2f8f5b;margin-top:4px;line-height:1.5}
@@ -891,16 +930,16 @@ var EVS={
 };
 function fltBoards(sec,ev){
   var dep=sec==='dep',E=EVS[ev];
-  return '<div class="board fids"><div class="bh"><b>'+(dep?'가는 편 · 출발 전광판':'오는 편 · 도착 전광판')+'</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+ev+'"></div><div class="bt">'+(dep?'인천 → 다카마쓰 · 인천공항 출발 현황':'다카마쓰 → 인천 · 인천공항 도착 현황')+'</div><div class="fh"><span>시각</span><span>편명</span><span>'+(dep?'게이트':'수하물·출구')+'</span></div><div class="br" data-flt="'+sec+'"></div><div class="bf">인천공항 공식 운항 현황 · ★ = 내 비행기 · T1=제1터미널, T2=제2터미널 · '+(dep?'게이트는 바뀔 수 있으니 출발 전 공항 전광판으로 다시 확인':'수하물·출구는 착륙 가까이 되면 나와')+' · 여행 당일 5분·평소 15분 간격 갱신</div></div>';
+  return '<div class="board flap fids"><div class="bh"><b>'+(dep?'가는 편 · 출발 전광판':'오는 편 · 도착 전광판')+'</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+ev+'"></div><div class="bt">'+(dep?'인천 → 다카마쓰':'다카마쓰 → 인천')+'</div><div class="fxh"><span>편명</span><span>'+(dep?'행선지':'출발지')+'</span><span>'+(dep?'출발':'도착')+'</span><span>'+(dep?'게이트':'수하물')+'</span></div><div class="br" data-flt="'+sec+'"></div><div class="bf">인천공항 공식 운항 현황 · ★ 내 비행기 · T1·T2 = 제1·제2터미널 · '+(dep?'게이트는 바뀔 수 있으니 출발 전 한 번 더 확인':'수하물·출구는 착륙 가까이 되면 나와')+'</div></div>';
 }
 function bdHtml(t){
-  if(t==='bus81') return '<div class="board"><div class="bh"><b>버스 전광판</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">정류장 「나눔초등학교.오뚜기식품.두산벤처다임」(10168) · 평촌동행정복지센터 방면</div><div class="br" data-bus="1"></div><div class="bf">441·502·540·777 중 가까운 순서 · 경기도 버스위치 정보 5분 간격 갱신 · 남은 시간·도착 예상은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
+  if(t==='bus81') return '<div class="board bis"><div class="bh"><b>버스 전광판</b><span>한국 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">정류장 「나눔초등학교.오뚜기식품.두산벤처다임」(10168) · 평촌동행정복지센터 방면</div><div class="br" data-bus="1"></div><div class="bf">441·502·540·777 중 가까운 순서 · 경기도 버스위치 정보 5분 간격 갱신 · 남은 시간·도착 예상은 정류장당 약 1.3분으로 계산한 추정이야</div></div>';
   if(t==='flt:arr') return fltBoards('arr','f4a');
   if(t==='e:f1') return fltBoards('dep','f1');
-  if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return (t==='e:f1'?'':'')+'<div class="board"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>';}
+  if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return '<div class="board flap"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>';}
   var C={a:['다카마쓰역 · 도쿠시마 방면 출발','a','dep','도쿠시마'],b:['도쿠시마역 · 다카마쓰 방면 출발','b','dep','다카마쓰'],c:['도쿠시마역 · 도착 예정 (다카마쓰발)','a','arr','도쿠시마']}[t];
   if(!C) return '';
-  return '<div class="board"><div class="bh"><b>특급 우즈시오 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+C[0]+'</div><div class="br" data-k="'+C[1]+'" data-m="'+C[2]+'" data-d="'+C[3]+'"></div><div class="bf">시각표 기준 · 실제 지연은 반영되지 않아</div></div>';
+  return '<div class="board flap"><div class="bh"><b>특급 우즈시오 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+C[0]+'</div><div class="fxh"><span>열차</span><span>행선지</span><span>'+(C[2]==='dep'?'출발':'도착')+'</span></div><div class="br" data-k="'+C[1]+'" data-m="'+C[2]+'" data-d="'+C[3]+'"></div><div class="bf">시각표 기준 · 실제 지연은 반영되지 않아</div></div>';
 }
 var ICNMAP='<iframe src="https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01" title="인천공항 공식 지도" loading="lazy" style="width:100%;height:480px;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 8px;background:#f4f7fb"></iframe><p class="note" style="margin:0 0 8px">인천공항 공식 지도야. 제1·제2터미널이 같이 나와. 진에어는 제2터미널이야.</p>';
 var TAKMAP='<a href="https://www.takamatsu-airport.com/guide/map.php" target="_blank" rel="noopener"><img src="https://www.takamatsu-airport.com/assets/images/guide/map_261015.png" alt="다카마쓰 공항 공식 안내 지도" loading="lazy" style="width:100%;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 6px;background:#fff" onerror="this.parentNode.style.display=\'none\';this.parentNode.nextSibling.style.display=\'none\'"></a><p class="note" style="margin:0 0 8px">다카마쓰 공항 공식 지도야. 누르면 공식 페이지가 열려.</p>';
@@ -1212,20 +1251,6 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   function jst(){return new Date(Date.now()+(9*60+new Date().getTimezoneOffset())*60000)}
   function z(n){return (n<10?'0':'')+n}
   function fmt(sec){sec=Math.max(0,Math.floor(sec));var h=Math.floor(sec/3600),mn=Math.floor(sec%3600/60),sc=sec%60;return (h?h+'시간 '+z(mn)+'분 ':(mn?mn+'분 ':''))+z(sc)+'초'}
-  function rows(el,k,mode,dest){
-    var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,cls,txt,sub;
-    for(i=0;i<L.length&&out.length<5;i++){
-      r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;key=mode==='dep'?dep:arr;
-      if(mode==='dep'&&now>=dep) continue;
-      if(mode==='arr'&&now>=arr) continue;
-      left=key-now;
-      if(mode==='dep'){txt=fmt(left);sub=r[1]+' 출발 · '+r[2]+' 도착'}
-      else{txt=fmt(left);sub=(now>=dep?'운행 중 · ':'출발 전 · ')+r[1]+' 출발 · '+r[2]+' 도착'}
-      cls=left<60?'row soon':'row';
-      out.push('<div class="'+cls+'"><b>'+r[0]+' '+dest+'행</b><span>'+txt+'</span><small>'+sub+'</small></div>');
-    }
-    el.innerHTML=out.length?out.join(''):'<div class="none">'+(k==='b'&&mode==='dep'?'오늘 막차(20:27)까지 모두 끝났어. 내일 첫차는 05:41이야.':(k==='a'&&mode==='dep'?'오늘 막차(22:22)까지 모두 끝났어. 내일 첫차는 06:10이야.':'오늘 도착 예정 열차는 모두 끝났어.'))+'</div>';
-  }
   var BUS=null;
   function loadBus(){try{fetch('bus_status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){BUS=j}).catch(function(){})}catch(e){}}
   loadBus(); setInterval(loadBus,60000);
@@ -1233,37 +1258,108 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     var age=BUS&&BUS.updated?Math.floor((Date.now()-new Date(BUS.updated).getTime())/1000):-1;
     if(!BUS||age<0||age>1800)return '<div class="none">버스 위치는 매일 05:30~23:30에 갱신돼(평소 15분, 1/18~1/19는 5분 간격). 지금은 갱신 시간대 밖이거나 자료가 오래돼서 숨겼어.</div>';
     if(!BUS.buses||!BUS.buses.length)return '<div class="none">지금 이 정류장으로 오는 버스가 없어(갱신 '+Math.floor(age/60)+'분 전).</div>';
-    var base=new Date(BUS.updated).getTime(),ag=age<60?age+'초':Math.floor(age/60)+'분';
-    return BUS.buses.map(function(b){return {n:b.n,d:b.d,at:base+(b.d<=0?0:Math.max(1,Math.round(b.d*1.3)))*60000}}).sort(function(a,c){return a.at-c.at}).slice(0,5).map(function(b){
-      var left=Math.floor((b.at-Date.now())/1000),near=b.d<=0||left<=60,txt=near?'곧 도착':fmt(left)+' 남음',cls='row'+(near?' soon':'');
-      return '<div class="'+cls+'"><b>'+esc(b.n)+'번 청사역행</b><span>'+txt+'</span><small>'+(b.d<=0?'정류장에 도착해 있어':b.d+'정류장 전 · 도착 예상 '+hm(new Date(b.at).toISOString()))+' · 갱신 '+ag+' 전</small></div>';
-    }).join('');
+    var base=new Date(BUS.updated).getTime(),ag=age<60?age+'초':Math.floor(age/60)+'분',by={};
+    BUS.buses.forEach(function(b){(by[b.n]=by[b.n]||[]).push({d:b.d,at:base+(b.d<=0?0:Math.max(1,Math.round(b.d*1.3)))*60000})});
+    var G=Object.keys(by).map(function(n){by[n].sort(function(a,c){return a.at-c.at});return {n:n,L:by[n]}}).sort(function(a,c){return a.L[0].at-c.L[0].at});
+    return G.map(function(g){
+      var a=g.L[0],c=g.L[1],left=Math.floor((a.at-Date.now())/1000),near=a.d<=0||left<=60;
+      var eta=near?'곧 도착':Math.max(1,Math.ceil(left/60))+'분';
+      return '<div class="bsr'+(near?' soon':'')+'"><i class="rn">'+esc(g.n)+'</i><span class="bd">청사역 방면<small>'+(a.d<=0?'정류장에 도착':a.d+'번째 전')+'</small></span><span class="be"><b>'+eta+'</b>'+(c?'<small>다음 '+Math.max(1,Math.ceil((c.at-Date.now())/60000))+'분</small>':'')+'</span></div>';
+    }).join('')+'<div class="fup">갱신 '+ag+' 전 · 남은 분은 정류장당 약 1.3분으로 계산한 추정</div>';
   }
   var FLT=null;
   function loadFlt(){try{fetch('status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){FLT=j}).catch(function(){})}catch(e){}}
   loadFlt(); setInterval(loadFlt,300000);
   function hm(iso){var d=new Date(iso);var j=new Date(d.getTime()+(d.getTimezoneOffset()+540)*60000);return z(j.getHours())+':'+z(j.getMinutes())}
-  function fltRows(sec){
+  /* ===== 분할 플랩(솔라리) 전광판: 글자마다 타일, 바뀔 때 촤르르 넘어간다 ===== */
+  var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FLCH='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',HGS='가나다라마바사아자차카타파하';
+  function fWide(c){return c.charCodeAt(0)>0x2e80}
+  function fPut(cell,ch,delay){
+    if(cell._c===ch)return;cell._c=ch;
+    cell.classList.toggle('w',fWide(ch));cell.classList.toggle('n',ch===':');
+    var b=cell.firstChild,tok=cell._t=(cell._t||0)+1;
+    function show(c){b.textContent=c===' '?'':c}
+    if(RM||document.hidden){show(ch);return}
+    var seq=[],k=0,n=ch===' '?1:(fWide(ch)?2:3+Math.floor(Math.random()*3)),i;
+    for(i=0;i<n;i++)seq.push(fWide(ch)?HGS.charAt(Math.floor(Math.random()*HGS.length)):FLCH.charAt(Math.floor(Math.random()*FLCH.length)));
+    seq.push(ch);
+    setTimeout(function step(){
+      if(cell._t!==tok)return;
+      cell.classList.remove('fp');void cell.offsetWidth;cell.classList.add('fp');
+      var c=seq[k++];setTimeout(function(){if(cell._t===tok)show(c)},40);
+      if(k<seq.length)setTimeout(step,85);
+    },delay);
+  }
+  function fField(el,text,n,right){
+    var cs=el.children,s,i;
+    while(cs.length<n){s=document.createElement('span');s.className='fc';s.innerHTML='<b></b>';s._c=' ';el.appendChild(s)}
+    var tx=String(text==null?'':text);if(tx.length>n)tx=tx.slice(0,n);
+    var pad=new Array(n-tx.length+1).join(' ');
+    tx=right?pad+tx:tx+pad;
+    for(i=0;i<n;i++)fPut(cs[i],tx.charAt(i),i*28);
+  }
+  /* list: [{plate,no,dest,time,gate,sub,mine,late,soon}], foot: 아래 한 줄 */
+  function fxRender(el,list,foot,gate){
+    var n=list.length;
+    if(el._n!==n||!el._ok){
+      el.innerHTML='';el._ok=1;el._n=n;el._r=[];
+      list.forEach(function(){
+        var d=document.createElement('div');d.className='fx';
+        d.innerHTML='<div class="fxp"><span class="plate"></span></div><div class="fxr"><span class="fno"></span><span class="fde"></span><span class="fti"></span>'+(gate?'<span class="fga"></span>':'')+'</div><div class="fxs"></div>';
+        el.appendChild(d);el._r.push(d);
+      });
+      var f=document.createElement('div');f.className='fup';el.appendChild(f);el._f=f;
+    }
+    list.forEach(function(r,i){
+      var d=el._r[i];
+      d.className='fx'+(r.mine?' mine':'')+(r.late?' late':'')+(r.soon?' soon':'');
+      d.querySelector('.plate').textContent=r.plate||'';
+      fField(d.querySelector('.fno'),r.no,6,true);
+      fField(d.querySelector('.fde'),r.dest,6,false);
+      fField(d.querySelector('.fti'),r.time,5,true);
+      if(gate)fField(d.querySelector('.fga'),r.gate,3,true);
+      d.querySelector('.fxs').textContent=r.sub||'';
+    });
+    el._f.textContent=foot||'';
+  }
+  function fxMsg(el,msg){el._ok=0;el._n=-1;el.innerHTML='<div class="none">'+msg+'</div>'}
+  function rows(el,k,mode,dest){
+    var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,sub;
+    for(i=0;i<L.length&&out.length<5;i++){
+      r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;key=mode==='dep'?dep:arr;
+      if(mode==='dep'&&now>=dep) continue;
+      if(mode==='arr'&&now>=arr) continue;
+      left=key-now;
+      sub=(mode==='dep'?'':(now>=dep?'운행 중 · ':'출발 전 · '))+'남은 시간 '+fmt(left)+' · '+r[1]+' 출발 → '+r[2]+' 도착';
+      out.push({plate:'특급 우즈시오',no:r[0],dest:dest,time:mode==='dep'?r[1]:r[2],sub:sub,soon:left<60});
+    }
+    if(!out.length)return fxMsg(el,(k==='b'&&mode==='dep'?'오늘 막차(20:27)까지 모두 끝났어. 내일 첫차는 05:41이야.':(k==='a'&&mode==='dep'?'오늘 막차(22:22)까지 모두 끝났어. 내일 첫차는 06:10이야.':'오늘 도착 예정 열차는 모두 끝났어.')));
+    fxRender(el,out,'시각표 기준 · 일본 시각',false);
+  }
+  function fltRows(el,sec){
     var arr=sec==='arr',mine=arr?'LJ300':'LJ299',S=FLT&&FLT[sec];
-    if(!S||!S.flights)return '<div class="none">아직 자료가 없어. 인천공항 자료가 올라오면 바로 보여줄게.</div>';
+    if(!S||!S.flights)return fxMsg(el,'아직 자료가 없어. 인천공항 자료가 올라오면 바로 보여줄게.');
     var trip=S.date===(arr?'2027-01-22':'2027-01-19');
-    if(Date.now()-new Date(S.updated).getTime()>10800000)return '<div class="none">자료가 오래됐어(마지막 갱신 '+hm(S.updated)+').</div>';
+    if(Date.now()-new Date(S.updated).getTime()>10800000)return fxMsg(el,'자료가 오래됐어(마지막 갱신 '+hm(S.updated)+').');
     var F=S.flights,ids=Object.keys(F).filter(function(k){return F[k]&&F[k].sched});
-    if(!ids.length)return '<div class="none">이 날 다카마쓰 '+(arr?'발':'행')+' 편 자료가 아직 없어.</div>';
+    if(!ids.length)return fxMsg(el,'이 날 다카마쓰 '+(arr?'발':'행')+' 편 자료가 아직 없어.');
     ids.sort(function(a,c){return new Date(F[a].est||F[a].sched)-new Date(F[c].est||F[c].sched)});
     var tm={P01:'T1',P02:'탑승동',P03:'T2'},out=[];
-    if(trip&&!F[mine])out.push('<div class="fr mine"><span class="t">--:--</span><span class="f"><b>★ '+mine+'</b><small>내 비행기 · 정보가 아직 없어</small></span><span class="g">-</span></div>');
+    if(trip&&!F[mine])out.push({plate:'★ 내 비행기',no:mine,dest:'다카마쓰',time:'',gate:'',mine:1,sub:'정보가 아직 없어'});
     ids.forEach(function(id){
       var f=F[id],est=f.est||f.sched,dm=Math.round((new Date(est)-new Date(f.sched))/60000),sub=[],me=trip&&id===mine;
-      if(f.airline)sub.push(esc(f.airline));
-      if(!arr&&f.counter)sub.push('카운터 '+esc(f.counter));
-      if(f.terminal)sub.push(tm[f.terminal]||esc(f.terminal));
-      var st=f.remark?esc(f.remark):'';
-      if(dm>0)st=(st&&st!=='지연'?st+' · ':'')+'+'+dm+'분 지연';else if(dm<0)st=(st?st+' · ':'')+(-dm)+'분 빠름';
-      var g=arr?((f.belt&&f.belt!=='-'?esc(f.belt):'-')+'<i>/</i>'+(f.exit&&f.exit!=='-'?esc(f.exit):'-')):(f.gate?esc(f.gate):'미정');
-      out.push('<div class="fr'+(me?' mine':'')+(dm>=10?' late':'')+'"><span class="t">'+hm(est)+(dm?'<s>'+hm(f.sched)+'</s>':'')+'</span><span class="f"><b>'+(me?'★ ':'')+esc(id)+'</b>'+'<small>'+sub.join(' · ')+(st?' · <u>'+st+'</u>':'')+'</small></span><span class="g">'+g+'</span></div>');
+      sub.push('예정 '+hm(f.sched));
+      if(dm>0)sub.push('+'+dm+'분 지연');else if(dm<0)sub.push((-dm)+'분 빠름');
+      if(f.remark&&!(dm>0&&f.remark==='지연'))sub.push(f.remark);
+      if(!arr&&f.gate)sub.push('게이트 '+f.gate);
+      if(!arr&&f.counter)sub.push('카운터 '+f.counter);
+      if(arr&&f.exit&&f.exit!=='-')sub.push('출구 '+f.exit);
+      if(f.terminal)sub.push(tm[f.terminal]||f.terminal);
+      out.push({plate:(me?'★ 내 비행기 · ':'')+(f.airline||''),no:id,dest:'다카마쓰',time:hm(est),gate:arr?((f.belt&&f.belt!=='-')?f.belt:''):(f.gate||''),mine:me,late:dm>=10,sub:sub.join(' · ')});
     });
-    return out.join('')+'<div class="fup">기준일 '+(S.date?S.date.slice(5).replace('-','/'):'')+(trip?' · 여행 당일':' · 오늘 운항 현황')+' · 갱신 '+hm(S.updated)+' ('+Math.max(0,Math.floor((Date.now()-new Date(S.updated).getTime())/60000))+'분 전)</div>';
+    var ago=Math.max(0,Math.floor((Date.now()-new Date(S.updated).getTime())/60000));
+    fxRender(el,out,'기준일 '+(S.date?S.date.slice(5).replace('-','/'):'')+(trip?' · 여행 당일':' · 오늘 운항 현황')+' · 갱신 '+hm(S.updated)+' ('+ago+'분 전)',true);
   }
   function evRow(key,one){
     var E=EVS[key],at=new Date(E[1]).getTime(),d=Math.floor((at-Date.now())/1000),cls='row',txt;
@@ -1278,7 +1374,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     var n=jst(),hh=z(n.getHours())+':'+z(n.getMinutes())+':'+z(n.getSeconds());
     document.querySelectorAll('.nxnow').forEach(function(e){e.textContent=hh});
     document.querySelectorAll('.br[data-ev]').forEach(function(el){var k=el.getAttribute('data-ev');el.innerHTML=k==='next'?['bus1','f1','lim1','f4','bus2'].filter(function(x){return new Date(EVS[x][1]).getTime()>Date.now()-60000}).slice(0,3).map(evRow).join(''):evRow(k,true)});
-    document.querySelectorAll('.br[data-flt]').forEach(function(el){el.innerHTML=fltRows(el.getAttribute('data-flt'))});
+    document.querySelectorAll('.br[data-flt]').forEach(function(el){fltRows(el,el.getAttribute('data-flt'))});
     document.querySelectorAll('.br[data-bus]').forEach(function(el){el.innerHTML=busRows()});
     document.querySelectorAll('.br[data-k]').forEach(function(el){rows(el,el.getAttribute('data-k'),el.getAttribute('data-m'),el.getAttribute('data-d'))});
   }
@@ -1387,7 +1483,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261108041154';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261108041740';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>
