@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1794111460">
+<meta name="build" content="1794114476">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -232,6 +232,12 @@ a.btn{text-decoration:none}
 .fc.fp{animation:fpl .085s linear}
 @keyframes fpl{0%{transform:scaleY(1)}45%{transform:scaleY(.06)}55%{transform:scaleY(.06)}100%{transform:scaleY(1)}}
 .fxs{font-size:11px;color:#c9c19f;margin-top:5px;line-height:1.45}
+.fxs .cdr{display:flex;align-items:center;gap:6px;margin-bottom:3px}
+.fxs .cdl{font:700 10px/1 "Noto Sans KR",sans-serif;color:#ffe27a;white-space:nowrap}
+.fcd{display:flex;gap:1px}
+.fcd .fc{width:10px;height:18px;font-size:13px}
+.fcd .fc.n{width:5px}
+.fx.soon .fcd .fc{color:#ff8a66}
 .fx.mine{background:#ffe27a14;outline:1px solid #ffe27a66}
 .fx.mine .fc{color:#ffe27a}
 .fx.mine .plate{background:#ffe27a;color:#14130e}
@@ -1254,6 +1260,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   var BUS=null;
   function loadBus(){try{fetch('bus_status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){BUS=j}).catch(function(){})}catch(e){}}
   loadBus(); setInterval(loadBus,60000);
+  function ms(sec){sec=Math.max(0,Math.floor(sec));return Math.floor(sec/60)+':'+z(sec%60)}
   function busRows(){
     var age=BUS&&BUS.updated?Math.floor((Date.now()-new Date(BUS.updated).getTime())/1000):-1;
     if(!BUS||age<0||age>1800)return '<div class="none">버스 위치는 매일 05:30~23:30에 갱신돼(평소 15분, 1/18~1/19는 5분 간격). 지금은 갱신 시간대 밖이거나 자료가 오래돼서 숨겼어.</div>';
@@ -1263,8 +1270,8 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
     var G=Object.keys(by).map(function(n){by[n].sort(function(a,c){return a.at-c.at});return {n:n,L:by[n]}}).sort(function(a,c){return a.L[0].at-c.L[0].at});
     return G.map(function(g){
       var a=g.L[0],c=g.L[1],left=Math.floor((a.at-Date.now())/1000),near=a.d<=0||left<=60;
-      var eta=near?'곧 도착':Math.max(1,Math.ceil(left/60))+'분';
-      return '<div class="bsr'+(near?' soon':'')+'"><i class="rn">'+esc(g.n)+'</i><span class="bd">청사역 방면<small>'+(a.d<=0?'정류장에 도착':a.d+'번째 전')+'</small></span><span class="be"><b>'+eta+'</b>'+(c?'<small>다음 '+Math.max(1,Math.ceil((c.at-Date.now())/60000))+'분</small>':'')+'</span></div>';
+      var eta=near?'곧 도착':ms(left);
+      return '<div class="bsr'+(near?' soon':'')+'"><i class="rn">'+esc(g.n)+'</i><span class="bd">청사역 방면<small>'+(a.d<=0?'정류장에 도착':a.d+'번째 전')+'</small></span><span class="be"><b>'+eta+'</b>'+(c?'<small>다음 '+ms(Math.floor((c.at-Date.now())/1000))+'</small>':'')+'</span></div>';
     }).join('')+'<div class="fup">갱신 '+ag+' 전 · 남은 분은 정류장당 약 1.3분으로 계산한 추정</div>';
   }
   var FLT=null;
@@ -1275,6 +1282,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   var RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
   var FLCH='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',HGS='가나다라마바사아자차카타파하';
   function fWide(c){return c.charCodeAt(0)>0x2e80}
+  function cdf(sec){sec=Math.max(0,Math.floor(sec));var h=Math.floor(sec/3600);return (h>99?99:h)+':'+z(Math.floor(sec%3600/60))+':'+z(sec%60)}
   function fPut(cell,ch,delay){
     if(cell._c===ch)return;cell._c=ch;
     cell.classList.toggle('w',fWide(ch));cell.classList.toggle('n',ch===':');
@@ -1306,7 +1314,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       el.innerHTML='';el._ok=1;el._n=n;el._r=[];
       list.forEach(function(){
         var d=document.createElement('div');d.className='fx';
-        d.innerHTML='<div class="fxp"><span class="plate"></span></div><div class="fxr"><span class="fno"></span><span class="fde"></span><span class="fti"></span>'+(gate?'<span class="fga"></span>':'')+'</div><div class="fxs"></div>';
+        d.innerHTML='<div class="fxp"><span class="plate"></span></div><div class="fxr"><span class="fno"></span><span class="fde"></span><span class="fti"></span>'+(gate?'<span class="fga"></span>':'')+'</div><div class="fxs"><div class="cdr"><span class="cdl">남은 시간</span><span class="fcd"></span></div><span class="sbt"></span></div>';
         el.appendChild(d);el._r.push(d);
       });
       var f=document.createElement('div');f.className='fup';el.appendChild(f);el._f=f;
@@ -1319,7 +1327,9 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       fField(d.querySelector('.fde'),r.dest,6,false);
       fField(d.querySelector('.fti'),r.time,5,true);
       if(gate)fField(d.querySelector('.fga'),r.gate,3,true);
-      d.querySelector('.fxs').textContent=r.sub||'';
+      var cd=d.querySelector('.cdr');
+      if(r.left!=null&&r.left>0){cd.style.display='';fField(d.querySelector('.fcd'),cdf(r.left),8,true)}else cd.style.display='none';
+      d.querySelector('.sbt').textContent=r.sub||'';
     });
     el._f.textContent=foot||'';
   }
@@ -1331,8 +1341,8 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       if(mode==='dep'&&now>=dep) continue;
       if(mode==='arr'&&now>=arr) continue;
       left=key-now;
-      sub=(mode==='dep'?'':(now>=dep?'운행 중 · ':'출발 전 · '))+'남은 시간 '+fmt(left)+' · '+r[1]+' 출발 → '+r[2]+' 도착';
-      out.push({plate:'특급 우즈시오',no:r[0],dest:dest,time:mode==='dep'?r[1]:r[2],sub:sub,soon:left<60});
+      sub=(mode==='dep'?'':(now>=dep?'운행 중 · ':'출발 전 · '))+r[1]+' 출발 → '+r[2]+' 도착';
+      out.push({plate:'특급 우즈시오',no:r[0],dest:dest,time:mode==='dep'?r[1]:r[2],sub:sub,left:left,soon:left<60});
     }
     if(!out.length)return fxMsg(el,(k==='b'&&mode==='dep'?'오늘 막차(20:27)까지 모두 끝났어. 내일 첫차는 05:41이야.':(k==='a'&&mode==='dep'?'오늘 막차(22:22)까지 모두 끝났어. 내일 첫차는 06:10이야.':'오늘 도착 예정 열차는 모두 끝났어.')));
     fxRender(el,out,'시각표 기준 · 일본 시각',false);
@@ -1356,7 +1366,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       if(!arr&&f.counter)sub.push('카운터 '+f.counter);
       if(arr&&f.exit&&f.exit!=='-')sub.push('출구 '+f.exit);
       if(f.terminal)sub.push(tm[f.terminal]||f.terminal);
-      out.push({plate:(me?'★ 내 비행기 · ':'')+(f.airline||''),no:id,dest:'다카마쓰',time:hm(est),gate:arr?((f.belt&&f.belt!=='-')?f.belt:''):(f.gate||''),mine:me,late:dm>=10,sub:sub.join(' · ')});
+      out.push({plate:(me?'★ 내 비행기 · ':'')+(f.airline||''),no:id,dest:'다카마쓰',time:hm(est),left:Math.floor((new Date(est)-Date.now())/1000),soon:(new Date(est)-Date.now())<3600000&&(new Date(est)-Date.now())>0,gate:arr?((f.belt&&f.belt!=='-')?f.belt:''):(f.gate||''),mine:me,late:dm>=10,sub:sub.join(' · ')});
     });
     var ago=Math.max(0,Math.floor((Date.now()-new Date(S.updated).getTime())/60000));
     fxRender(el,out,'기준일 '+(S.date?S.date.slice(5).replace('-','/'):'')+(trip?' · 여행 당일':' · 오늘 운항 현황')+' · 갱신 '+hm(S.updated)+' ('+ago+'분 전)',true);
@@ -1483,7 +1493,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261108041740';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261108050756';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>
