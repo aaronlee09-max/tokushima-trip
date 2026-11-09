@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1794192206">
+<meta name="build" content="1794200144">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -20,6 +20,7 @@
   --bg:#12172a; --card:#1b2240; --ink:#e8ecf8; --muted:#a6b0cf; --line:#2c3558;
   --accent:#8fb0ff; --tint:#222b4f; --warn-bg:#3a2d12; --warn-ink:#ffd58a; --ok-bg:#16382a; --ok-ink:#9fe3bd; --wait-bg:#232a47; --bus:#7fa8ff; --jr:#5fd0a0; --walk:#8e99bb; --pin:#ff8a80; --plane:#b7a2ff; color-scheme:dark}
 *{box-sizing:border-box}
+html,body{overflow-anchor:none}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;
   padding-block:0 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:760px;margin:0 auto}
@@ -1417,13 +1418,22 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
       txt=(days?days+'일 ':'')+fmt(r2);if(d<60)cls+=' soon'}
     return '<div class="'+cls+(one?' one':'')+'">'+(one?'':'<b>'+E[0]+'</b>')+'<span>'+txt+'</span><small>'+E[2]+'</small></div>';
   }
+  /* 보드 높이가 바뀌어도 화면이 밀리지 않게: 위쪽 보드가 변하면 스크롤 보정, 높이는 줄지 않게 */
+  function keep(el,fn){
+    var above=el.getBoundingClientRect().bottom<=0,h0=el.offsetHeight;
+    fn();
+    var h1=el.offsetHeight;
+    if(h1<(el._mh||0)){el.style.minHeight=el._mh+'px';h1=el.offsetHeight}
+    else{el._mh=h1}
+    if(above&&h1!==h0)window.scrollBy(0,h1-h0);
+  }
   function tick(){
     var n=jst(),hh=z(n.getHours())+':'+z(n.getMinutes())+':'+z(n.getSeconds());
     document.querySelectorAll('.nxnow').forEach(function(e){e.textContent=hh});
-    document.querySelectorAll('.br[data-ev]').forEach(function(el){var k=el.getAttribute('data-ev');el.innerHTML=k==='next'?['bus1','f1','lim1','f4','bus2'].filter(function(x){return new Date(EVS[x][1]).getTime()>Date.now()-60000}).slice(0,3).map(evRow).join(''):evRow(k,true)});
-    document.querySelectorAll('.br[data-flt]').forEach(function(el){fltRows(el,el.getAttribute('data-flt'))});
-    document.querySelectorAll('.br[data-bus]').forEach(function(el){el.innerHTML=busRows()});
-    document.querySelectorAll('.br[data-k]').forEach(function(el){rows(el,el.getAttribute('data-k'),el.getAttribute('data-m'),el.getAttribute('data-d'))});
+    document.querySelectorAll('.br[data-ev]').forEach(function(el){keep(el,function(){var k=el.getAttribute('data-ev');el.innerHTML=k==='next'?['bus1','f1','lim1','f4','bus2'].filter(function(x){return new Date(EVS[x][1]).getTime()>Date.now()-60000}).slice(0,3).map(evRow).join(''):evRow(k,true)})});
+    document.querySelectorAll('.br[data-flt]').forEach(function(el){keep(el,function(){fltRows(el,el.getAttribute('data-flt'))})});
+    document.querySelectorAll('.br[data-bus]').forEach(function(el){keep(el,function(){el.innerHTML=busRows()})});
+    document.querySelectorAll('.br[data-k]').forEach(function(el){keep(el,function(){rows(el,el.getAttribute('data-k'),el.getAttribute('data-m'),el.getAttribute('data-d'))})});
   }
   tick(); setInterval(tick,1000);
   function run(){
@@ -1530,7 +1540,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261109024326';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261109045544';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>
