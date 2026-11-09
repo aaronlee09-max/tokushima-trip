@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<meta name="build" content="1794114476">
+<meta name="build" content="1794192206">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700&display=swap">
 <style>
 /* 레이아웃: D-day 요약 → 날짜별 타임라인 → 예매 순서 → 링크 모음 → 실시간·날씨 → 준비물 → 주의사항. 쪽빛 계열의 연한 색 */
@@ -358,7 +358,7 @@ a.btn{text-decoration:none}
       <div class="bt">도쿠시마역 · 다카마쓰 방면 출발</div><div class="br" data-k="b" data-m="dep" data-d="다카마쓰"></div>
       <div class="bt">도쿠시마역 · 도착 예정 (다카마쓰발)</div><div class="br" data-k="a" data-m="arr" data-d="도쿠시마"></div>
       <div class="bt">여행 일정 · 다가오는 순서 (한국과 일본은 시차가 없어)</div><div class="br" data-ev="next"></div>
-      <div class="bf">시각표 기준 · 실제 지연은 반영되지 않아</div>
+      <div class="bf">시각표 기준 · 실제 지연 정보는 받지 못했어</div>
     </div>
     <div class="calc"><label for="nxdir">방향</label>
       <select id="nxdir"><option value="a">다카마쓰 → 도쿠시마 (1/19)</option><option value="b">도쿠시마 → 다카마쓰 (1/22)</option></select>
@@ -945,7 +945,7 @@ function bdHtml(t){
   if(t.indexOf('e:')===0){var E=EVS[t.slice(2)];if(!E) return '';return '<div class="board flap"><div class="bh"><b>출발 전광판</b></div><div class="bt">'+E[0]+'</div><div class="br" data-ev="'+t.slice(2)+'"></div><div class="bf">정해진 시각 기준 · 실제 지연은 반영되지 않아</div></div>';}
   var C={a:['다카마쓰역 · 도쿠시마 방면 출발','a','dep','도쿠시마'],b:['도쿠시마역 · 다카마쓰 방면 출발','b','dep','다카마쓰'],c:['도쿠시마역 · 도착 예정 (다카마쓰발)','a','arr','도쿠시마']}[t];
   if(!C) return '';
-  return '<div class="board flap"><div class="bh"><b>특급 우즈시오 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+C[0]+'</div><div class="fxh"><span>열차</span><span>행선지</span><span>'+(C[2]==='dep'?'출발':'도착')+'</span></div><div class="br" data-k="'+C[1]+'" data-m="'+C[2]+'" data-d="'+C[3]+'"></div><div class="bf">시각표 기준 · 실제 지연은 반영되지 않아</div></div>';
+  return '<div class="board flap"><div class="bh"><b>특급 우즈시오 전광판</b><span>일본 시각 <i class="nxnow">--:--:--</i></span></div><div class="bt">'+C[0]+'</div><div class="fxh"><span>열차</span><span>행선지</span><span>'+(C[2]==='dep'?'출발':'도착')+'</span></div><div class="br" data-k="'+C[1]+'" data-m="'+C[2]+'" data-d="'+C[3]+'"></div><div class="bf">시각표 기준 · 실제 지연 정보는 받지 못했어</div></div>';
 }
 var ICNMAP='<iframe src="https://airport.kr/geomap/ap_ko/view.do?type=2&alertType=0&tmnlId=P01" title="인천공항 공식 지도" loading="lazy" style="width:100%;height:480px;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 8px;background:#f4f7fb"></iframe><p class="note" style="margin:0 0 8px">인천공항 공식 지도야. 제1·제2터미널이 같이 나와. 진에어는 제2터미널이야.</p>';
 var TAKMAP='<a href="https://www.takamatsu-airport.com/guide/map.php" target="_blank" rel="noopener"><img src="https://www.takamatsu-airport.com/assets/images/guide/map_261015.png" alt="다카마쓰 공항 공식 안내 지도" loading="lazy" style="width:100%;border:1px solid #cfd8e3;border-radius:12px;margin:0 0 6px;background:#fff" onerror="this.parentNode.style.display=\'none\';this.parentNode.nextSibling.style.display=\'none\'"></a><p class="note" style="margin:0 0 8px">다카마쓰 공항 공식 지도야. 누르면 공식 페이지가 열려.</p>';
@@ -1257,6 +1257,40 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   function jst(){return new Date(Date.now()+(9*60+new Date().getTimezoneOffset())*60000)}
   function z(n){return (n<10?'0':'')+n}
   function fmt(sec){sec=Math.max(0,Math.floor(sec));var h=Math.floor(sec/3600),mn=Math.floor(sec%3600/60),sc=sec%60;return (h?h+'시간 '+z(mn)+'분 ':(mn?mn+'분 ':''))+z(sc)+'초'}
+  var JRS=null,JRS_URL='https://train.jr-shikoku.co.jp/g?arg1=train&arg2=train';
+  function jrsOpen(){var n=jst(),h=n.getHours();return h>=5||h<1}
+  function jrsParse(rows,ts){
+    var out={},i,x,t,mm,d,k;
+    for(i=0;i<rows.length;i++){
+      x=rows[i];if(!x||typeof x!=='object')continue;
+      t=String(x.Type||'');mm=t.match(/うずしお([０-９0-9]+)号/);if(!mm)continue;
+      k=parseInt(mm[1].replace(/[０-９]/g,function(c){return String(c.charCodeAt(0)-65296)}),10);
+      d=x.delay;
+      if(!out[k]||x.Line==='koutoku')out[k]={n:k,delay:typeof d==='number'?d:0,state:d==='入線'?'arriving':'run'};
+    }
+    return {updated:ts,trains:Object.keys(out).map(function(q){return out[q]})};
+  }
+  function loadJrs(){
+    if(document.hidden||!jrsOpen())return;
+    try{
+      var c=new AbortController(),to=setTimeout(function(){c.abort()},10000);
+      fetch(JRS_URL,{method:'GET',mode:'cors',credentials:'omit',cache:'no-store',signal:c.signal}).then(function(r){return r.ok?r.text():''}).then(function(t){
+        clearTimeout(to);if(!t||!t.trim())return;
+        var rows=JSON.parse(t);if(!Array.isArray(rows))return;
+        JRS=jrsParse(rows,new Date().toISOString());
+      }).catch(function(){clearTimeout(to)});
+    }catch(e){}
+  }
+  loadJrs(); setInterval(loadJrs,300000);
+  function jrsFor(no){
+    if(!JRS||!JRS.updated||!JRS.trains)return null;
+    var age=(Date.now()-new Date(JRS.updated).getTime())/1000;
+    if(!(age>=0&&age<1200))return null;
+    var n=parseInt(no,10),i;
+    for(i=0;i<JRS.trains.length;i++){if(JRS.trains[i].n===n)return JRS.trains[i]}
+    return null;
+  }
+  function tstr(sec){sec=Math.floor(sec/60);return z(Math.floor(sec/60)%24)+':'+z(sec%60)}
   var BUS=null;
   function loadBus(){try{fetch('bus_status.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){BUS=j}).catch(function(){})}catch(e){}}
   loadBus(); setInterval(loadBus,60000);
@@ -1335,15 +1369,18 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
   }
   function fxMsg(el,msg){el._ok=0;el._n=-1;el.innerHTML='<div class="none">'+msg+'</div>'}
   function rows(el,k,mode,dest){
-    var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,sub;
+    var n=jst(),now=n.getHours()*3600+n.getMinutes()*60+n.getSeconds(),out=[],L=TT[k],i,r,dep,arr,key,left,sub,lv,dl,used=false;
     for(i=0;i<L.length&&out.length<5;i++){
-      r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;key=mode==='dep'?dep:arr;
-      if(mode==='dep'&&now>=dep) continue;
-      if(mode==='arr'&&now>=arr) continue;
+      r=L[i];dep=m(r[1])*60;arr=m(r[2])*60;lv=jrsFor(r[0]);dl=lv&&typeof lv.delay==='number'&&lv.delay>0?lv.delay*60:0;
+      key=(mode==='dep'?dep:arr)+dl;
+      if(now>=key) continue;
       left=key-now;
-      sub=(mode==='dep'?'':(now>=dep?'운행 중 · ':'출발 전 · '))+r[1]+' 출발 → '+r[2]+' 도착';
-      out.push({plate:'특급 우즈시오',no:r[0],dest:dest,time:mode==='dep'?r[1]:r[2],sub:sub,left:left,soon:left<60});
+      sub=(mode==='dep'?'':(now>=dep+dl?'운행 중 · ':'출발 전 · '))+(dl?'실시간 +'+(dl/60)+'분 지연 · ':(lv&&lv.state==='arriving'?'역 진입 중 · ':''));
+      sub+=r[1]+' 출발 → '+r[2]+' 도착';if(lv)used=true;
+      out.push({plate:'특급 우즈시오',no:r[0],dest:dest,time:tstr(key),sub:sub,left:left,soon:left<60});
     }
+    var bd=el.closest?el.closest('.board'):null,bf=bd?bd.querySelector('.bf'):null;
+    if(bf)bf.textContent=used?'시각표 + JR시코쿠 열차 주행 위치 서비스의 지연 정보 · 위치·지연은 실제와 다를 수 있어':'시각표 기준 · 실제 지연 정보는 받지 못했어';
     if(!out.length)return fxMsg(el,(k==='b'&&mode==='dep'?'오늘 막차(20:27)까지 모두 끝났어. 내일 첫차는 05:41이야.':(k==='a'&&mode==='dep'?'오늘 막차(22:22)까지 모두 끝났어. 내일 첫차는 06:10이야.':'오늘 도착 예정 열차는 모두 끝났어.')));
     fxRender(el,out,'시각표 기준 · 일본 시각',false);
   }
@@ -1493,7 +1530,7 @@ document.getElementById('days').innerHTML=DAYS.map(function(x){
 </script>
 
 <script>/* 새 버전 자동 반영: 배포할 때마다 version.json 의 번호가 바뀌고, 다르면 주소 끝에 ?v=번호를 붙여 한 번 다시 불러온다 */
-(function(){var B='20261108050756';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
+(function(){var B='20261109024326';function chk(){try{fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(!j||!j.b||j.b===B)return;var k='rl_'+j.b;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){return}location.replace(location.pathname+'?v='+j.b+location.hash)}).catch(function(){})}catch(e){}}
 chk();setInterval(chk,600000);document.addEventListener('visibilitychange',function(){if(!document.hidden)chk()})})();
 </script>
 </body></html>
